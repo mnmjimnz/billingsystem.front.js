@@ -29,7 +29,8 @@ const ApiClient = {
             const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
             if (response.status === 401) {
                 // Unauthorized, redirect to login
-                window.location.href = '/pages/login.html';
+                //window.location.href = '/pages/login.html';
+                console.log(JSON.stringify(response));
                 return null;
             }
             if (!response.ok) {
