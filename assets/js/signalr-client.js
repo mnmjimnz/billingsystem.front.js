@@ -5,8 +5,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Only connect if user is logged in
     if (!ApiClient.getToken()) return;
 
+    // Build hub URL dynamically based on API_BASE_URL from apiClient.js
+    const hubUrl = API_BASE_URL.replace('/api', '/hubs/notifications');
+
     connection = new signalR.HubConnectionBuilder()
-        .withUrl("https://localhost:7145/hubs/notifications", {
+        .withUrl(hubUrl, {
             accessTokenFactory: () => ApiClient.getToken()
         })
         .withAutomaticReconnect()
