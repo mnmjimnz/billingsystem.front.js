@@ -1,0 +1,205 @@
+let products = [];
+let cart = [];
+let suppliers = [];
+
+document.addEventListener('DOMContentLoaded', async () => {
+    await loadProducts();
+    await loadSuppliers();
+
+    document.getElementById('search-input').addEventListener('input', (e) => {
+        renderProducts(e.target.value);
+    });
+
+    document.getElementById('btn-save-purchase').addEventListener('click', savePurchase);
+});
+
+async function loadProducts() {
+    try {
+        products = await ApiClient.request('/Products');
+        renderProducts();
+    } catch (e) {
+        console.error("Error loading products", e);
+    }
+}
+
+async function loadSuppliers() {
+    try {
+        suppliers = await ApiClient.request('/Suppliers');
+        const select = document.getElementById('supplierSelect');
+        select.innerHTML = '<option value="">Seleccione un Proveedor...</option>';
+        suppliers.forEach(s => {
+            select.innerHTML += `<option value="${s.id}">${s.name}</option>`;
+        });
+    } catch (e) {
+        console.error("Error loading suppliers", e);
+    }
+}
+
+function renderProducts(filter = '') {
+    const grid = document.getElementById('products-grid');
+    grid.innerHTML = '';
+    const filtered = products.filter(p => p.name.toLowerCase().includes(filter.toLowerCase()) || p.barcode?.includes(filter));
+    
+    filtered.forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'col-md-4 col-sm-6';
+        div.innerHTML = `
+            <div class="card h-100 shadow-sm cursor-pointer border-0" onclick="addToCart(${p.id})">
+                <div class="card-body text-center p-4">
+                    <i class="bi bi-box-seam text-secondary" style="font-size: 2.5rem;"></i>
+                    <h6 class="mt-3 mb-1 fw-bold text-truncate" title="${p.name}">${p.name}</h6>
+                    <div class="text-muted small mb-2">Costo actual: $${p.cost.toFixed(2)}</div>
+                    <span class="badge ${p.stock > 10 ? 'bg-success' : 'bg-danger'}">${p.stock} en stock</span>
+                </div>
+            </div>
+        `;
+        // Make it slightly interactive
+        div.firstElementChild.style.cursor = 'pointer';
+        div.firstElementChild.addEventListener('mouseover', function() { this.classList.add('border-info'); });
+        div.firstElementChild.addEventListener('mouseout', function() { this.classList.remove('border-info'); });
+        grid.appendChild(div);
+    });
+}
+
+function addToCart(productId) {
+    const p = products.find(x => x.id === productId);
+    const existing = cart.find(x => x.productId === productId);
+    if (existing) {
+        existing.quantity += 1;
+        existing.subtotal = existing.quantity * existing.unitCost;
+    } else {
+        cart.push({
+            productId: p.id,
+            name: p.name,
+            quantity: 1,
+            unitCost: p.cost,
+            subtotal: p.cost
+        });
+    }
+    renderCart();
+}
+
+function renderCart() {
+    const list = document.getElementById('cart-items');
+    list.innerHTML = '';
+    let total = 0;
+
+    cart.forEach((item, index) => {
+        total += item.subtotal;
+        list.innerHTML += `
+            <li class="list-group-item p-3 border-bottom-0 border-top">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div class="fw-semibold text-truncate me-2">${item.name}</div>
+                    <button class="btn btn-sm text-danger p-0" onclick="removeFromCart(${index})"><i class="bi bi-trash"></i></button>
+                </div>
+                <div class="row g-2 align-items-center">
+                    <div class="col-4">
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text bg-light border-end-0">Cant</span>
+                            <input type="number" class="form-control text-center" value="${item.quantity}" min="1" onchange="updateQty(${index}, this.value)">
+                        </div>
+                    </div>
+                    <div class="col-5">
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text bg-light border-end-0">$</span>
+                            <input type="number" class="form-control text-end" value="${item.unitCost}" step="0.01" min="0" onchange="updateCost(${index}, this.value)" title="Costo Unitario">
+                        </div>
+                    </div>
+                    <div class="col-3 text-end fw-bold text-primary">
+                        $${item.subtotal.toFixed(2)}
+                    </div>
+                </div>
+            </li>
+        `;
+    });
+
+    document.getElementById('cart-total').innerText = `$${total.toFixed(2)}`;
+}
+
+function updateQty(index, qty) {
+    const q = parseInt(qty);
+    if (q > 0) {
+        cart[index].quantity = q;
+        cart[index].subtotal = q * cart[index].unitCost;
+        renderCart();
+    }
+}
+
+function updateCost(index, cost) {
+    const c = parseFloat(cost);
+    if (c >= 0) {
+        cart[index].unitCost = c;
+        cart[index].subtotal = cart[index].quantity * c;
+        renderCart();
+    }
+}
+
+function removeFromCart(index) {
+    cart.splice(index, 1);
+    renderCart();
+}
+
+function toggleAdvancePayment() {
+    const type = document.getElementById('paymentTypeSelect').value;
+    document.getElementById('divAdvancePayment').style.display = type === 'CREDIT' ? 'block' : 'none';
+    if (type !== 'CREDIT') {
+        document.getElementById('advanceInput').value = '0';
+    }
+}
+
+async function savePurchase() {
+    if (cart.length === 0) return alert("El detalle de compra está vacío");
+    
+    const invoice = document.getElementById('invoiceInput').value;
+    const supplierId = document.getElementById('supplierSelect').value;
+    const paymentType = document.getElementById('paymentTypeSelect').value;
+    const amountPaid = document.getElementById('advanceInput').value;
+
+    if (!invoice || !supplierId) return alert("Complete los datos requeridos");
+
+    const total = cart.reduce((sum, item) => sum + item.subtotal, 0);
+
+    const dto = {
+        invoiceNumber: invoice,
+        supplierId: parseInt(supplierId),
+        userId: 1, // hardcoded for now, idealmente viene del token JWT
+        total: total,
+        paymentType: paymentType,
+        amountPaid: paymentType === 'CREDIT' ? parseFloat(amountPaid) : total,
+        details: cart.map(c => ({
+            productId: c.productId,
+            quantity: c.quantity,
+            unitCost: c.unitCost,
+            subtotal: c.subtotal
+        }))
+    };
+
+    try {
+        const btn = document.getElementById('btn-save-purchase');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Procesando...';
+
+        await ApiClient.request('/Purchases', 'POST', dto);
+        
+        alert("¡Compra registrada y Kardex actualizado exitosamente!");
+        cart = [];
+        document.getElementById('invoiceInput').value = '';
+        document.getElementById('supplierSelect').value = '';
+        renderCart();
+        
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-check-circle me-2"></i> Procesar Ingreso';
+
+        // Reload products to update stock
+        await loadProducts();
+    } catch (e) {
+        alert("Error procesando la compra");
+        document.getElementById('btn-save-purchase').disabled = false;
+        document.getElementById('btn-save-purchase').innerHTML = '<i class="bi bi-check-circle me-2"></i> Procesar Ingreso';
+    }
+}
+
+function logout() {
+    ApiClient.clearToken();
+    window.location.href = 'login.html';
+}
