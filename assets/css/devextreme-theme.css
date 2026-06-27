@@ -354,3 +354,115 @@ body {
 .justify-content-end { justify-content: flex-end; }
 .mt-2 { margin-top: 0.5rem; }
 .py-3 { padding-top: 1rem; padding-bottom: 1rem; }
+
+/* Nav Tabs (DevExtreme Style) */
+.nav-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid var(--dx-border);
+}
+.nav-tabs .nav-item { margin-bottom: -2px; }
+.nav-tabs .nav-link {
+    display: block;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--dx-text-secondary);
+    background: transparent;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-weight: 500;
+    transition: color 0.2s, border-color 0.2s;
+}
+.nav-tabs .nav-link:hover { color: var(--dx-primary); }
+.nav-tabs .nav-link.active {
+    color: var(--dx-primary);
+    border-bottom: 2px solid var(--dx-primary);
+}
+
+/* List Group */
+.list-group {
+    display: flex;
+    flex-direction: column;
+    padding-left: 0;
+    margin-bottom: 0;
+}
+.list-group-item {
+    position: relative;
+    display: block;
+    padding: 0.5rem 1rem;
+    color: var(--dx-text);
+    text-decoration: none;
+    background-color: var(--dx-card-bg);
+    border: 1px solid var(--dx-border);
+    margin-bottom: -1px;
+}
+.list-group-item:first-child { border-top-left-radius: 4px; border-top-right-radius: 4px; }
+.list-group-item:last-child { border-bottom-left-radius: 4px; border-bottom-right-radius: 4px; }
+.list-group-item.active {
+    z-index: 2;
+    color: #fff;
+    background-color: var(--dx-primary);
+    border-color: var(--dx-primary);
+}
+.list-group-item-action:hover { background-color: rgba(0,0,0,0.04); }
+
+/* Form Floating Fix */
+.form-floating > label {
+    position: static;
+    display: block;
+    transform: none;
+    padding: 0;
+    margin-bottom: 4px;
+    font-size: 12px;
+    color: var(--dx-text-secondary);
+}
+.form-floating > input, .form-floating > select {
+    padding: 8px 0;
+}
+
+/* Form Check / Switches */
+.form-check {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.form-check-input {
+    width: 32px;
+    height: 16px;
+    appearance: none;
+    background-color: var(--dx-border);
+    border-radius: 16px;
+    position: relative;
+    cursor: pointer;
+    outline: none;
+    transition: background-color 0.3s;
+}
+.form-check-input::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 12px;
+    height: 12px;
+    background-color: #fff;
+    border-radius: 50%;
+    transition: transform 0.3s;
+}
+.form-check-input:checked { background-color: var(--dx-primary); }
+.form-check-input:checked::after { transform: translateX(16px); }
+.form-switch { margin: 0; padding: 0; }
+
+/* Topbar Notification Badge Fix */
+.position-relative .badge {
+    top: -5px !important;
+    right: -10px !important;
+    left: auto !important;
+    transform: none !important;
+    font-size: 10px;
+    padding: 3px 6px;
+}
+.cursor-pointer { cursor: pointer; }

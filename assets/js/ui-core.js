@@ -63,6 +63,37 @@ document.addEventListener('DOMContentLoaded', () => {
             menu.classList.remove('show');
         });
     });
+
+    // 3. Tabs
+    const tabToggles = document.querySelectorAll('[data-bs-toggle="tab"]');
+    tabToggles.forEach(toggle => {
+        toggle.addEventListener('click', (e) => {
+            e.preventDefault();
+            // Remove active from all tabs in this nav
+            const nav = toggle.closest('.nav-tabs');
+            if (nav) {
+                nav.querySelectorAll('.nav-link').forEach(t => t.classList.remove('active'));
+            }
+            // Add active to clicked
+            toggle.classList.add('active');
+
+            // Hide all tab panes
+            const targetSelector = toggle.getAttribute('data-bs-target');
+            // We need to find the container. Usually tab panes have class tab-pane
+            document.querySelectorAll('.tab-pane').forEach(pane => {
+                pane.classList.remove('show', 'active');
+                pane.classList.add('d-none');
+            });
+            // Show target
+            if (targetSelector) {
+                const targetPane = document.querySelector(targetSelector);
+                if (targetPane) {
+                    targetPane.classList.remove('d-none');
+                    targetPane.classList.add('show', 'active');
+                }
+            }
+        });
+    });
 });
 
 // Polyfill for legacy scripts that expect bootstrap.Modal

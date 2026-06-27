@@ -15,7 +15,10 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (data && data.token) {
                 ApiClient.setToken(data.token);
-                window.location.href = 'dashboard.html';
+                localStorage.setItem('userRole', data.user.role);
+                localStorage.setItem('userName', data.user.name);
+                localStorage.setItem('userId', data.user.id);
+                window.location.href = 'reports.html';
             } else {
                 showError('Respuesta inesperada del servidor.');
                 resetButton(btn, originalText);

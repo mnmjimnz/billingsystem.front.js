@@ -22,8 +22,8 @@ async function loadCategories(page = 1) {
                     <td class="fw-bold text-primary">${c.name}</td>
                     <td>${c.description || '-'}</td>
                     <td class="text-end pe-4">
-                        <button class="btn btn-sm btn-light text-primary border" onclick='editCategory(${JSON.stringify(c)})'>
-                            <i class="bi bi-pencil"></i> Editar
+                        <button class="btn btn-sm btn-outline-primary rounded-circle" onclick='editCategory(${JSON.stringify(c)})' title="Editar">
+                            <i class="bi bi-pencil"></i>
                         </button>
                     </td>
                 </tr>
