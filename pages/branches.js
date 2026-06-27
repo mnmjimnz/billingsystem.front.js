@@ -51,6 +51,7 @@ async function loadBranches(page = 1) {
                         <small class="text-muted"><i class="bi bi-cash-coin me-1"></i>Fondos: <strong>$${(b.availableFunds || 0).toFixed(2)}</strong></small>
                     </td>
                     <td>${b.phone || '<span class="text-muted">-</span>'}</td>
+                    <td><span class="badge bg-light text-dark border">${b.seriesPrefix || '-'}</span></td>
                     <td class="text-center">
                         <button class="btn btn-sm btn-outline-info rounded-circle" onclick='openCashRegisters(${b.id}, "${b.name}")' title="Gestionar Cajas">
                             <i class="bi bi-display"></i>
