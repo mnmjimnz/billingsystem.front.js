@@ -1,0 +1,354 @@
+/* Atlassian Design System (ADS) Custom CSS */
+/* Recommended font stack by Atlassian for system fonts */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans", Ubuntu, "Droid Sans", "Helvetica Neue", sans-serif;
+    font-size: 14px;
+    background-color: var(--bg-body);
+    color: var(--text-primary);
+    transition: background-color 0.2s ease, color 0.2s ease;
+    overflow-x: hidden;
+    line-height: 1.5;
+}
+
+:root {
+    /* Atlassian Light Mode Palette */
+    --bg-body: #FAFBFC; 
+    --bg-card: #FFFFFF;
+    --bg-sidebar: #FFFFFF;
+    --text-primary: #172B4D; 
+    --text-secondary: #6B778C; 
+    --border-color: #DFE1E6; 
+    
+    /* Brand Colors (Atlassian) */
+    --brand-primary: #0C66E4; /* Atlassian Blue */
+    --brand-primary-hover: #0052CC; /* Darker Blue */
+    --brand-success: #1F845A; /* Green */
+    --brand-danger: #C9372C; /* Red */
+    --brand-warning: #F5CD47; /* Yellow */
+    --brand-warning-text: #854C0E;
+    --brand-info: #0C66E4;
+
+    /* Subtle floating shadows */
+    --shadow-sm: 0 1px 1px rgba(9, 30, 66, 0.25), 0 0 1px rgba(9, 30, 66, 0.31);
+    --shadow-md: 0 4px 8px -2px rgba(9, 30, 66, 0.25), 0 0 1px rgba(9, 30, 66, 0.31);
+    --shadow-lg: 0 8px 16px -4px rgba(9, 30, 66, 0.25), 0 0 1px rgba(9, 30, 66, 0.31);
+    
+    /* Geometry */
+    --radius-sm: 3px;
+    --radius-md: 3px;
+    --radius-lg: 8px;
+    --transition-speed: 0.15s;
+}
+
+[data-bs-theme="dark"] {
+    /* Atlassian Dark Mode Palette */
+    --bg-body: #1D2125; 
+    --bg-card: #22272B; 
+    --bg-sidebar: #22272B; 
+    --text-primary: #B6C2CF; 
+    --text-secondary: #8C9BAB; 
+    --border-color: #2C333A; 
+    
+    --brand-primary: #579DFF;
+    --brand-primary-hover: #85B8FF;
+    --brand-success: #22A06B;
+    --brand-danger: #E2483D;
+    
+    --shadow-sm: 0 1px 1px rgba(3, 4, 4, 0.5), 0 0 1px rgba(3, 4, 4, 0.5);
+    --shadow-md: 0 4px 8px -2px rgba(3, 4, 4, 0.5), 0 0 1px rgba(3, 4, 4, 0.5);
+    --shadow-lg: 0 8px 16px -4px rgba(3, 4, 4, 0.5), 0 0 1px rgba(3, 4, 4, 0.5);
+}
+
+/* Layout Structure */
+.app-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 260px;
+    background-color: var(--bg-sidebar);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease;
+    z-index: 1000;
+}
+
+.sidebar-header {
+    height: 64px;
+    display: flex;
+    align-items: center;
+    padding: 0 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.sidebar-brand {
+    font-weight: 600;
+    font-size: 1.25rem;
+    color: var(--brand-primary);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.sidebar-nav {
+    flex: 1;
+    padding: 1rem 0.5rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.nav-link {
+    color: var(--text-primary);
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 500;
+    font-size: 14px;
+    transition: background-color var(--transition-speed) ease;
+    text-decoration: none;
+}
+
+.nav-link:hover {
+    background-color: rgba(9, 30, 66, 0.08); /* Atlassian hover state */
+    color: var(--text-primary);
+}
+
+[data-bs-theme="dark"] .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.nav-link.active {
+    background-color: rgba(12, 102, 228, 0.1); /* Light blue background */
+    color: var(--brand-primary);
+}
+
+[data-bs-theme="dark"] .nav-link.active {
+    background-color: rgba(87, 157, 255, 0.15);
+    color: var(--brand-primary);
+}
+
+.nav-link i {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+}
+.nav-link:hover i, .nav-link.active i {
+    color: inherit;
+}
+
+.sidebar-footer {
+    padding: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+/* Topbar */
+.topbar {
+    height: 64px;
+    background-color: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+}
+
+.topbar-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--text-primary);
+}
+
+/* Page Content Area */
+.page-content {
+    padding: 2rem;
+    flex: 1;
+    overflow-y: auto;
+}
+
+/* Cards */
+.card {
+    background-color: var(--bg-card);
+    border: none;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow var(--transition-speed) ease;
+    overflow: hidden;
+}
+
+.card:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.card-header {
+    background-color: transparent;
+    border-bottom: 1px solid var(--border-color);
+    padding: 1.25rem 1.5rem;
+    font-weight: 600;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+/* Tables */
+.table {
+    color: var(--text-primary);
+    margin-bottom: 0;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(9, 30, 66, 0.04);
+}
+
+[data-bs-theme="dark"] .table-hover tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.04);
+}
+
+.table th {
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    border-bottom: 2px solid var(--border-color);
+    padding: 0.75rem 1rem;
+}
+
+.table td {
+    padding: 0.75rem 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* Buttons */
+.btn {
+    border-radius: var(--radius-sm);
+    padding: 0.4rem 0.75rem;
+    font-weight: 500;
+    font-size: 14px;
+    transition: background-color var(--transition-speed) ease;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background-color: var(--brand-primary);
+    color: #ffffff;
+}
+
+.btn-primary:hover {
+    background-color: var(--brand-primary-hover);
+    color: #ffffff;
+}
+
+.btn-outline-danger {
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--brand-danger);
+}
+
+.btn-outline-danger:hover {
+    background-color: rgba(201, 55, 44, 0.08); /* Faint red */
+    color: var(--brand-danger);
+}
+
+/* Form Inputs */
+.form-control, .form-select {
+    border-radius: var(--radius-sm);
+    border: 2px solid var(--border-color);
+    padding: 0.5rem 0.75rem;
+    background-color: var(--bg-body);
+    color: var(--text-primary);
+    transition: border-color 0.2s ease-in-out;
+    font-size: 14px;
+}
+
+.form-control:hover, .form-select:hover {
+    background-color: var(--bg-card);
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--brand-primary);
+    box-shadow: none; /* Atlassian uses border, not box-shadow for focus */
+    background-color: var(--bg-card);
+}
+
+/* Floating Labels Fix for Atlassian */
+.form-floating > label {
+    padding-left: 0.75rem;
+    color: var(--text-secondary);
+}
+
+/* Modals */
+.modal-content {
+    background-color: var(--bg-card);
+    border: none;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+}
+
+.modal-header {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.modal-footer {
+    border-top: 1px solid var(--border-color);
+}
+
+/* Badges */
+.badge {
+    padding: 2px 6px;
+    font-weight: 700;
+    font-size: 11px;
+    border-radius: var(--radius-sm);
+    text-transform: uppercase;
+}
+
+.bg-success { background-color: var(--brand-success) !important; color: white !important; }
+.bg-warning { background-color: var(--brand-warning) !important; color: var(--brand-warning-text) !important; }
+.bg-danger { background-color: var(--brand-danger) !important; color: white !important; }
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
+}
+
+/* Responsive Sidebar */
+@media (max-width: 992px) {
+    .sidebar {
+        position: fixed;
+        left: 0;
+        transform: translateX(-100%);
+        height: 100vh;
+        z-index: 1050;
+    }
+    .sidebar.show {
+        transform: translateX(0);
+    }
+}
