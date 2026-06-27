@@ -64,3 +64,28 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
+// Polyfill for legacy scripts that expect bootstrap.Modal
+window.bootstrap = {
+    Modal: class {
+        constructor(element) {
+            this.element = typeof element === 'string' ? document.querySelector(element) : element;
+            if (this.element) {
+                this.element._modalInstance = this;
+            }
+        }
+        show() {
+            if (this.element) {
+                this.element.classList.add('show');
+            }
+        }
+        hide() {
+            if (this.element) {
+                this.element.classList.remove('show');
+            }
+        }
+        static getInstance(element) {
+            return element ? (element._modalInstance || new window.bootstrap.Modal(element)) : null;
+        }
+    }
+};
