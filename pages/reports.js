@@ -31,7 +31,7 @@ async function loadFilterOptions() {
         const users = await ApiClient.request('/Users');
         const userSelect = document.getElementById('filterUserId');
         users.forEach(u => {
-            userSelect.innerHTML += `<option value="${u.id}">${u.name}</option>`;
+            userSelect.innerHTML += `<option value="${u.id}">${u.fullName || u.username}</option>`;
         });
     } catch(e) {
         console.error("Error cargando filtros", e);
