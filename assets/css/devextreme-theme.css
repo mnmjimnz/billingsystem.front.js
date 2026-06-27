@@ -304,3 +304,53 @@ body {
 .shadow-sm { box-shadow: var(--shadow-1) !important; }
 .shadow-lg { box-shadow: var(--shadow-3) !important; }
 .fs-5 { font-size: 1.25rem; }
+
+/* Pagination (DevExtreme Material Style) */
+.pagination {
+    display: flex;
+    padding-left: 0;
+    list-style: none;
+    margin-top: 0;
+    gap: 4px;
+}
+.page-item { margin: 0; }
+.page-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--dx-text);
+    text-decoration: none;
+    background-color: transparent;
+    border: none;
+    padding: 6px 12px;
+    min-width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    transition: background-color 0.2s, color 0.2s;
+    font-size: 13px;
+    font-weight: 500;
+}
+.page-link:hover {
+    background-color: rgba(0,0,0,0.08);
+    color: var(--dx-text);
+}
+[data-bs-theme="dark"] .page-link:hover { background-color: rgba(255,255,255,0.08); }
+
+.page-item.active .page-link {
+    z-index: 3;
+    color: #fff;
+    background-color: var(--dx-primary);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+.page-item.disabled .page-link {
+    color: var(--dx-text-secondary);
+    pointer-events: none;
+    background-color: transparent;
+    opacity: 0.5;
+}
+.text-muted { color: var(--dx-text-secondary) !important; }
+.small, small { font-size: 12px; }
+.justify-content-end { justify-content: flex-end; }
+.mt-2 { margin-top: 0.5rem; }
+.py-3 { padding-top: 1rem; padding-bottom: 1rem; }
