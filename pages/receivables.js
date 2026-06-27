@@ -3,6 +3,7 @@ let currentBalance = 0;
 let currentPage = 1;
 let currentSearch = '';
 let searchTimeout = null;
+let receivablesList = [];
 
 document.addEventListener('DOMContentLoaded', async () => {
     paymentModalInstance = new bootstrap.Modal(document.getElementById('paymentModal'));
@@ -16,7 +17,7 @@ async function loadReceivables(page = 1) {
         const tbody = document.getElementById('receivables-table-body');
         tbody.innerHTML = '';
         
-        const data = (result.items || []).map(item => ({
+        receivablesList = (result.items || []).map(item => ({
             id: item.id,
             customerName: item.customername !== undefined ? item.customername : item.customerName,
             ticketNumber: item.ticketnumber !== undefined ? item.ticketnumber : item.ticketNumber,
@@ -26,7 +27,7 @@ async function loadReceivables(page = 1) {
             dueDate: item.duedate !== undefined ? item.duedate : item.dueDate,
             status: item.status !== undefined ? item.status : item.status
         }));
-        data.forEach(item => {
+        receivablesList.forEach(item => {
             const isPaid = item.status === 'PAID';
             const badgeClass = isPaid ? 'bg-success' : 'bg-warning text-dark';
             const badgeText = isPaid ? 'Pagado' : 'Pendiente';
@@ -42,7 +43,10 @@ async function loadReceivables(page = 1) {
                     <td class="text-danger fw-bold">$${item.balance.toFixed(2)}</td>
                     <td><span class="badge ${badgeClass}">${badgeText}</span></td>
                     <td class="text-end">
-                        ${!isPaid ? `<button class="btn btn-sm btn-primary shadow-sm" onclick="openPaymentModal(${item.id}, ${item.balance})"><i class="bi bi-cash-coin me-1"></i> Abonar</button>` : ''}
+                        <button class="btn btn-sm btn-outline-secondary rounded-pill px-3 shadow-sm me-2" onclick="viewDetails(${item.id})">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                        ${!isPaid ? `<button class="btn btn-sm btn-primary shadow-sm rounded-pill px-3" onclick="openPaymentModal(${item.id}, ${item.balance})"> Abonar</button>` : ''}
                     </td>
                 </tr>
             `;
@@ -69,6 +73,46 @@ function openPaymentModal(id, balance) {
     document.getElementById('payment-notes').value = '';
     currentBalance = balance;
     paymentModalInstance.show();
+}
+
+async function viewDetails(id) {
+    const p = receivablesList.find(x => x.id === id);
+    if (!p) return;
+
+    document.getElementById('detail-sale-ref').innerText = `${p.ticketNumber}`;
+    document.getElementById('detail-customer').innerText = p.customerName || '-';
+    document.getElementById('detail-total').innerText = `$${p.totalDebt.toFixed(2)}`;
+    document.getElementById('detail-paid').innerText = `$${p.amountPaid.toFixed(2)}`;
+    document.getElementById('detail-balance').innerText = `$${p.balance.toFixed(2)}`;
+
+    const tbody = document.getElementById('detail-payments-body');
+    tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">Cargando historial...</td></tr>';
+    
+    new bootstrap.Modal(document.getElementById('detailsModal')).show();
+
+    try {
+        const payments = await ApiClient.request(`/Receivables/${id}/payments`);
+        tbody.innerHTML = '';
+        if (payments.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">No hay abonos registrados.</td></tr>';
+            return;
+        }
+        
+        payments.forEach(pay => {
+            const date = new Date(pay.paymentDate).toLocaleString();
+            tbody.innerHTML += `
+                <tr>
+                    <td>${date}</td>
+                    <td>Usuario ${pay.userId}</td>
+                    <td class="fw-bold text-success">$${pay.amount.toFixed(2)}</td>
+                    <td>${pay.notes || '-'}</td>
+                </tr>
+            `;
+        });
+    } catch (e) {
+        tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Error al cargar historial.</td></tr>';
+        console.error(e);
+    }
 }
 
 async function savePayment() {

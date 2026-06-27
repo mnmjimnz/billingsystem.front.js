@@ -147,19 +147,26 @@ function addToCart(productId) {
 }
 
 async function addProductByBarcode(barcode) {
-    const p = products.find(x => x.barcode === barcode);
-    if (p) {
-        addToCart(p.id);
-    } else {
+    let p = products.find(x => x.barcode === barcode);
+    if (!p) {
         try {
             const product = await ApiClient.request(`/Products/barcode/${barcode}`);
             if (product) {
                 products.push(product);
-                addToCart(product.id);
+                p = product;
             }
         } catch (error) {
             showToast('Producto no encontrado en el sistema.', 'error');
+            return;
         }
+    }
+    
+    if (p) {
+        addToCart(p.id);
+        const searchInput = document.getElementById('search-input');
+        searchInput.value = p.name;
+        renderProducts(p.name);
+        showToast(`Producto escaneado: ${p.name}`, 'success');
     }
 }
 

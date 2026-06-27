@@ -77,13 +77,6 @@
                                     <!-- Rendered by JS -->
                                 </div>
                                 <div id="pagination-container"></div>
-                                
-                                <h5 class="mt-5 mb-3 fw-bold"><i class="bi bi-list-check me-2"></i>Productos Agregados</h5>
-                                <div class="border rounded overflow-auto" style="max-height: 400px;">
-                                    <ul class="list-group list-group-flush" id="cart-items">
-                                        <!-- Rendered by JS -->
-                                    </ul>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -92,9 +85,14 @@
                     <div class="col-lg-4">
                         <div id="reader" class="mx-auto bg-dark" style="width: 100%; border-radius: 12px; overflow: hidden; box-shadow: var(--shadow-sm); margin-bottom: 20px;"></div>
                         
-                        <div class="card d-flex flex-column border-primary" style="border-width: 2px;">
+                        <div class="card d-flex flex-column border-primary" style="border-width: 2px; max-height: calc(100vh - 350px);">
                             <div class="card-header bg-transparent border-bottom pt-4 pb-3">
                                 <h5 class="fw-bold mb-0"><i class="bi bi-receipt text-primary me-2"></i> Detalle de Venta</h5>
+                            </div>
+                            <div class="card-body flex-grow-1 overflow-auto p-0">
+                                <ul class="list-group list-group-flush" id="cart-items">
+                                    <!-- Rendered by JS -->
+                                </ul>
                             </div>
                             <div class="card-footer bg-transparent border-top p-4">
                                 <div class="d-flex justify-content-between mb-2 text-secondary">

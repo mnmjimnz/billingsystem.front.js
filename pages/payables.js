@@ -56,6 +56,9 @@ async function loadPayables(page = 1) {
                         </span>
                     </td>
                     <td class="text-end pe-4">
+                        <button class="btn btn-sm btn-outline-secondary rounded-pill px-3 shadow-sm me-2" onclick="viewDetails(${p.id})">
+                            <i class="bi bi-eye"></i>
+                        </button>
                         ${p.balance > 0 ? `
                         <button class="btn btn-sm btn-primary rounded-pill px-3 shadow-sm" onclick="openPaymentModal(${p.id}, ${p.balance})">
                             Abonar <i class="bi bi-arrow-right ms-1"></i>
@@ -87,6 +90,46 @@ function openPaymentModal(id, balance) {
     document.getElementById('paymentNotes').value = '';
     
     paymentModalInstance.show();
+}
+
+async function viewDetails(id) {
+    const p = payablesList.find(x => x.id === id);
+    if (!p) return;
+
+    document.getElementById('detail-purchase-id').innerText = `C-${p.purchaseId}`;
+    document.getElementById('detail-supplier').innerText = p.supplierName || 'Prov-' + p.supplierId;
+    document.getElementById('detail-total').innerText = `$${p.totalDebt.toFixed(2)}`;
+    document.getElementById('detail-paid').innerText = `$${p.amountPaid.toFixed(2)}`;
+    document.getElementById('detail-balance').innerText = `$${p.balance.toFixed(2)}`;
+
+    const tbody = document.getElementById('detail-payments-body');
+    tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">Cargando historial...</td></tr>';
+    
+    new bootstrap.Modal(document.getElementById('detailsModal')).show();
+
+    try {
+        const payments = await ApiClient.request(`/Payables/${id}/payments`);
+        tbody.innerHTML = '';
+        if (payments.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">No hay abonos registrados.</td></tr>';
+            return;
+        }
+        
+        payments.forEach(pay => {
+            const date = new Date(pay.paymentDate).toLocaleString();
+            tbody.innerHTML += `
+                <tr>
+                    <td>${date}</td>
+                    <td>Usuario ${pay.userId}</td>
+                    <td class="fw-bold text-success">$${pay.amount.toFixed(2)}</td>
+                    <td>${pay.notes || '-'}</td>
+                </tr>
+            `;
+        });
+    } catch (e) {
+        tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Error al cargar historial.</td></tr>';
+        console.error(e);
+    }
 }
 
 async function savePayment() {

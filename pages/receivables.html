@@ -146,6 +146,62 @@
       </div>
     </div>
 
+    <!-- Details Modal -->
+    <div class="modal fade" id="detailsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header border-bottom-0 pb-0">
+                    <h5 class="modal-title fw-bold">Detalles de Cuenta por Cobrar</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <p class="text-secondary small mb-1">Ref. Venta</p>
+                            <h6 class="fw-bold" id="detail-sale-ref">-</h6>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="text-secondary small mb-1">Cliente</p>
+                            <h6 class="fw-bold" id="detail-customer">-</h6>
+                        </div>
+                        <div class="col-md-4 mt-3">
+                            <p class="text-secondary small mb-1">Deuda Total</p>
+                            <h6 class="fw-bold" id="detail-total">-</h6>
+                        </div>
+                        <div class="col-md-4 mt-3">
+                            <p class="text-secondary small mb-1">Total Abonado</p>
+                            <h6 class="fw-bold text-success" id="detail-paid">-</h6>
+                        </div>
+                        <div class="col-md-4 mt-3">
+                            <p class="text-secondary small mb-1">Saldo Pendiente</p>
+                            <h6 class="fw-bold text-danger" id="detail-balance">-</h6>
+                        </div>
+                    </div>
+                    
+                    <h6 class="fw-bold mb-3"><i class="bi bi-clock-history me-2"></i>Historial de Abonos</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Usuario ID</th>
+                                    <th>Monto</th>
+                                    <th>Notas</th>
+                                </tr>
+                            </thead>
+                            <tbody id="detail-payments-body">
+                                <!-- Rendered by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer border-top-0 pt-0">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
     <script src="../assets/js/theme.js"></script>
