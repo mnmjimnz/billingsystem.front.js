@@ -76,6 +76,12 @@
             </header>
 
             <div class="page-content">
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <input type="text" id="searchInput" class="form-control" placeholder="Buscar cuentas por cobrar..." onkeyup="handleSearch(event)">
+                    </div>
+                </div>
+
                 <div class="card border-0 shadow-sm">
                     <div class="card-body">
                         <div class="table-responsive">
@@ -98,6 +104,7 @@
                                 </tbody>
                             </table>
                         </div>
+                        <div id="pagination-container" class="p-3 border-top"></div>
                     </div>
                 </div>
             </div>
@@ -147,6 +154,7 @@
     <script src="../assets/js/toast.js"></script>
     <script src="../assets/js/apiClient.js"></script>
     <script src="../assets/js/signalr-client.js"></script>
+    <script src="../assets/js/pagination.js"></script>
     <script src="receivables.js"></script>
 </body>
 </html>

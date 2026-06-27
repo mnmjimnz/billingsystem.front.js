@@ -1,31 +1,23 @@
+let currentPage = 1;
+let currentSearch = '';
+let searchTimeout = null;
+
 document.addEventListener('DOMContentLoaded', async () => {
-    await loadProductsForFilter();
     await loadKardex();
 });
 
-async function loadProductsForFilter() {
+async function loadKardex(page = 1) {
     try {
-        const products = await ApiClient.request('/Products');
-        const select = document.getElementById('kardex-product-filter');
-        products.forEach(p => {
-            select.innerHTML += `<option value="${p.id}">${p.barcode ? `[${p.barcode}] ` : ''}${p.name}</option>`;
-        });
-    } catch (e) {
-        console.error("Error loading products for filter", e);
-    }
-}
-
-async function loadKardex() {
-    try {
-        const productId = document.getElementById('kardex-product-filter').value;
-        const url = productId ? `/Kardex?productId=${productId}` : '/Kardex';
-        const data = await ApiClient.request(url);
+        currentPage = page;
+        const result = await ApiClient.request(`/Kardex/paged?page=${page}&pageSize=10&search=${encodeURIComponent(currentSearch)}`);
         
         const tbody = document.getElementById('kardex-table-body');
         tbody.innerHTML = '';
 
+        const data = result.items || [];
         if (data.length === 0) {
             tbody.innerHTML = '<tr><td colspan="8" class="text-center text-secondary py-4">No hay movimientos registrados.</td></tr>';
+            document.getElementById('pagination-container').innerHTML = '';
             return;
         }
 
@@ -53,10 +45,20 @@ async function loadKardex() {
                 </tr>
             `;
         });
+        
+        renderPagination('pagination-container', result, 'loadKardex');
     } catch (e) {
         console.error("Error loading kardex", e);
         showToast('Error al cargar el Kardex', 'error');
     }
+}
+
+function handleSearch(event) {
+    if (searchTimeout) clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+        currentSearch = event.target.value;
+        loadKardex(1);
+    }, 500);
 }
 
 function logout() {

@@ -1,15 +1,20 @@
 let categoryModalInstance;
+let currentPage = 1;
+let currentSearch = '';
+let searchTimeout = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
     categoryModalInstance = new bootstrap.Modal(document.getElementById('categoryModal'));
     await loadCategories();
 });
 
-async function loadCategories() {
+async function loadCategories(page = 1) {
     try {
-        const categories = await ApiClient.request('/Categories');
+        currentPage = page;
+        const result = await ApiClient.request(`/Categories/paged?page=${page}&pageSize=10&search=${encodeURIComponent(currentSearch)}`);
         const tbody = document.getElementById('categories-table-body');
         tbody.innerHTML = '';
+        const categories = result.items || [];
         categories.forEach(c => {
             tbody.innerHTML += `
                 <tr>
@@ -24,9 +29,18 @@ async function loadCategories() {
                 </tr>
             `;
         });
+        renderPagination('pagination-container', result, 'loadCategories');
     } catch (e) {
         console.error("Error loading categories", e);
     }
+}
+
+function handleSearch(event) {
+    if (searchTimeout) clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+        currentSearch = event.target.value;
+        loadCategories(1);
+    }, 500);
 }
 
 function clearForm() {

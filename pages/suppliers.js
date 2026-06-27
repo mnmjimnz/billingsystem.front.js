@@ -1,33 +1,47 @@
 let supplierModalInstance;
+let currentPage = 1;
+let currentSearch = '';
+let searchTimeout = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
     supplierModalInstance = new bootstrap.Modal(document.getElementById('supplierModal'));
     await loadSuppliers();
 });
 
-async function loadSuppliers() {
+async function loadSuppliers(page = 1) {
     try {
-        const suppliers = await ApiClient.request('/Suppliers');
+        currentPage = page;
+        const result = await ApiClient.request(`/Suppliers/paged?page=${page}&pageSize=10&search=${encodeURIComponent(currentSearch)}`);
         const tbody = document.getElementById('suppliers-table-body');
         tbody.innerHTML = '';
+        const suppliers = result.items || [];
         suppliers.forEach(s => {
             tbody.innerHTML += `
                 <tr>
-                    <td>${s.id}</td>
-                    <td>${s.name}</td>
+                    <td class="ps-4">#${s.id}</td>
+                    <td class="fw-medium">${s.name}</td>
                     <td>${s.documentNumber || '-'}</td>
                     <td>${s.contactName || '-'}</td>
                     <td>${s.email || '-'}</td>
                     <td>${s.phone || '-'}</td>
-                    <td>
-                        <button class="btn btn-sm btn-outline-primary" onclick='editSupplier(${JSON.stringify(s)})'><i class="bi bi-pencil"></i></button>
+                    <td class="text-end pe-4">
+                        <button class="btn btn-sm btn-outline-primary rounded-circle" onclick='editSupplier(${JSON.stringify(s)})'><i class="bi bi-pencil"></i></button>
                     </td>
                 </tr>
             `;
         });
+        renderPagination('pagination-container', result, 'loadSuppliers');
     } catch (e) {
         console.error("Error loading suppliers", e);
     }
+}
+
+function handleSearch(event) {
+    if (searchTimeout) clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+        currentSearch = event.target.value;
+        loadSuppliers(1);
+    }, 500);
 }
 
 function clearForm() {

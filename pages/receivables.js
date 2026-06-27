@@ -1,17 +1,22 @@
 let paymentModalInstance;
 let currentBalance = 0;
+let currentPage = 1;
+let currentSearch = '';
+let searchTimeout = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
     paymentModalInstance = new bootstrap.Modal(document.getElementById('paymentModal'));
     await loadReceivables();
 });
 
-async function loadReceivables() {
+async function loadReceivables(page = 1) {
     try {
-        const data = await ApiClient.request('/Receivables');
+        currentPage = page;
+        const result = await ApiClient.request(`/Receivables/paged?page=${page}&pageSize=10&search=${encodeURIComponent(currentSearch)}`);
         const tbody = document.getElementById('receivables-table-body');
         tbody.innerHTML = '';
-
+        
+        const data = result.items || [];
         data.forEach(item => {
             const isPaid = item.status === 'PAID';
             const badgeClass = isPaid ? 'bg-success' : 'bg-warning text-dark';
@@ -33,9 +38,18 @@ async function loadReceivables() {
                 </tr>
             `;
         });
+        renderPagination('pagination-container', result, 'loadReceivables');
     } catch (e) {
         console.error("Error loading receivables", e);
     }
+}
+
+function handleSearch(event) {
+    if (searchTimeout) clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+        currentSearch = event.target.value;
+        loadReceivables(1);
+    }, 500);
 }
 
 function openPaymentModal(id, balance) {

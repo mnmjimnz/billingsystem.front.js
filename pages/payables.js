@@ -1,37 +1,42 @@
 let payablesList = [];
 let paymentModalInstance = null;
+let currentPage = 1;
+let currentSearch = '';
+let searchTimeout = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
     paymentModalInstance = new bootstrap.Modal(document.getElementById('paymentModal'));
     await loadPayables();
+    await loadTotalPending();
 });
 
-async function loadPayables() {
+async function loadTotalPending() {
     try {
-        payablesList = await ApiClient.request('/Payables/pending');
-        renderPayables();
-        
-        const total = payablesList.reduce((sum, p) => sum + p.balance, 0);
+        const pending = await ApiClient.request('/Payables/pending');
+        const total = pending.reduce((sum, p) => sum + p.balance, 0);
         document.getElementById('total-pending').innerText = `$${total.toFixed(2)}`;
     } catch(e) {
-        console.error("Error cargando cuentas por pagar", e);
+        console.error("Error cargando total pendiente", e);
     }
 }
 
-function renderPayables() {
-    const tbody = document.getElementById('payables-table-body');
-    tbody.innerHTML = '';
-    
-    if (payablesList) {
+async function loadPayables(page = 1) {
+    try {
+        currentPage = page;
+        const result = await ApiClient.request(`/Payables/paged?page=${page}&pageSize=10&search=${encodeURIComponent(currentSearch)}`);
+        const tbody = document.getElementById('payables-table-body');
+        tbody.innerHTML = '';
+        
+        payablesList = result.items || [];
         payablesList.forEach(p => {
             const dueDate = new Date(p.dueDate).toLocaleDateString();
-            const isOverdue = new Date(p.dueDate) < new Date();
+            const isOverdue = new Date(p.dueDate) < new Date() && p.balance > 0;
             
             tbody.innerHTML += `
                 <tr>
                     <td class="ps-4 text-secondary">#${p.id}</td>
                     <td><a href="#" class="text-decoration-none">C-${p.purchaseId}</a></td>
-                    <td>Prov-${p.supplierId}</td>
+                    <td>${p.supplierName || 'Prov-'+p.supplierId}</td>
                     <td class="fw-semibold text-dark">$${p.totalDebt.toFixed(2)}</td>
                     <td class="text-success">$${p.amountPaid.toFixed(2)}</td>
                     <td class="fw-bold text-danger">$${p.balance.toFixed(2)}</td>
@@ -41,14 +46,27 @@ function renderPayables() {
                         </span>
                     </td>
                     <td class="text-end pe-4">
+                        ${p.balance > 0 ? `
                         <button class="btn btn-sm btn-primary rounded-pill px-3 shadow-sm" onclick="openPaymentModal(${p.id}, ${p.balance})">
                             Abonar <i class="bi bi-arrow-right ms-1"></i>
-                        </button>
+                        </button>` : `<span class="badge bg-success">Pagado</span>`}
                     </td>
                 </tr>
             `;
         });
+        
+        renderPagination('pagination-container', result, 'loadPayables');
+    } catch(e) {
+        console.error("Error cargando cuentas por pagar", e);
     }
+}
+
+function handleSearch(event) {
+    if (searchTimeout) clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+        currentSearch = event.target.value;
+        loadPayables(1);
+    }, 500);
 }
 
 function openPaymentModal(id, balance) {

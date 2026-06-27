@@ -2,6 +2,9 @@ let usersList = [];
 let rolesList = [];
 let branchesList = [];
 let userModalInstance = null;
+let currentPage = 1;
+let currentSearch = '';
+let searchTimeout = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
     userModalInstance = new bootstrap.Modal(document.getElementById('userModal'));
@@ -30,13 +33,24 @@ async function loadDependencies() {
     }
 }
 
-async function loadUsers() {
+async function loadUsers(page = 1) {
     try {
-        usersList = await ApiClient.request('/Users');
+        currentPage = page;
+        const result = await ApiClient.request(`/Users/paged?page=${page}&pageSize=10&search=${encodeURIComponent(currentSearch)}`);
+        usersList = result.items || [];
         renderUsers();
+        renderPagination('pagination-container', result, 'loadUsers');
     } catch(e) {
         console.error(e);
     }
+}
+
+function handleSearch(event) {
+    if (searchTimeout) clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+        currentSearch = event.target.value;
+        loadUsers(1);
+    }, 500);
 }
 
 function renderUsers() {

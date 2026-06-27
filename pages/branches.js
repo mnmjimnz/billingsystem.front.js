@@ -1,54 +1,56 @@
 let branchesList = [];
-let branchModalInstance = null;
+let branchModalInstance;
+let currentPage = 1;
+let currentSearch = '';
+let searchTimeout = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
     branchModalInstance = new bootstrap.Modal(document.getElementById('branchModal'));
     await loadBranches();
 });
 
-async function loadBranches() {
+async function loadBranches(page = 1) {
     try {
-        branchesList = await ApiClient.request('/Branches');
-        renderBranches();
-    } catch(e) {
-        console.error("Error cargando sucursales", e);
-    }
-}
-
-function renderBranches() {
-    const tbody = document.getElementById('branches-table-body');
-    tbody.innerHTML = '';
-    
-    if (branchesList) {
-        branchesList.forEach(b => {
+        currentPage = page;
+        const result = await ApiClient.request(`/Branches/paged?page=${page}&pageSize=10&search=${encodeURIComponent(currentSearch)}`);
+        const tbody = document.getElementById('branches-table-body');
+        tbody.innerHTML = '';
+        const branches = result.items || [];
+        branches.forEach(b => {
             tbody.innerHTML += `
                 <tr>
-                    <td class="ps-4 text-secondary">#${b.id}</td>
-                    <td class="fw-semibold text-primary"><i class="bi bi-buildings me-2"></i>${b.name}</td>
-                    <td class="text-muted">${b.address || 'N/A'}</td>
-                    <td>${b.phone || 'N/A'}</td>
+                    <td class="ps-4">#${b.id}</td>
+                    <td class="fw-medium">${b.name}</td>
+                    <td>${b.address || '-'}</td>
+                    <td>${b.phone || '-'}</td>
+                    <td><span class="badge bg-light text-dark border">${b.seriesPrefix}</span></td>
                     <td class="text-end pe-4">
-                        <button class="btn btn-sm btn-outline-secondary rounded-circle" onclick="editBranch(${b.id})">
-                            <i class="bi bi-pencil"></i>
-                        </button>
+                        <button class="btn btn-sm btn-outline-primary rounded-circle" onclick='editBranch(${JSON.stringify(b)})'><i class="bi bi-pencil"></i></button>
                     </td>
                 </tr>
             `;
         });
+        renderPagination('pagination-container', result, 'loadBranches');
+    } catch (e) {
+        console.error("Error loading branches", e);
     }
 }
 
-function openBranchModal() {
+function handleSearch(event) {
+    if (searchTimeout) clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+        currentSearch = event.target.value;
+        loadBranches(1);
+    }, 500);
+}
+
+function clearForm() {
     document.getElementById('branchId').value = '';
     document.getElementById('branchForm').reset();
     document.getElementById('branchModalLabel').innerText = 'Nueva Sucursal';
-    branchModalInstance.show();
 }
 
-function editBranch(id) {
-    const branch = branchesList.find(b => b.id === id);
-    if (!branch) return;
-
+function editBranch(branch) {
     document.getElementById('branchId').value = branch.id;
     document.getElementById('branchName').value = branch.name;
     document.getElementById('branchAddress').value = branch.address || '';

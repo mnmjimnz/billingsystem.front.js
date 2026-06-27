@@ -1,5 +1,8 @@
 let productModalInstance;
 let barcodeModalInstance;
+let currentPage = 1;
+let currentSearch = '';
+let searchTimeout = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
     productModalInstance = new bootstrap.Modal(document.getElementById('productModal'));
@@ -23,30 +26,41 @@ async function loadCategories() {
     }
 }
 
-async function loadProducts() {
+async function loadProducts(page = 1) {
     try {
-        const products = await ApiClient.request('/Products');
+        currentPage = page;
+        const result = await ApiClient.request(`/Products/paged?page=${page}&pageSize=10&search=${encodeURIComponent(currentSearch)}`);
         const tbody = document.getElementById('products-table-body');
         tbody.innerHTML = '';
+        const products = result.items || [];
         products.forEach(p => {
             tbody.innerHTML += `
                 <tr>
-                    <td>${p.id}</td>
+                    <td class="ps-4">#${p.id}</td>
                     <td>${p.barcode}</td>
-                    <td>${p.name}</td>
+                    <td class="fw-medium">${p.name}</td>
                     <td>$${p.price.toFixed(2)}</td>
                     <td>$${p.cost.toFixed(2)}</td>
-                    <td><span class="badge ${p.stock > 10 ? 'bg-success' : 'bg-danger'}">${p.stock}</span></td>
-                    <td>
-                        <button class="btn btn-sm btn-outline-info me-1" onclick='showBarcodes(${JSON.stringify(p)})' title="Ver Códigos"><i class="bi bi-upc-scan"></i></button>
-                        <button class="btn btn-sm btn-outline-primary" onclick='editProduct(${JSON.stringify(p)})' title="Editar"><i class="bi bi-pencil"></i></button>
+                    <td><span class="badge ${p.stock > 10 ? 'bg-success' : 'bg-danger'} rounded-pill">${p.stock}</span></td>
+                    <td class="text-end pe-4">
+                        <button class="btn btn-sm btn-outline-info me-1 rounded-circle" onclick='showBarcodes(${JSON.stringify(p)})' title="Ver Códigos"><i class="bi bi-upc-scan"></i></button>
+                        <button class="btn btn-sm btn-outline-primary rounded-circle" onclick='editProduct(${JSON.stringify(p)})' title="Editar"><i class="bi bi-pencil"></i></button>
                     </td>
                 </tr>
             `;
         });
+        renderPagination('pagination-container', result, 'loadProducts');
     } catch (e) {
         console.error("Error loading products", e);
     }
+}
+
+function handleSearch(event) {
+    if (searchTimeout) clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+        currentSearch = event.target.value;
+        loadProducts(1);
+    }, 500);
 }
 
 function clearForm() {

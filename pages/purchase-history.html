@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kardex de Inventario - Sistema de Facturación Premium</title>
+    <title>Historial de Compras - Sistema de Facturación Premium</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="../assets/css/style.css">
@@ -21,11 +21,12 @@
                 <a href="dashboard.html" class="nav-link"><i class="bi bi-grid"></i> Dashboard</a>
                 <a href="pos.html" class="nav-link"><i class="bi bi-shop"></i> Punto de Venta</a>
                 <a href="purchases.html" class="nav-link"><i class="bi bi-cart-plus"></i> Compras</a>
+                <a href="purchase-history.html" class="nav-link active"><i class="bi bi-clock-history"></i> Historial de Compras</a>
                 <a href="receivables.html" class="nav-link"><i class="bi bi-cash-coin"></i> Cuentas por Cobrar</a>
                 <a href="payables.html" class="nav-link"><i class="bi bi-wallet2"></i> Cuentas por Pagar</a>
                 <a href="reports.html" class="nav-link"><i class="bi bi-bar-chart-fill"></i> Reportes</a>
                 <a href="products.html" class="nav-link"><i class="bi bi-box-seam"></i> Productos</a>
-                <a href="kardex.html" class="nav-link active"><i class="bi bi-card-list"></i> Kardex de Inventario</a>
+                <a href="kardex.html" class="nav-link"><i class="bi bi-card-list"></i> Kardex de Inventario</a>
                 <a href="categories.html" class="nav-link"><i class="bi bi-tags"></i> Categorías</a>
                 <a href="customers.html" class="nav-link"><i class="bi bi-people"></i> Clientes</a>
                 <a href="suppliers.html" class="nav-link"><i class="bi bi-truck"></i> Proveedores</a>
@@ -43,27 +44,9 @@
             <header class="topbar">
                 <div class="d-flex align-items-center gap-3">
                     <button class="btn btn-light d-lg-none" id="sidebarToggle"><i class="bi bi-list"></i></button>
-                    <h1 class="topbar-title">Kardex de Inventario</h1>
+                    <h1 class="topbar-title">Historial de Compras</h1>
                 </div>
                 <div class="d-flex align-items-center gap-4">
-                    <div class="dropdown">
-                        <button class="btn position-relative border-0 bg-transparent text-body" type="button" data-bs-toggle="dropdown" onclick="loadNotifications()">
-                            <i class="bi bi-bell fs-5"></i>
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notif-badge" style="display:none; font-size: 0.65em;"></span>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="width: 300px; max-height: 400px; overflow-y: auto;" id="notif-list">
-                            <li><h6 class="dropdown-header">Notificaciones Pendientes</h6></li>
-                        </ul>
-                    </div>
-                                        <div class="dropdown">
-                        <button class="btn position-relative border-0 bg-transparent text-body" type="button" data-bs-toggle="dropdown" onclick="loadNotifications()">
-                            <i class="bi bi-bell fs-5"></i>
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notif-badge" style="display:none; font-size: 0.65em;"></span>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="width: 300px; max-height: 400px; overflow-y: auto;" id="notif-list">
-                            <li><h6 class="dropdown-header">Notificaciones Pendientes</h6></li>
-                        </ul>
-                    </div>
                     <div class="form-check form-switch m-0">
                         <input class="form-check-input" type="checkbox" role="switch" id="theme-toggle">
                         <label class="form-check-label" for="theme-toggle"><i class="bi bi-moon-stars"></i></label>
@@ -72,39 +55,28 @@
             </header>
 
             <div class="page-content">
-                <!-- Filtros -->
-                <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-body">
-                        <div class="row align-items-end">
-                            <div class="col-md-5">
-                                <label class="form-label fw-semibold">Buscar en el Kardex</label>
-                                <input type="text" id="searchInput" class="form-control" placeholder="Buscar por producto..." onkeyup="handleSearch(event)">
-                            </div>
-                            <div class="col-md-7 text-end">
-                                <button class="btn btn-light" onclick="loadKardex()"><i class="bi bi-arrow-clockwise me-2"></i>Actualizar</button>
-                            </div>
-                        </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <input type="text" id="searchInput" class="form-control" placeholder="Buscar compras (factura, proveedor)..." onkeyup="handleSearch(event)">
                     </div>
                 </div>
 
                 <div class="card border-0 shadow-sm">
-                    <div class="card-body">
+                    <div class="card-body p-0">
                         <div class="table-responsive">
-                            <table class="table table-hover align-middle">
+                            <table class="table table-hover align-middle mb-0">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>Fecha / Hora</th>
-                                        <th>Producto (Código)</th>
-                                        <th>Tipo Mov.</th>
-                                        <th>Referencia</th>
-                                        <th>Motivo</th>
-                                        <th class="text-center">Stock Ant.</th>
-                                        <th class="text-center">Cant.</th>
-                                        <th class="text-center">Nuevo Stock</th>
+                                        <th class="ps-4">ID</th>
+                                        <th>Factura</th>
+                                        <th>Proveedor</th>
+                                        <th>Fecha</th>
+                                        <th>Tipo Pago</th>
+                                        <th>Total</th>
                                     </tr>
                                 </thead>
-                                <tbody id="kardex-table-body">
-                                    <!-- Rendered by JS -->
+                                <tbody id="purchases-table-body">
+                                    <!-- Dinámico -->
                                 </tbody>
                             </table>
                         </div>
@@ -117,12 +89,10 @@
 
     <!-- Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
     <script src="../assets/js/theme.js"></script>
     <script src="../assets/js/toast.js"></script>
     <script src="../assets/js/apiClient.js"></script>
-    <script src="../assets/js/signalr-client.js"></script>
     <script src="../assets/js/pagination.js"></script>
-    <script src="kardex.js"></script>
+    <script src="purchase-history.js"></script>
 </body>
 </html>

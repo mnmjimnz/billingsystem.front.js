@@ -1,32 +1,46 @@
 let customerModalInstance;
+let currentPage = 1;
+let currentSearch = '';
+let searchTimeout = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
     customerModalInstance = new bootstrap.Modal(document.getElementById('customerModal'));
     await loadCustomers();
 });
 
-async function loadCustomers() {
+async function loadCustomers(page = 1) {
     try {
-        const customers = await ApiClient.request('/Customers');
+        currentPage = page;
+        const result = await ApiClient.request(`/Customers/paged?page=${page}&pageSize=10&search=${encodeURIComponent(currentSearch)}`);
         const tbody = document.getElementById('customers-table-body');
         tbody.innerHTML = '';
+        const customers = result.items || [];
         customers.forEach(c => {
             tbody.innerHTML += `
                 <tr>
-                    <td>${c.id}</td>
-                    <td>${c.name}</td>
+                    <td class="ps-4">#${c.id}</td>
+                    <td class="fw-medium">${c.name}</td>
                     <td>${c.documentNumber || '-'}</td>
                     <td>${c.email || '-'}</td>
                     <td>${c.phone || '-'}</td>
-                    <td>
-                        <button class="btn btn-sm btn-outline-primary" onclick='editCustomer(${JSON.stringify(c)})'><i class="bi bi-pencil"></i></button>
+                    <td class="text-end pe-4">
+                        <button class="btn btn-sm btn-outline-primary rounded-circle" onclick='editCustomer(${JSON.stringify(c)})'><i class="bi bi-pencil"></i></button>
                     </td>
                 </tr>
             `;
         });
+        renderPagination('pagination-container', result, 'loadCustomers');
     } catch (e) {
         console.error("Error loading customers", e);
     }
+}
+
+function handleSearch(event) {
+    if (searchTimeout) clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+        currentSearch = event.target.value;
+        loadCustomers(1);
+    }, 500);
 }
 
 function clearForm() {
