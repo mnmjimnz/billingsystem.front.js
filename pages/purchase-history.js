@@ -14,7 +14,15 @@ async function loadPurchases(page = 1) {
         const tbody = document.getElementById('purchases-table-body');
         tbody.innerHTML = '';
         
-        const data = result.items || [];
+        const data = (result.items || []).map(item => ({
+            id: item.id,
+            invoiceNumber: item.invoicenumber !== undefined ? item.invoicenumber : item.invoiceNumber,
+            supplierName: item.suppliername !== undefined ? item.suppliername : item.supplierName,
+            supplierId: item.supplierid !== undefined ? item.supplierid : item.supplierId,
+            createdAt: item.createdat !== undefined ? item.createdat : item.createdAt,
+            paymentType: item.paymenttype !== undefined ? item.paymenttype : item.paymentType,
+            total: item.total !== undefined ? item.total : item.total
+        }));
         if (data.length === 0) {
             tbody.innerHTML = '<tr><td colspan="6" class="text-center text-secondary py-4">No hay compras registradas.</td></tr>';
             document.getElementById('pagination-container').innerHTML = '';
