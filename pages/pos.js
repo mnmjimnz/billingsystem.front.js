@@ -41,21 +41,54 @@ async function checkCashRegister() {
     try {
         const res = await ApiClient.request('/CashRegisters/session');
         if (!res.hasOpenSession) {
-            // Load branches for modal
+            // Load branches — only OPEN ones can receive a cash register
             const branches = await ApiClient.request('/Branches') || [];
+            const openBranches = branches.filter(b => b.status !== 'CLOSED');
             const select = document.getElementById('register-branch');
             select.innerHTML = '';
-            branches.forEach(b => {
-                if (b.status === 'OPEN') {
-                    select.innerHTML += `<option value="${b.id}">${b.name}</option>`;
-                }
+
+            if (openBranches.length === 0) {
+                // No open branches at all — block everything
+                showBlockedOverlay(
+                    'bi-buildings text-danger',
+                    'Ninguna sucursal disponible',
+                    'No hay sucursales aperturadas. Por favor, pida a un administrador que aperture una sucursal antes de operar.'
+                );
+                return;
+            }
+
+            openBranches.forEach(b => {
+                select.innerHTML += `<option value="${b.id}">${b.name}</option>`;
             });
+
             const openRegisterModal = new bootstrap.Modal(document.getElementById('openRegisterModal'));
             openRegisterModal.show();
         }
     } catch (e) {
         console.error("Error checking cash register", e);
     }
+}
+
+function showBlockedOverlay(iconClass, title, message) {
+    // Remove existing overlay
+    const existing = document.getElementById('pos-blocked-overlay');
+    if (existing) existing.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'pos-blocked-overlay';
+    overlay.style.cssText = `
+        position: fixed; inset: 0; z-index: 9999;
+        background: rgba(0,0,0,0.6);
+        display: flex; align-items: center; justify-content: center;
+    `;
+    overlay.innerHTML = `
+        <div style="background: var(--card-bg, #fff); border-radius: 1rem; padding: 3rem 2.5rem; text-align: center; max-width: 420px; box-shadow: 0 20px 60px rgba(0,0,0,0.4);">
+            <i class="bi ${iconClass}" style="font-size: 3.5rem;"></i>
+            <h4 class="fw-bold mt-3 mb-2">${title}</h4>
+            <p class="text-muted mb-0">${message}</p>
+        </div>
+    `;
+    document.body.appendChild(overlay);
 }
 
 async function openCashRegister() {

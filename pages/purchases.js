@@ -55,18 +55,40 @@ async function loadBranches() {
 window.updateAvailableFunds = function() {
     const branchId = document.getElementById('branchSelect').value;
     const badge = document.getElementById('available-funds-badge');
+    const branchWarning = document.getElementById('branch-closed-warning');
+    const saveBtn = document.getElementById('btn-save-purchase');
+
     if (!branchId) {
-        badge.innerText = 'Fondos: $0.00';
+        badge.innerText = 'Seleccione una sucursal';
+        badge.className = 'badge bg-secondary position-absolute top-0 end-0 mt-2 me-2';
+        if (branchWarning) branchWarning.style.display = 'none';
         return;
     }
+
     const branch = branches.find(b => b.id == branchId);
     if (branch) {
-        badge.innerText = `Fondos: $${(branch.availableFunds || 0).toFixed(2)}`;
-        if (branch.status === 'CLOSED') {
-            badge.className = 'badge bg-danger position-absolute top-0 end-0 mt-2 me-2';
-            badge.innerText += ' - CERRADA';
-        } else {
-            badge.className = 'badge bg-success position-absolute top-0 end-0 mt-2 me-2';
+        const isClosed = branch.status === 'CLOSED';
+        badge.innerText = isClosed
+            ? `🔒 CERRADA | Fondos: $${(branch.availableFunds || 0).toFixed(2)}`
+            : `🟢 Fondos disponibles: $${(branch.availableFunds || 0).toFixed(2)}`;
+        badge.className = `badge ${isClosed ? 'bg-danger' : 'bg-success'} position-absolute top-0 end-0 mt-2 me-2`;
+
+        if (branchWarning) {
+            if (isClosed) {
+                branchWarning.innerHTML = `
+                    <div class="alert alert-danger d-flex align-items-center gap-2 py-2 mb-0">
+                        <i class="bi bi-lock-fill fs-5"></i>
+                        <div>
+                            <strong>Sucursal cerrada.</strong> No es posible registrar compras. 
+                            Aperture la sucursal desde <a href="branches.html" class="alert-link">Administración de Sucursales</a>.
+                        </div>
+                    </div>`;
+                branchWarning.style.display = 'block';
+                if (saveBtn) saveBtn.disabled = true;
+            } else {
+                branchWarning.style.display = 'none';
+                if (saveBtn) saveBtn.disabled = false;
+            }
         }
     }
 }

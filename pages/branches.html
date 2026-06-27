@@ -1,11 +1,11 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es" data-bs-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sucursales - Sistema de Facturación Premium</title>
+    <title>Sucursales - Sistema de Facturación</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-        <link rel="stylesheet" href="../assets/css/devextreme-theme.css?v=20260627004119">
+    <link rel="stylesheet" href="../assets/css/devextreme-theme.css?v=20260627004119">
 </head>
 <body>
     <div class="app-container">
@@ -31,7 +31,7 @@
                 <a href="users.html" class="nav-link"><i class="bi bi-person-badge"></i> Usuarios</a>
                 <a href="roles.html" class="nav-link"><i class="bi bi-shield-lock"></i> Roles y Permisos</a>
                 <a href="branches.html" class="nav-link active"><i class="bi bi-buildings"></i> Sucursales</a>
-                <a href="settings.html" class="nav-link"><i class="bi bi-gear"></i> Configuraci&#243;n</a>
+                <a href="settings.html" class="nav-link"><i class="bi bi-gear"></i> Configuración</a>
             </nav>
             <div class="sidebar-footer">
                 <button class="btn btn-outline-danger w-100 fw-semibold" onclick="logout()"><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</button>
@@ -137,14 +137,30 @@
         </div>
     </div>
 
+    <!-- Confirm Status Modal -->
+    <div class="modal fade" id="confirmStatusModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 420px;">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-body p-4 text-center">
+                    <div id="confirm-icon-wrap" class="mb-3" style="font-size: 3rem;"></div>
+                    <h5 class="fw-bold mb-2" id="confirm-title"></h5>
+                    <p class="text-muted mb-4" id="confirm-message"></p>
+                    <div class="d-flex gap-3 justify-content-center">
+                        <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn px-4 fw-semibold" id="btn-confirm-action">Confirmar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
     <script src="../assets/js/theme.js?v=20260627004119"></script>
     <script src="../assets/js/toast.js?v=20260627004119"></script>
     <script src="../assets/js/apiClient.js?v=20260627004119"></script>
     <script src="../assets/js/signalr-client.js?v=20260627004119"></script>
     <script src="../assets/js/pagination.js?v=20260627004119"></script>
-    <script src="branches.js?v=20260627004119"></script>
+    <script src="branches.js?v=20260627004120"></script>
     <script src="../assets/js/ui-core.js?v=20260627004119"></script>
 </body>
 </html>
-
