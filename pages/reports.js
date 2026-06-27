@@ -88,7 +88,7 @@ async function loadSalesReport() {
         
         // Add Total Row
         tbody.innerHTML += `
-            <tr class="table-light">
+            <tr class="table-light report-total-row">
                 <td colspan="6" class="text-end fw-bold">TOTAL:</td>
                 <td class="text-end fw-bold text-primary fs-5">$${totalSum.toFixed(2)}</td>
             </tr>
@@ -156,7 +156,7 @@ async function loadCashFlowReport() {
         
         // Add Total Row
         tbody.innerHTML += `
-            <tr class="table-light fw-bold">
+            <tr class="table-light fw-bold report-total-row">
                 <td colspan="4" class="text-end">TOTALES:</td>
                 <td class="text-end text-success">$${totalIn.toFixed(2)}</td>
                 <td class="text-end text-danger">$${totalOut.toFixed(2)}</td>
@@ -223,15 +223,58 @@ function exportExcel(tableId, filename) {
 
 function exportPDF(tableId, filename) {
     const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
+    const doc = new jsPDF('p', 'pt', 'letter');
     
-    doc.text(filename.replace('_', ' '), 14, 15);
+    // Header Corporate Title
+    doc.setFontSize(18);
+    doc.setTextColor(33, 43, 89); // Dark blue from the reference
+    doc.setFont('helvetica', 'bold');
+    doc.text(filename.replace('_', ' '), 40, 45);
+    
+    // Subtitle
+    doc.setFontSize(9);
+    doc.setTextColor(100, 100, 100);
+    doc.setFont('helvetica', 'normal');
+    const dateStr = new Date().toLocaleString();
+    doc.text(`Reporte generado el: ${dateStr}`, 40, 60);
     
     doc.autoTable({ 
         html: `#${tableId}`,
-        startY: 20,
+        startY: 75,
         theme: 'grid',
-        styles: { fontSize: 8 }
+        styles: { 
+            fontSize: 9,
+            font: 'helvetica',
+            cellPadding: 6,
+            lineColor: [220, 220, 220],
+            lineWidth: 0.5,
+        },
+        headStyles: {
+            fillColor: [33, 43, 89], // Dark Blue
+            textColor: 255,
+            fontStyle: 'bold',
+            halign: 'center'
+        },
+        alternateRowStyles: {
+            fillColor: [248, 249, 250] // Light gray
+        },
+        didParseCell: function(data) {
+            // Apply cyan style to total rows
+            if (data.row.raw && data.row.raw.classList && data.row.raw.classList.contains('report-total-row')) {
+                data.cell.styles.fillColor = [189, 244, 229]; // Light cyan
+                data.cell.styles.textColor = [15, 60, 45]; // Dark green/blue
+                data.cell.styles.fontStyle = 'bold';
+            }
+            
+            // Align monetary/numeric columns to the right
+            if (data.section === 'body') {
+                const text = data.cell.text[0] || '';
+                // If it looks like a number or monetary value, right align
+                if (text.trim().startsWith('$') || text.trim().startsWith('+') || text.trim().startsWith('-') || (!isNaN(text.trim()) && text.trim().length > 0)) {
+                    data.cell.styles.halign = 'right';
+                }
+            }
+        }
     });
     
     doc.save(`${filename}_${new Date().toISOString().split('T')[0]}.pdf`);
