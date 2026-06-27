@@ -359,35 +359,76 @@ function exportPDF(tableId, filename) {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF('p', 'pt', 'letter');
     
-    doc.setFontSize(18);
-    doc.setTextColor(33, 43, 89);
+    // Extraer metadatos del UI
+    const prefix = tableId.replace('Table', '');
+    let branch = 'Consolidado Global', user = 'Todos', period = '-', printed = new Date().toLocaleString();
+    if(document.getElementById(prefix + '-meta-branch')) {
+        branch = document.getElementById(prefix + '-meta-branch').innerText;
+        user = document.getElementById(prefix + '-meta-user').innerText;
+        period = document.getElementById(prefix + '-meta-period').innerText;
+    }
+    
+    // Título Principal
+    doc.setFontSize(22);
+    doc.setTextColor(42, 58, 82); // Color oscuro formal (#2a3a52)
     doc.setFont('helvetica', 'bold');
-    doc.text(filename.replace(/_/g, ' '), 40, 45);
+    doc.text(filename.replace(/_/g, ' '), 40, 50);
+    
+    // Caja de Metadatos (Fondo gris sutil)
+    doc.setFillColor(244, 246, 249);
+    doc.setDrawColor(238, 240, 243);
+    doc.roundedRect(40, 65, 532, 60, 3, 3, 'FD'); // X, Y, Width, Height
     
     doc.setFontSize(9);
-    doc.setTextColor(100, 100, 100);
+    doc.setTextColor(134, 142, 150); // Etiquetas
+    doc.setFont('helvetica', 'bold');
+    doc.text('SUCURSAL:', 55, 85);
+    doc.text('USUARIO:', 55, 105);
+    doc.text('PERÍODO:', 320, 85);
+    doc.text('GENERADO:', 320, 105);
+
+    doc.setTextColor(44, 62, 80); // Valores
     doc.setFont('helvetica', 'normal');
-    doc.text(`Reporte generado el: ${new Date().toLocaleString()}`, 40, 60);
+    doc.text(branch, 120, 85);
+    doc.text(user, 120, 105);
+    doc.text(period, 380, 85);
+    doc.text(printed, 380, 105);
     
+    // Configuración formal de la tabla
     doc.autoTable({ 
         html: `#${tableId}`,
-        startY: 75,
-        theme: 'grid',
-        styles: { fontSize: 8, font: 'helvetica', cellPadding: 4, lineColor: [220, 220, 220], lineWidth: 0.5 },
-        headStyles: { fillColor: [44, 62, 80], textColor: 255, fontStyle: 'bold', halign: 'center' },
-        alternateRowStyles: { fillColor: [248, 249, 250] },
+        startY: 140,
+        theme: 'plain', // Sin bordes verticales como en DevExtreme
+        styles: { fontSize: 8, font: 'helvetica', cellPadding: 6, textColor: [52, 58, 64] },
+        headStyles: { fillColor: [69, 130, 142], textColor: 255, fontStyle: 'bold', halign: 'left' }, // Fondo teal corporativo
+        alternateRowStyles: { fillColor: [248, 250, 252] }, // Filas cebra muy sutiles
         didParseCell: function(data) {
+            // Detección de fila de Totales
             if (data.row.raw && data.row.raw.classList && data.row.raw.classList.contains('report-total-row')) {
-                data.cell.styles.fillColor = [225, 230, 235];
-                data.cell.styles.textColor = [0, 0, 0];
+                data.cell.styles.fillColor = [255, 255, 255];
+                data.cell.styles.textColor = [42, 58, 82];
                 data.cell.styles.fontStyle = 'bold';
+                data.cell.styles.lineWidth = {top: 1.5, bottom: 1.5}; // Borde superior e inferior resaltado
+                data.cell.styles.lineColor = [69, 130, 142]; // Color del borde igual al header
+            } else if (data.section === 'body') {
+                // Borde inferior para separar filas normales
+                data.cell.styles.lineWidth = {bottom: 0.5};
+                data.cell.styles.lineColor = [233, 236, 239];
             }
-            if (data.section === 'body') {
+            
+            // Alineación derecha para monedas/cantidades
+            if (data.section === 'body' || data.section === 'foot') {
                 const text = data.cell.text[0] || '';
                 if (text.trim().startsWith('$') || text.trim().startsWith('+') || text.trim().startsWith('-') || (!isNaN(text.trim()) && text.trim().length > 0)) {
                     data.cell.styles.halign = 'right';
                 }
             }
+        },
+        willDrawPage: function (data) {
+            // Footer con número de página
+            doc.setFontSize(8);
+            doc.setTextColor(150);
+            doc.text("Página " + doc.internal.getNumberOfPages(), data.settings.margin.left, doc.internal.pageSize.height - 20);
         }
     });
     
