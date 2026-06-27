@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Categorías - Sistema de Facturación Premium</title>
+    <title>Categor�as - Sistema de Facturaci�n Premium</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
         <link rel="stylesheet" href="../assets/css/devextreme-theme.css?v=20260627004119">
 </head>
@@ -13,7 +13,7 @@
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <a href="#" class="sidebar-brand">
-                    <i class="bi bi-hexagon-fill"></i> Nexus POS
+                    <i class="bi bi-hexagon-fill"></i> <span id="brand-name">Nexus POS</span>
                 </a>
             </div>
             <nav class="sidebar-nav">
@@ -25,15 +25,16 @@
                 <a href="reports.html" class="nav-link"><i class="bi bi-bar-chart-fill"></i> Reportes</a>
                 <a href="products.html" class="nav-link"><i class="bi bi-box-seam"></i> Productos</a>
                 <a href="kardex.html" class="nav-link"><i class="bi bi-card-list"></i> Kardex de Inventario</a>
-                <a href="categories.html" class="nav-link active"><i class="bi bi-tags"></i> Categorías</a>
+                <a href="categories.html" class="nav-link active"><i class="bi bi-tags"></i> Categor�as</a>
                 <a href="customers.html" class="nav-link"><i class="bi bi-people"></i> Clientes</a>
                 <a href="suppliers.html" class="nav-link"><i class="bi bi-truck"></i> Proveedores</a>
                 <a href="users.html" class="nav-link"><i class="bi bi-person-badge"></i> Usuarios</a>
                 <a href="roles.html" class="nav-link"><i class="bi bi-shield-lock"></i> Roles y Permisos</a>
                 <a href="branches.html" class="nav-link"><i class="bi bi-buildings"></i> Sucursales</a>
+                <a href="settings.html" class="nav-link"><i class="bi bi-gear"></i> Configuraci&#243;n</a>
             </nav>
             <div class="sidebar-footer">
-                <button class="btn btn-outline-danger w-100 fw-semibold" onclick="logout()"><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</button>
+                <button class="btn btn-outline-danger w-100 fw-semibold" onclick="logout()"><i class="bi bi-box-arrow-right"></i> Cerrar Sesi�n</button>
             </div>
         </aside>
 
@@ -63,17 +64,17 @@
             </header>
 
             <div class="page-content">
-                <h2 class="mb-4 fw-bold text-dark">Clasificación de Productos</h2>
+                <h2 class="mb-4 fw-bold text-dark">Clasificaci�n de Productos</h2>
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h4 class="fw-bold mb-0 text-secondary">Categorías del Sistema</h4>
+                    <h4 class="fw-bold mb-0 text-secondary">Categor�as del Sistema</h4>
                     <button class="btn btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#categoryModal" onclick="clearForm()">
-                        <i class="bi bi-plus-lg me-1"></i> Nueva Categoría
+                        <i class="bi bi-plus-lg me-1"></i> Nueva Categor�a
                     </button>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-md-4">
-                        <input type="text" id="searchInput" class="form-control" placeholder="Buscar categorías..." onkeyup="handleSearch(event)">
+                        <input type="text" id="searchInput" class="form-control" placeholder="Buscar categor�as..." onkeyup="handleSearch(event)">
                     </div>
                 </div>
 
@@ -85,12 +86,12 @@
                                     <tr>
                                         <th class="ps-4">ID</th>
                                         <th>Nombre</th>
-                                        <th>Descripción</th>
+                                        <th>Descripci�n</th>
                                         <th class="text-end pe-4">Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody id="categories-table-body">
-                                    <!-- Dinámico -->
+                                    <!-- Din�mico -->
                                 </tbody>
                             </table>
                         </div>
@@ -106,7 +107,7 @@
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0">
           <div class="modal-header border-0 pb-0">
-            <h5 class="modal-title fw-bold" id="modalTitle">Nueva Categoría</h5>
+            <h5 class="modal-title fw-bold" id="modalTitle">Nueva Categor�a</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
           </div>
           <div class="modal-body p-4">
@@ -114,11 +115,11 @@
                 <input type="hidden" id="categoryId">
                 <div class="form-floating mb-3">
                     <input type="text" class="form-control" id="categoryName" placeholder="Nombre" required>
-                    <label>Nombre de Categoría</label>
+                    <label>Nombre de Categor�a</label>
                 </div>
                 <div class="form-floating">
-                    <textarea class="form-control" id="categoryDescription" placeholder="Descripción" style="height: 100px"></textarea>
-                    <label>Descripción</label>
+                    <textarea class="form-control" id="categoryDescription" placeholder="Descripci�n" style="height: 100px"></textarea>
+                    <label>Descripci�n</label>
                 </div>
             </form>
           </div>
@@ -140,4 +141,5 @@
     <script src="../assets/js/ui-core.js?v=20260627004119"></script>
 </body>
 </html>
+
 

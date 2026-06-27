@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clientes - Sistema de Facturación Premium</title>
+    <title>Clientes - Sistema de Facturaci�n Premium</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
         <link rel="stylesheet" href="../assets/css/devextreme-theme.css?v=20260627004119">
 </head>
@@ -13,7 +13,7 @@
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <a href="#" class="sidebar-brand">
-                    <i class="bi bi-hexagon-fill"></i> Nexus POS
+                    <i class="bi bi-hexagon-fill"></i> <span id="brand-name">Nexus POS</span>
                 </a>
             </div>
             <nav class="sidebar-nav">
@@ -25,15 +25,16 @@
                 <a href="reports.html" class="nav-link"><i class="bi bi-bar-chart-fill"></i> Reportes</a>
                 <a href="products.html" class="nav-link"><i class="bi bi-box-seam"></i> Productos</a>
                 <a href="kardex.html" class="nav-link"><i class="bi bi-card-list"></i> Kardex de Inventario</a>
-                <a href="categories.html" class="nav-link"><i class="bi bi-tags"></i> Categorías</a>
+                <a href="categories.html" class="nav-link"><i class="bi bi-tags"></i> Categor�as</a>
                 <a href="customers.html" class="nav-link active"><i class="bi bi-people"></i> Clientes</a>
                 <a href="suppliers.html" class="nav-link"><i class="bi bi-truck"></i> Proveedores</a>
                 <a href="users.html" class="nav-link"><i class="bi bi-person-badge"></i> Usuarios</a>
                 <a href="roles.html" class="nav-link"><i class="bi bi-shield-lock"></i> Roles y Permisos</a>
                 <a href="branches.html" class="nav-link"><i class="bi bi-buildings"></i> Sucursales</a>
+                <a href="settings.html" class="nav-link"><i class="bi bi-gear"></i> Configuraci&#243;n</a>
             </nav>
             <div class="sidebar-footer">
-                <button class="btn btn-outline-danger w-100 fw-semibold" onclick="logout()"><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</button>
+                <button class="btn btn-outline-danger w-100 fw-semibold" onclick="logout()"><i class="bi bi-box-arrow-right"></i> Cerrar Sesi�n</button>
             </div>
         </aside>
 
@@ -63,7 +64,7 @@
             </header>
 
             <div class="page-content">
-                <h2 class="mb-4 fw-bold text-dark">Gestión de Clientes</h2>
+                <h2 class="mb-4 fw-bold text-dark">Gesti�n de Clientes</h2>
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h4 class="fw-bold mb-0 text-secondary">Directorio</h4>
                     <button class="btn btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#customerModal" onclick="clearForm()">
@@ -87,12 +88,12 @@
                                         <th>Nombre Completo</th>
                                         <th>Documento</th>
                                         <th>Email</th>
-                                        <th>Teléfono</th>
+                                        <th>Tel�fono</th>
                                         <th class="text-end pe-4">Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody id="customers-table-body">
-                                    <!-- Dinámico -->
+                                    <!-- Din�mico -->
                                 </tbody>
                             </table>
                         </div>
@@ -131,14 +132,14 @@
                     </div>
                     <div class="col-6">
                         <div class="form-floating">
-                            <input type="text" class="form-control" id="customerPhone" placeholder="Teléfono">
-                            <label>Teléfono</label>
+                            <input type="text" class="form-control" id="customerPhone" placeholder="Tel�fono">
+                            <label>Tel�fono</label>
                         </div>
                     </div>
                 </div>
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="customerAddress" placeholder="Dirección">
-                    <label>Dirección</label>
+                    <input type="text" class="form-control" id="customerAddress" placeholder="Direcci�n">
+                    <label>Direcci�n</label>
                 </div>
             </form>
           </div>
@@ -160,4 +161,5 @@
     <script src="../assets/js/ui-core.js?v=20260627004119"></script>
 </body>
 </html>
+
 

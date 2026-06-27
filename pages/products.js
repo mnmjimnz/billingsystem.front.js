@@ -34,11 +34,14 @@ async function loadProducts(page = 1) {
         tbody.innerHTML = '';
         const products = result.items || [];
         products.forEach(p => {
+            const exemptBadge = p.isTaxExempt
+                ? '<span class="badge bg-secondary ms-1" title="Exento de IVA">Exento</span>'
+                : '';
             tbody.innerHTML += `
                 <tr>
                     <td class="ps-4">#${p.id}</td>
                     <td>${p.barcode}</td>
-                    <td class="fw-medium">${p.name}</td>
+                    <td class="fw-medium">${p.name}${exemptBadge}</td>
                     <td>$${p.price.toFixed(2)}</td>
                     <td>$${p.cost.toFixed(2)}</td>
                     <td><span class="badge ${p.stock > 10 ? 'bg-success' : 'bg-danger'} rounded-pill">${p.stock}</span></td>
@@ -66,6 +69,7 @@ function handleSearch(event) {
 function clearForm() {
     document.getElementById('productId').value = '';
     document.getElementById('productForm').reset();
+    document.getElementById('productIsTaxExempt').checked = false;
     document.getElementById('modalTitle').innerText = 'Nuevo Producto';
 }
 
@@ -76,6 +80,7 @@ function editProduct(product) {
     document.getElementById('productPrice').value = product.price;
     document.getElementById('productCost').value = product.cost;
     document.getElementById('productCategory').value = product.categoryId;
+    document.getElementById('productIsTaxExempt').checked = product.isTaxExempt || false;
     document.getElementById('modalTitle').innerText = 'Editar Producto';
     productModalInstance.show();
 }
@@ -88,8 +93,9 @@ async function saveProduct() {
         name: document.getElementById('productName').value,
         price: parseFloat(document.getElementById('productPrice').value),
         cost: parseFloat(document.getElementById('productCost').value),
-        stock: 0, // El stock se maneja por compras/Kardex, aquí se inicia en 0 si es nuevo, o se mantiene si se edita (el API debería ignorar update de stock manual)
-        categoryId: parseInt(document.getElementById('productCategory').value)
+        stock: 0,
+        categoryId: parseInt(document.getElementById('productCategory').value),
+        isTaxExempt: document.getElementById('productIsTaxExempt').checked
     };
 
     try {

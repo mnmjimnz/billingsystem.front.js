@@ -4,9 +4,19 @@ let html5QrcodeScanner = null;
 let checkoutModalInstance = null;
 let customers = [];
 let currentSaleTotal = 0;
+let currentTaxAmount = 0;
+let appSettings = { taxPercentage: 13, companyName: 'Nexus POS' };
 
 document.addEventListener('DOMContentLoaded', async () => {
     checkoutModalInstance = new bootstrap.Modal(document.getElementById('checkoutModal'));
+    
+    // Load global settings first
+    try {
+        appSettings = await ApiClient.request('/Settings') || appSettings;
+    } catch (e) {
+        console.warn('Could not load settings, using defaults');
+    }
+    
     await loadProducts();
     await loadCustomers();
 
@@ -193,7 +203,8 @@ function addToCart(productId) {
             price: p.price,
             quantity: 1,
             subtotal: p.price,
-            stock: p.stock
+            stock: p.stock,
+            isTaxExempt: p.isTaxExempt || false
         });
     }
     renderCart();
@@ -230,10 +241,13 @@ function renderCart() {
 
     cart.forEach((item, index) => {
         subtotal += item.subtotal;
+        const taxBadge = item.isTaxExempt
+            ? '<span class="badge bg-secondary ms-1" style="font-size:0.65rem;">Exento</span>'
+            : `<span class="badge bg-warning text-dark ms-1" style="font-size:0.65rem;">IVA ${appSettings.taxPercentage}%</span>`;
         list.innerHTML += `
             <div class="p-3 border-bottom bg-white">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <div class="fw-bold text-truncate me-2 text-dark fs-6">${item.name}</div>
+                    <div class="fw-bold text-truncate me-2 text-dark fs-6">${item.name}${taxBadge}</div>
                     <button class="btn btn-sm btn-outline-danger py-0 px-2" onclick="removeFromCart(${index})"><i class="bi bi-trash"></i></button>
                 </div>
                 <div class="d-flex align-items-center gap-2">
@@ -255,10 +269,36 @@ function renderCart() {
 function updateTotalsOnly() {
     const subtotal = cart.reduce((acc, item) => acc + item.subtotal, 0);
     const discount = parseFloat(document.getElementById('input-discount').value) || 0;
-    const total = subtotal - discount;
+    
+    // Calculate IVA only for non-exempt products
+    const taxRate = (appSettings.taxPercentage || 0) / 100;
+    currentTaxAmount = cart.reduce((acc, item) => {
+        return acc + (item.isTaxExempt ? 0 : item.subtotal * taxRate);
+    }, 0);
+    
+    const total = Math.max(0, subtotal - discount + currentTaxAmount);
 
     document.getElementById('cart-subtotal').innerText = `$${subtotal.toFixed(2)}`;
-    document.getElementById('cart-total').innerText = `$${Math.max(0, total).toFixed(2)}`;
+    
+    // Show or hide IVA row
+    let taxRow = document.getElementById('cart-tax-row');
+    if (!taxRow) {
+        // Inject IVA row if not present
+        const subtotalRow = document.getElementById('cart-subtotal').closest('.d-flex') || document.getElementById('cart-subtotal').parentElement;
+        taxRow = document.createElement('div');
+        taxRow.id = 'cart-tax-row';
+        taxRow.className = 'd-flex justify-content-between text-muted small px-3';
+        subtotalRow.parentElement.insertBefore(taxRow, subtotalRow.nextSibling);
+    }
+    if (currentTaxAmount > 0) {
+        taxRow.innerHTML = `<span>IVA (${appSettings.taxPercentage}%):</span><span>$${currentTaxAmount.toFixed(2)}</span>`;
+        taxRow.style.display = 'flex';
+    } else {
+        taxRow.style.display = 'none';
+    }
+    
+    document.getElementById('cart-total').innerText = `$${total.toFixed(2)}`;
+    currentSaleTotal = total;
 }
 
 function updateQty(index, qty) {
@@ -290,10 +330,7 @@ function openCheckoutModal() {
         return;
     }
     
-    const subtotal = cart.reduce((acc, item) => acc + item.subtotal, 0);
-    const discount = parseFloat(document.getElementById('input-discount').value) || 0;
-    currentSaleTotal = subtotal - discount;
-    
+    // Totals already computed by updateTotalsOnly
     document.getElementById('checkout-grand-total').innerText = `$${Math.max(0, currentSaleTotal).toFixed(2)}`;
     document.getElementById('checkout-tendered').value = currentSaleTotal.toFixed(2);
     document.getElementById('checkout-payment-type').value = "CASH";
@@ -334,11 +371,13 @@ async function confirmSale() {
     const subtotal = cart.reduce((acc, item) => acc + item.subtotal, 0);
     const discount = parseFloat(document.getElementById('input-discount').value) || 0;
     const total = currentSaleTotal;
+    const taxAmount = currentTaxAmount;
 
     const request = {
         customerId: customerValue ? parseInt(customerValue) : null,
         subtotal: subtotal,
         discount: discount,
+        taxAmount: taxAmount,
         total: total,
         paymentType: paymentType,
         amountTendered: tendered,
@@ -359,9 +398,10 @@ async function confirmSale() {
         const response = await ApiClient.request('/Sales', 'POST', request);
         if (response && response.ticketNumber) {
             checkoutModalInstance.hide();
-            generateTicketPDF(response.ticketNumber, cart, subtotal, discount, total);
+            generateTicketPDF(response.ticketNumber, cart, subtotal, discount, taxAmount, total);
             cart = [];
             document.getElementById('input-discount').value = '0';
+            currentTaxAmount = 0;
             renderCart();
             showToast('Venta procesada con éxito!', 'success');
             await loadProducts(); // Recargar stock
@@ -430,8 +470,9 @@ function onScanFailure(error) {
     // Ignore frequent errors from scanner
 }
 
-function generateTicketPDF(ticketNumber, items, subtotal, discount, total) {
+function generateTicketPDF(ticketNumber, items, subtotal, discount, taxAmount, total) {
     const { jsPDF } = window.jspdf;
+    const companyName = (appSettings.companyName || 'Nexus POS').toUpperCase();
     const doc = new jsPDF({
         orientation: 'portrait',
         unit: 'mm',
@@ -439,13 +480,19 @@ function generateTicketPDF(ticketNumber, items, subtotal, discount, total) {
     });
 
     doc.setFontSize(14);
-    doc.text("NEXUS POS", 40, 10, { align: "center" });
+    doc.setFont(undefined, 'bold');
+    doc.text(companyName, 40, 10, { align: "center" });
+    
+    doc.setFontSize(9);
+    doc.setFont(undefined, 'normal');
+    if (appSettings.address) doc.text(appSettings.address, 40, 15, { align: "center" });
+    if (appSettings.phone) doc.text(`Tel: ${appSettings.phone}`, 40, 19, { align: "center" });
     
     doc.setFontSize(10);
-    doc.text(`Ticket: ${ticketNumber}`, 5, 20);
-    doc.text(`Fecha: ${new Date().toLocaleString()}`, 5, 25);
+    doc.text(`Ticket: ${ticketNumber}`, 5, 25);
+    doc.text(`Fecha: ${new Date().toLocaleString()}`, 5, 30);
     
-    let y = 30;
+    let y = 35;
     doc.line(5, y, 75, y);
     y += 5;
 
@@ -456,7 +503,7 @@ function generateTicketPDF(ticketNumber, items, subtotal, discount, total) {
 
     items.forEach(item => {
         doc.text(`${item.quantity}`, 5, y);
-        doc.text(`${item.name.substring(0,15)}`, 15, y);
+        doc.text(`${item.name.substring(0,15)}${item.isTaxExempt ? '*' : ''}`, 15, y);
         doc.text(`$${item.subtotal.toFixed(2)}`, 60, y);
         y += 5;
     });
@@ -474,10 +521,24 @@ function generateTicketPDF(ticketNumber, items, subtotal, discount, total) {
         y += 5;
     }
 
+    if (taxAmount > 0) {
+        doc.text(`IVA (${appSettings.taxPercentage}%):`, 30, y);
+        doc.text(`$${taxAmount.toFixed(2)}`, 60, y);
+        y += 5;
+    }
+
     doc.setFontSize(12);
+    doc.setFont(undefined, 'bold');
     doc.text(`TOTAL:`, 30, y);
     doc.text(`$${total.toFixed(2)}`, 60, y);
-    y += 10;
+    y += 8;
+    
+    if (taxAmount > 0) {
+        doc.setFontSize(8);
+        doc.setFont(undefined, 'normal');
+        doc.text(`* Producto exento de IVA`, 5, y);
+        y += 5;
+    }
 
     doc.setFontSize(10);
     doc.text("¡Gracias por su compra!", 40, y, { align: "center" });

@@ -1,6 +1,24 @@
 // Minimal JS to replace Bootstrap's Modal and Dropdown functionality
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Load Company Name from localStorage immediately for quick UI update
+    const savedName = localStorage.getItem('companyName');
+    if (savedName) {
+        document.querySelectorAll('#brand-name').forEach(el => el.innerText = savedName);
+    }
+    
+    // Fetch latest from API asynchronously
+    if (window.ApiClient) {
+        ApiClient.request('/Settings', 'GET')
+            .then(settings => {
+                if (settings && settings.companyName) {
+                    localStorage.setItem('companyName', settings.companyName);
+                    document.querySelectorAll('#brand-name').forEach(el => el.innerText = settings.companyName);
+                }
+            })
+            .catch(e => console.log('Settings not available or not logged in'));
+    }
+
     // 1. Modals
     const modalToggles = document.querySelectorAll('[data-bs-toggle="modal"]');
     const modalDismisses = document.querySelectorAll('[data-bs-dismiss="modal"]');

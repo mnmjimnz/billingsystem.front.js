@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roles y Permisos - Sistema de Facturación Premium</title>
+    <title>Roles y Permisos - Sistema de Facturaci�n Premium</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
         <link rel="stylesheet" href="../assets/css/devextreme-theme.css?v=20260627004119">
 </head>
@@ -13,7 +13,7 @@
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <a href="#" class="sidebar-brand">
-                    <i class="bi bi-hexagon-fill"></i> Nexus POS
+                    <i class="bi bi-hexagon-fill"></i> <span id="brand-name">Nexus POS</span>
                 </a>
             </div>
             <nav class="sidebar-nav">
@@ -25,15 +25,16 @@
                 <a href="reports.html" class="nav-link"><i class="bi bi-bar-chart-fill"></i> Reportes</a>
                 <a href="products.html" class="nav-link"><i class="bi bi-box-seam"></i> Productos</a>
                 <a href="kardex.html" class="nav-link"><i class="bi bi-card-list"></i> Kardex de Inventario</a>
-                <a href="categories.html" class="nav-link"><i class="bi bi-tags"></i> Categorías</a>
+                <a href="categories.html" class="nav-link"><i class="bi bi-tags"></i> Categor�as</a>
                 <a href="customers.html" class="nav-link"><i class="bi bi-people"></i> Clientes</a>
                 <a href="suppliers.html" class="nav-link"><i class="bi bi-truck"></i> Proveedores</a>
                 <a href="users.html" class="nav-link"><i class="bi bi-person-badge"></i> Usuarios</a>
                 <a href="roles.html" class="nav-link active"><i class="bi bi-shield-lock"></i> Roles y Permisos</a>
                 <a href="branches.html" class="nav-link"><i class="bi bi-buildings"></i> Sucursales</a>
+                <a href="settings.html" class="nav-link"><i class="bi bi-gear"></i> Configuraci&#243;n</a>
             </nav>
             <div class="sidebar-footer">
-                <button class="btn btn-outline-danger w-100 fw-semibold" onclick="logout()"><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</button>
+                <button class="btn btn-outline-danger w-100 fw-semibold" onclick="logout()"><i class="bi bi-box-arrow-right"></i> Cerrar Sesi�n</button>
             </div>
         </aside>
 
@@ -73,7 +74,7 @@
                             </button>
                         </div>
                         <div class="list-group border-0 shadow-sm rounded-3" id="roles-list">
-                            <!-- Dinámico -->
+                            <!-- Din�mico -->
                         </div>
                     </div>
                     <div class="col-md-8">
@@ -86,13 +87,13 @@
                             </div>
                             <div class="card-body p-4">
                                 <div id="permissions-grid" class="row g-4">
-                                    <!-- Dinámico -->
+                                    <!-- Din�mico -->
                                 </div>
                             </div>
                         </div>
                         <div class="text-center p-5 text-muted" id="no-role-selected">
                             <i class="bi bi-shield-check display-1 mb-3 text-secondary opacity-50"></i>
-                            <h4>Gestión de Permisos</h4>
+                            <h4>Gesti�n de Permisos</h4>
                             <p>Selecciona un rol de la lista izquierda para administrar sus permisos de acceso.</p>
                         </div>
                     </div>
@@ -117,7 +118,7 @@
                             <input type="text" class="form-control" id="roleName" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label text-secondary small fw-semibold">Descripción</label>
+                            <label class="form-label text-secondary small fw-semibold">Descripci�n</label>
                             <textarea class="form-control" id="roleDescription" rows="3"></textarea>
                         </div>
                     </form>
@@ -139,3 +140,4 @@
     <script src="../assets/js/ui-core.js?v=20260627004119"></script>
 </body>
 </html>
+
