@@ -80,7 +80,7 @@ async function loadSalesReport() {
                     <td>${s.customerName || 'Consumidor Final'}</td>
                     <td>${s.userName}</td>
                     <td>${s.branchName}</td>
-                    <td><span class="badge ${s.paymentType === 'CASH' ? 'bg-success' : 'bg-warning text-dark'}">${s.paymentType}</span></td>
+                    <td><span class="badge ${s.paymentType === 'CASH' ? 'bg-success' : 'bg-warning text-dark'}">${s.paymentType === 'CASH' ? 'EFECTIVO' : 'CRÉDITO'}</span></td>
                     <td class="text-end fw-bold">$${s.total.toFixed(2)}</td>
                 </tr>
             `;
@@ -111,7 +111,7 @@ async function loadKardexReport() {
                 <tr>
                     <td>${new Date(k.createdAt).toLocaleString()}</td>
                     <td class="fw-semibold">${k.productName}</td>
-                    <td><span class="badge ${isEntry ? 'bg-success' : 'bg-danger'}">${k.movementType}</span></td>
+                    <td><span class="badge ${isEntry ? 'bg-success' : 'bg-danger'}">${isEntry ? 'INGRESO' : 'EGRESO'}</span></td>
                     <td>${k.description}</td>
                     <td class="text-end ${isEntry ? 'text-success' : 'text-danger'} fw-bold">${isEntry ? '+' : '-'}${k.quantity}</td>
                     <td class="text-end text-secondary">${k.previousStock}</td>
@@ -137,10 +137,19 @@ async function loadCashFlowReport() {
             if (isEntry) totalIn += c.amount;
             else totalOut += c.amount;
 
+            const categoryMap = {
+                'SALE': 'Venta',
+                'PURCHASE': 'Compra',
+                'AR_PAYMENT': 'Abono Cuentas x Cobrar',
+                'AP_PAYMENT': 'Abono Proveedor',
+                'BRANCH_MOVEMENT': 'Movimiento Sucursal'
+            };
+            const catLabel = categoryMap[c.category] || c.category;
+
             tbody.innerHTML += `
                 <tr>
                     <td>${new Date(c.date).toLocaleString()}</td>
-                    <td><span class="badge ${isEntry ? 'bg-success' : 'bg-danger'}">${c.category}</span></td>
+                    <td><span class="badge ${isEntry ? 'bg-success' : 'bg-danger'}">${catLabel}</span></td>
                     <td>${c.description}</td>
                     <td>${c.branchName || 'N/A'}</td>
                     <td class="text-end text-success fw-bold">${isEntry ? '$'+c.amount.toFixed(2) : '-'}</td>
