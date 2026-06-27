@@ -4,40 +4,50 @@ function showToast(message, type = 'info', title = 'Notificación') {
     if (!container) {
         container = document.createElement('div');
         container.id = 'toast-container';
-        container.className = 'toast-container position-fixed bottom-0 end-0 p-3';
-        container.style.zIndex = '9999';
+        container.className = 'toast-container';
         document.body.appendChild(container);
     }
 
-    let bgClass = 'bg-primary text-white';
+    let bgClass = 'bg-primary';
     let icon = 'bi-info-circle';
     
-    if (type === 'success') { bgClass = 'bg-success text-white'; icon = 'bi-check-circle'; }
-    if (type === 'error' || type === 'danger') { bgClass = 'bg-danger text-white'; icon = 'bi-x-circle'; }
-    if (type === 'warning') { bgClass = 'bg-warning text-dark'; icon = 'bi-exclamation-triangle'; }
+    if (type === 'success') { bgClass = 'bg-success'; icon = 'bi-check-circle'; }
+    if (type === 'error' || type === 'danger') { bgClass = 'bg-danger'; icon = 'bi-x-circle'; }
+    if (type === 'warning') { bgClass = 'bg-warning'; icon = 'bi-exclamation-triangle'; }
     
-    // Override alert to use this
     const toastId = 'toast-' + Date.now();
     const html = `
-        <div id="${toastId}" class="toast align-items-center ${bgClass} border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="4000">
-          <div class="d-flex">
-            <div class="toast-body fw-semibold">
-              <i class="bi ${icon} me-2 fs-5 align-middle"></i>
-              ${message}
-            </div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        <div id="${toastId}" class="toast ${bgClass}" role="alert">
+          <div class="toast-body">
+            <i class="bi ${icon} fs-5"></i>
+            <span>${message}</span>
+            <button type="button" class="btn-close" style="margin-left:auto" aria-label="Close">&times;</button>
           </div>
         </div>
     `;
     
     container.insertAdjacentHTML('beforeend', html);
     const toastEl = document.getElementById(toastId);
-    const toast = new bootstrap.Toast(toastEl);
-    toast.show();
     
-    toastEl.addEventListener('hidden.bs.toast', () => {
-        toastEl.remove();
+    // Show toast
+    setTimeout(() => {
+        toastEl.classList.add('show');
+    }, 10);
+    
+    // Close button
+    const closeBtn = toastEl.querySelector('.btn-close');
+    closeBtn.addEventListener('click', () => {
+        toastEl.classList.remove('show');
+        setTimeout(() => toastEl.remove(), 300);
     });
+
+    // Auto dismiss after 4s
+    setTimeout(() => {
+        if (toastEl && toastEl.parentElement) {
+            toastEl.classList.remove('show');
+            setTimeout(() => toastEl.remove(), 300);
+        }
+    }, 4000);
 }
 
 // Override native alert globally
