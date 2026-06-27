@@ -154,7 +154,7 @@ async function saveUser() {
         fullName: fullName,
         roleId: parseInt(roleId),
         branchId: parseInt(branchId),
-        passwordHash: password || null,
+        passwordHash: password || '',
         salary: document.getElementById('userSalary').value ? parseFloat(document.getElementById('userSalary').value) : null,
         hireDate: document.getElementById('userHireDate').value || null,
         isActive: document.getElementById('userIsActive').checked,
