@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reportes y Estad�sticas - Sistema de Facturaci�n Premium</title>
+    <title>Reportes y Estadísticas - Sistema de Facturación Premium</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <!-- SheetJS for Excel -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -30,7 +30,7 @@
                 <a href="reports.html" class="nav-link active"><i class="bi bi-bar-chart-fill"></i> Reportes</a>
                 <a href="products.html" class="nav-link"><i class="bi bi-box-seam"></i> Productos</a>
                 <a href="kardex.html" class="nav-link"><i class="bi bi-card-list"></i> Kardex de Inventario</a>
-                <a href="categories.html" class="nav-link"><i class="bi bi-tags"></i> Categor�as</a>
+                <a href="categories.html" class="nav-link"><i class="bi bi-tags"></i> Categorías</a>
                 <a href="customers.html" class="nav-link"><i class="bi bi-people"></i> Clientes</a>
                 <a href="suppliers.html" class="nav-link"><i class="bi bi-truck"></i> Proveedores</a>
                 <a href="users.html" class="nav-link"><i class="bi bi-person-badge"></i> Usuarios</a>
@@ -39,7 +39,7 @@
                 <a href="settings.html" class="nav-link"><i class="bi bi-gear"></i> Configuración</a>
             </nav>
             <div class="sidebar-footer">
-                <button class="btn btn-outline-danger w-100 fw-semibold" onclick="logout()"><i class="bi bi-box-arrow-right"></i> Cerrar Sesi�n</button>
+                <button class="btn btn-outline-danger w-100 fw-semibold" onclick="logout()"><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</button>
             </div>
         </aside>
 
@@ -69,7 +69,7 @@
             </header>
 
             <div class="page-content">
-                <h2 class="mb-4 fw-bold text-dark">Generador de Reportes y Estad�sticas</h2>
+                <h2 class="mb-4 fw-bold text-dark">Generador de Reportes y Estadísticas</h2>
                 <!-- Filtros Universales -->
                 <div class="card shadow-sm border-0 mb-4">
                     <div class="card-body">
@@ -99,7 +99,7 @@
                     </div>
                 </div>
 
-                <!-- Tabs Navegaci�n -->
+                <!-- Tabs Navegación -->
                 <ul class="nav nav-tabs fw-semibold" id="reportTabs" role="tablist">
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active" id="sales-tab" data-bs-toggle="tab" data-bs-target="#sales" type="button" role="tab" onclick="loadSalesReport()">Ventas</button>
@@ -111,7 +111,7 @@
                         <button class="nav-link" id="cashflow-tab" data-bs-toggle="tab" data-bs-target="#cashflow" type="button" role="tab" onclick="loadCashFlowReport()">Flujo de Efectivo</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="stats-tab" data-bs-toggle="tab" data-bs-target="#stats" type="button" role="tab" onclick="loadStats()">Estad�sticas Visuales</button>
+                        <button class="nav-link" id="stats-tab" data-bs-toggle="tab" data-bs-target="#stats" type="button" role="tab" onclick="loadStats()">Estadísticas Visuales</button>
                     </li>
                 </ul>
 
@@ -125,7 +125,7 @@
                                 <label class="btn btn-outline-primary" for="btnradioCash">Ventas Contado</label>
                               
                                 <input type="radio" class="btn-check" name="btnradio" id="btnradioCredit" autocomplete="off" onclick="currentPaymentType='CREDIT'; loadSalesReport();">
-                                <label class="btn btn-outline-primary" for="btnradioCredit">Ventas Cr�dito</label>
+                                <label class="btn btn-outline-primary" for="btnradioCredit">Ventas Crédito</label>
                             </div>
                             <div>
                                 <button class="btn btn-sm btn-danger me-2" onclick="exportPDF('salesTable', 'Reporte_Ventas')"><i class="bi bi-file-earmark-pdf"></i> Exportar PDF</button>
@@ -163,7 +163,7 @@
                                         <th>Fecha</th>
                                         <th>Producto</th>
                                         <th>Movimiento</th>
-                                        <th>Descripci�n</th>
+                                        <th>Descripción</th>
                                         <th class="text-end">Ctd.</th>
                                         <th class="text-end">Stock Previo</th>
                                         <th class="text-end">Stock Nuevo</th>
@@ -189,7 +189,7 @@
                                     <tr>
                                         <th>Fecha</th>
                                         <th>Tipo</th>
-                                        <th>Descripci�n</th>
+                                        <th>Descripción</th>
                                         <th>Sucursal</th>
                                         <th class="text-end">Entrada ($)</th>
                                         <th class="text-end">Salida ($)</th>
@@ -207,7 +207,7 @@
                             <div class="col-md-6">
                                 <div class="card shadow-sm h-100 border-0">
                                     <div class="card-header bg-transparent fw-bold text-secondary">
-                                        <i class="bi bi-trophy text-warning"></i> Top 10 Productos M�s Vendidos
+                                        <i class="bi bi-trophy text-warning"></i> Top 10 Productos Más Vendidos
                                     </div>
                                     <div class="card-body">
                                         <div style="position: relative; height: 350px; width: 100%;">
@@ -237,9 +237,9 @@
                                     <div class="card-header bg-transparent fw-bold text-secondary d-flex justify-content-between align-items-center">
                                         <span><i class="bi bi-graph-up-arrow text-primary"></i> Comparativo de Ventas</span>
                                         <select class="form-select form-select-sm w-auto" id="comparisonPeriod" onchange="loadStats()">
-                                            <option value="day">Por D�a (�ltimos 30)</option>
+                                            <option value="day">Por Día (Últimos 30)</option>
                                             <option value="month">Por Mes</option>
-                                            <option value="dayofweek">Por D�a de la Semana</option>
+                                            <option value="dayofweek">Por Día de la Semana</option>
                                         </select>
                                     </div>
                                     <div class="card-body">

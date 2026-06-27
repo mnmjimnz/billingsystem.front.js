@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Productos - Sistema de Facturaci�n Premium</title>
+    <title>Productos - Sistema de Facturación Premium</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
         <link rel="stylesheet" href="../assets/css/devextreme-theme.css?v=20260627004119">
 </head>
@@ -25,7 +25,7 @@
                 <a href="reports.html" class="nav-link"><i class="bi bi-bar-chart-fill"></i> Reportes</a>
                 <a href="products.html" class="nav-link active"><i class="bi bi-box-seam"></i> Productos</a>
                 <a href="kardex.html" class="nav-link"><i class="bi bi-card-list"></i> Kardex de Inventario</a>
-                <a href="categories.html" class="nav-link"><i class="bi bi-tags"></i> Categor�as</a>
+                <a href="categories.html" class="nav-link"><i class="bi bi-tags"></i> Categorías</a>
                 <a href="customers.html" class="nav-link"><i class="bi bi-people"></i> Clientes</a>
                 <a href="suppliers.html" class="nav-link"><i class="bi bi-truck"></i> Proveedores</a>
                 <a href="users.html" class="nav-link"><i class="bi bi-person-badge"></i> Usuarios</a>
@@ -34,7 +34,7 @@
                 <a href="settings.html" class="nav-link"><i class="bi bi-gear"></i> Configuración</a>
             </nav>
             <div class="sidebar-footer">
-                <button class="btn btn-outline-danger w-100 fw-semibold" onclick="logout()"><i class="bi bi-box-arrow-right"></i> Cerrar Sesi�n</button>
+                <button class="btn btn-outline-danger w-100 fw-semibold" onclick="logout()"><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</button>
             </div>
         </aside>
 
@@ -66,7 +66,7 @@
             <div class="page-content">
                 <h2 class="mb-4 fw-bold text-dark">Inventario y Productos</h2>
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h4 class="fw-bold mb-0 text-secondary">Cat�logo General</h4>
+                    <h4 class="fw-bold mb-0 text-secondary">Catálogo General</h4>
                     <button class="btn btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#productModal" onclick="clearForm()">
                         <i class="bi bi-plus-lg me-1"></i> Nuevo Producto
                     </button>
@@ -85,7 +85,7 @@
                                 <thead class="table-light">
                                     <tr>
                                         <th class="ps-4">ID</th>
-                                        <th>C�digo</th>
+                                        <th>Código</th>
                                         <th>Nombre del Producto</th>
                                         <th>Precio</th>
                                         <th>Costo</th>
@@ -94,7 +94,7 @@
                                     </tr>
                                 </thead>
                                 <tbody id="products-table-body">
-                                    <!-- Din�mico -->
+                                    <!-- Dinámico -->
                                 </tbody>
                             </table>
                         </div>
@@ -117,8 +117,8 @@
             <form id="productForm">
                 <input type="hidden" id="productId">
                 <div class="form-floating mb-3">
-                    <input type="text" class="form-control" id="productBarcode" placeholder="C�digo" required>
-                    <label>C�digo de Barras</label>
+                    <input type="text" class="form-control" id="productBarcode" placeholder="Código" required>
+                    <label>Código de Barras</label>
                 </div>
                 <div class="form-floating mb-3">
                     <input type="text" class="form-control" id="productName" placeholder="Nombre" required>
@@ -142,7 +142,7 @@
                     <select class="form-select" id="productCategory" required>
                         <!-- Loaded dynamically -->
                     </select>
-                    <label>Categor�a</label>
+                    <label>Categoría</label>
                 </div>
             </form>
           </div>
@@ -159,12 +159,12 @@
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0">
           <div class="modal-header border-0 pb-0">
-            <h5 class="modal-title fw-bold" id="barcodeModalTitle">C�digos del Producto</h5>
+            <h5 class="modal-title fw-bold" id="barcodeModalTitle">Códigos del Producto</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
           </div>
           <div class="modal-body text-center p-4">
             <div class="mb-4">
-                <h6 class="fw-bold text-secondary mb-3">C�digo de Barras</h6>
+                <h6 class="fw-bold text-secondary mb-3">Código de Barras</h6>
                 <div class="bg-light p-3 rounded mb-2 d-inline-block">
                     <svg id="barcodeSvg"></svg>
                 </div>
@@ -174,7 +174,7 @@
             </div>
             <hr>
             <div class="mt-4">
-                <h6 class="fw-bold text-secondary mb-3">C�digo QR</h6>
+                <h6 class="fw-bold text-secondary mb-3">Código QR</h6>
                 <div class="bg-light p-3 rounded mb-2 d-inline-block">
                     <canvas id="qrcodeCanvas"></canvas>
                 </div>

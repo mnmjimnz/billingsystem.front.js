@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roles y Permisos - Sistema de Facturaci�n Premium</title>
+    <title>Roles y Permisos - Sistema de Facturación Premium</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
         <link rel="stylesheet" href="../assets/css/devextreme-theme.css?v=20260627004119">
 </head>
@@ -25,7 +25,7 @@
                 <a href="reports.html" class="nav-link"><i class="bi bi-bar-chart-fill"></i> Reportes</a>
                 <a href="products.html" class="nav-link"><i class="bi bi-box-seam"></i> Productos</a>
                 <a href="kardex.html" class="nav-link"><i class="bi bi-card-list"></i> Kardex de Inventario</a>
-                <a href="categories.html" class="nav-link"><i class="bi bi-tags"></i> Categor�as</a>
+                <a href="categories.html" class="nav-link"><i class="bi bi-tags"></i> Categorías</a>
                 <a href="customers.html" class="nav-link"><i class="bi bi-people"></i> Clientes</a>
                 <a href="suppliers.html" class="nav-link"><i class="bi bi-truck"></i> Proveedores</a>
                 <a href="users.html" class="nav-link"><i class="bi bi-person-badge"></i> Usuarios</a>
@@ -34,7 +34,7 @@
                 <a href="settings.html" class="nav-link"><i class="bi bi-gear"></i> Configuración</a>
             </nav>
             <div class="sidebar-footer">
-                <button class="btn btn-outline-danger w-100 fw-semibold" onclick="logout()"><i class="bi bi-box-arrow-right"></i> Cerrar Sesi�n</button>
+                <button class="btn btn-outline-danger w-100 fw-semibold" onclick="logout()"><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</button>
             </div>
         </aside>
 
@@ -74,7 +74,7 @@
                             </button>
                         </div>
                         <div class="list-group border-0 shadow-sm rounded-3" id="roles-list">
-                            <!-- Din�mico -->
+                            <!-- Dinámico -->
                         </div>
                     </div>
                     <div class="col-md-8">
@@ -87,13 +87,13 @@
                             </div>
                             <div class="card-body p-4">
                                 <div id="permissions-grid" class="row g-4">
-                                    <!-- Din�mico -->
+                                    <!-- Dinámico -->
                                 </div>
                             </div>
                         </div>
                         <div class="text-center p-5 text-muted" id="no-role-selected">
                             <i class="bi bi-shield-check display-1 mb-3 text-secondary opacity-50"></i>
-                            <h4>Gesti�n de Permisos</h4>
+                            <h4>Gestión de Permisos</h4>
                             <p>Selecciona un rol de la lista izquierda para administrar sus permisos de acceso.</p>
                         </div>
                     </div>
@@ -118,7 +118,7 @@
                             <input type="text" class="form-control" id="roleName" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label text-secondary small fw-semibold">Descripci�n</label>
+                            <label class="form-label text-secondary small fw-semibold">Descripción</label>
                             <textarea class="form-control" id="roleDescription" rows="3"></textarea>
                         </div>
                     </form>
