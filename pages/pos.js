@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 async function loadCustomers() {
     try {
-        customers = await ApiClient.request('/Customers');
+        customers = await ApiClient.request('/Customers') || [];
         const select = document.getElementById('checkout-customer');
         select.innerHTML = '<option value="">Cliente Público General</option>';
         customers.forEach(c => {
@@ -35,16 +35,17 @@ async function loadCustomers() {
         });
     } catch (e) {
         console.error("Error loading customers", e);
+        customers = [];
     }
 }
 
 async function loadProducts() {
     try {
-        products = await ApiClient.request('/Products');
-        // Only show active products with stock > 0 for POS by default, or all? Let's show all but highlight no stock.
+        products = await ApiClient.request('/Products') || [];
         renderProducts();
     } catch (e) {
         console.error("Error loading products", e);
+        products = [];
     }
 }
 

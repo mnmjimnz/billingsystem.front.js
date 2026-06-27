@@ -15,16 +15,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 async function loadProducts() {
     try {
-        products = await ApiClient.request('/Products');
+        products = await ApiClient.request('/Products') || [];
         renderProducts();
     } catch (e) {
         console.error("Error loading products", e);
+        products = [];
     }
 }
 
 async function loadSuppliers() {
     try {
-        suppliers = await ApiClient.request('/Suppliers');
+        suppliers = await ApiClient.request('/Suppliers') || [];
         const select = document.getElementById('supplierSelect');
         select.innerHTML = '<option value="">Seleccione un Proveedor...</option>';
         suppliers.forEach(s => {
@@ -32,6 +33,7 @@ async function loadSuppliers() {
         });
     } catch (e) {
         console.error("Error loading suppliers", e);
+        suppliers = [];
     }
 }
 
