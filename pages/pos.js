@@ -331,7 +331,8 @@ function startCamera() {
         { facingMode: "environment" },
         {
             fps: 10,
-            qrbox: { width: 250, height: 250 }
+            qrbox: { width: 250, height: 120 },
+            aspectRatio: 3.5
         },
         onScanSuccess,
         onScanFailure
