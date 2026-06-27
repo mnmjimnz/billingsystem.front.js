@@ -27,7 +27,17 @@ async function loadPayables(page = 1) {
         const tbody = document.getElementById('payables-table-body');
         tbody.innerHTML = '';
         
-        payablesList = result.items || [];
+        payablesList = (result.items || []).map(item => ({
+            id: item.id,
+            purchaseId: item.purchaseid !== undefined ? item.purchaseid : item.purchaseId,
+            supplierName: item.suppliername !== undefined ? item.suppliername : item.supplierName,
+            supplierId: item.supplierid !== undefined ? item.supplierid : item.supplierId,
+            totalDebt: item.totaldebt !== undefined ? item.totaldebt : item.totalDebt,
+            amountPaid: item.amountpaid !== undefined ? item.amountpaid : item.amountPaid,
+            balance: item.balance !== undefined ? item.balance : item.balance,
+            dueDate: item.duedate !== undefined ? item.duedate : item.dueDate,
+            status: item.status !== undefined ? item.status : item.status
+        }));
         payablesList.forEach(p => {
             const dueDate = new Date(p.dueDate).toLocaleDateString();
             const isOverdue = new Date(p.dueDate) < new Date() && p.balance > 0;

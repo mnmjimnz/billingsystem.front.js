@@ -16,7 +16,16 @@ async function loadReceivables(page = 1) {
         const tbody = document.getElementById('receivables-table-body');
         tbody.innerHTML = '';
         
-        const data = result.items || [];
+        const data = (result.items || []).map(item => ({
+            id: item.id,
+            customerName: item.customername !== undefined ? item.customername : item.customerName,
+            ticketNumber: item.ticketnumber !== undefined ? item.ticketnumber : item.ticketNumber,
+            totalDebt: item.totaldebt !== undefined ? item.totaldebt : item.totalDebt,
+            amountPaid: item.amountpaid !== undefined ? item.amountpaid : item.amountPaid,
+            balance: item.balance !== undefined ? item.balance : item.balance,
+            dueDate: item.duedate !== undefined ? item.duedate : item.dueDate,
+            status: item.status !== undefined ? item.status : item.status
+        }));
         data.forEach(item => {
             const isPaid = item.status === 'PAID';
             const badgeClass = isPaid ? 'bg-success' : 'bg-warning text-dark';
