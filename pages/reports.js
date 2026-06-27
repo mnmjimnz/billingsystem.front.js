@@ -167,23 +167,27 @@ async function loadCashFlowReport() {
 
 /* ================= ESTADISTICAS ================= */
 async function loadStats() {
-    try {
-        // Top Products
-        const prods = await ApiClient.request(`/Reports/top-products?limit=10`);
-        renderChart('topProductsChart', 'bar', prods.map(p => p.productName), prods.map(p => p.totalQuantitySold), 'Cantidad Vendida', '#ffc107');
+    // Delay rendering slightly to ensure the tab's display:none is fully removed by the browser
+    // This allows Chart.js to accurately calculate the container's height and prevents infinite expansion
+    setTimeout(async () => {
+        try {
+            // Top Products
+            const prods = await ApiClient.request(`/Reports/top-products?limit=10`);
+            renderChart('topProductsChart', 'bar', prods.map(p => p.productName), prods.map(p => p.totalQuantitySold), 'Cantidad Vendida', '#ffc107');
 
-        // Top Suppliers
-        const sups = await ApiClient.request(`/Reports/top-suppliers?limit=10`);
-        renderChart('topSuppliersChart', 'doughnut', sups.map(s => s.supplierName), sups.map(s => s.totalVolume), 'Volumen Comprado', ['#0dcaf0', '#0d6efd', '#198754', '#ffc107', '#dc3545']);
+            // Top Suppliers
+            const sups = await ApiClient.request(`/Reports/top-suppliers?limit=10`);
+            renderChart('topSuppliersChart', 'doughnut', sups.map(s => s.supplierName), sups.map(s => s.totalVolume), 'Volumen Comprado', ['#0dcaf0', '#0d6efd', '#198754', '#ffc107', '#dc3545']);
 
-        // Sales Comparison
-        const period = document.getElementById('comparisonPeriod').value;
-        const comp = await ApiClient.request(`/Reports/sales-comparison${getFilterParams()}&periodType=${period}`);
-        
-        // Reverse array so chronological order is left to right
-        const reversedComp = [...comp].reverse();
-        renderChart('salesComparisonChart', 'line', reversedComp.map(c => c.period), reversedComp.map(c => c.totalSales), 'Ventas Totales ($)', '#0d6efd');
-    } catch (e) { console.error(e); }
+            // Sales Comparison
+            const period = document.getElementById('comparisonPeriod').value;
+            const comp = await ApiClient.request(`/Reports/sales-comparison${getFilterParams()}&periodType=${period}`);
+            
+            // Reverse array so chronological order is left to right
+            const reversedComp = [...comp].reverse();
+            renderChart('salesComparisonChart', 'line', reversedComp.map(c => c.period), reversedComp.map(c => c.totalSales), 'Ventas Totales ($)', '#0d6efd');
+        } catch (e) { console.error(e); }
+    }, 50);
 }
 
 function renderChart(canvasId, type, labels, data, label, colors) {
