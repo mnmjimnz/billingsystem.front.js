@@ -332,7 +332,7 @@ function startCamera() {
         {
             fps: 10,
             qrbox: { width: 250, height: 120 },
-            aspectRatio: 3.5
+            aspectRatio: 1.777778
         },
         onScanSuccess,
         onScanFailure
