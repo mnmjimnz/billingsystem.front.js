@@ -5,6 +5,7 @@ let suppliers = [];
 document.addEventListener('DOMContentLoaded', async () => {
     await loadProducts();
     await loadSuppliers();
+    await loadBranches();
 
     document.getElementById('search-input').addEventListener('input', (e) => {
         renderProducts(e.target.value);
@@ -34,6 +35,39 @@ async function loadSuppliers() {
     } catch (e) {
         console.error("Error loading suppliers", e);
         suppliers = [];
+    }
+}
+
+let branches = [];
+async function loadBranches() {
+    try {
+        branches = await ApiClient.request('/Branches') || [];
+        const select = document.getElementById('branchSelect');
+        select.innerHTML = '<option value="">Seleccione una Sucursal...</option>';
+        branches.forEach(b => {
+            select.innerHTML += `<option value="${b.id}">${b.name} ${b.status === 'CLOSED' ? '(CERRADA)' : ''}</option>`;
+        });
+    } catch (e) {
+        console.error("Error loading branches", e);
+    }
+}
+
+window.updateAvailableFunds = function() {
+    const branchId = document.getElementById('branchSelect').value;
+    const badge = document.getElementById('available-funds-badge');
+    if (!branchId) {
+        badge.innerText = 'Fondos: $0.00';
+        return;
+    }
+    const branch = branches.find(b => b.id == branchId);
+    if (branch) {
+        badge.innerText = `Fondos: $${(branch.availableFunds || 0).toFixed(2)}`;
+        if (branch.status === 'CLOSED') {
+            badge.className = 'badge bg-danger position-absolute top-0 end-0 mt-2 me-2';
+            badge.innerText += ' - CERRADA';
+        } else {
+            badge.className = 'badge bg-success position-absolute top-0 end-0 mt-2 me-2';
+        }
     }
 }
 
@@ -186,10 +220,11 @@ async function savePurchase() {
     
     const invoice = document.getElementById('invoiceInput').value;
     const supplierId = document.getElementById('supplierSelect').value;
+    const branchId = document.getElementById('branchSelect').value;
     const paymentType = document.getElementById('paymentTypeSelect').value;
     const amountPaid = document.getElementById('advanceInput').value;
 
-    if (!invoice || !supplierId) return alert("Complete los datos requeridos");
+    if (!invoice || !supplierId || !branchId) return showToast("Complete los datos requeridos", "warning");
 
     const total = cart.reduce((sum, item) => sum + item.subtotal, 0);
 
@@ -197,6 +232,7 @@ async function savePurchase() {
         invoiceNumber: invoice,
         supplierId: parseInt(supplierId),
         userId: 1, // hardcoded for now, idealmente viene del token JWT
+        branchId: parseInt(branchId),
         total: total,
         paymentType: paymentType,
         amountPaid: paymentType === 'CREDIT' ? parseFloat(amountPaid) : total,
@@ -215,7 +251,7 @@ async function savePurchase() {
 
         await ApiClient.request('/Purchases', 'POST', dto);
         
-        alert("¡Compra registrada y Kardex actualizado exitosamente!");
+        showToast("¡Compra registrada y Kardex actualizado exitosamente!", "success");
         cart = [];
         document.getElementById('invoiceInput').value = '';
         document.getElementById('supplierSelect').value = '';
@@ -224,10 +260,12 @@ async function savePurchase() {
         btn.disabled = false;
         btn.innerHTML = '<i class="bi bi-check-circle me-2"></i> Procesar Ingreso';
 
-        // Reload products to update stock
+        // Reload products and branches to update stock and funds
         await loadProducts();
+        await loadBranches();
+        updateAvailableFunds();
     } catch (e) {
-        alert("Error procesando la compra");
+        showToast("Error procesando la compra o fondos insuficientes.", "error");
         document.getElementById('btn-save-purchase').disabled = false;
         document.getElementById('btn-save-purchase').innerHTML = '<i class="bi bi-check-circle me-2"></i> Procesar Ingreso';
     }

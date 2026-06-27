@@ -23,7 +23,59 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // Process Sale button opens Modal now
     document.getElementById('btn-pay').addEventListener('click', openCheckoutModal);
+
+    await checkCashRegister();
 });
+
+async function checkCashRegister() {
+    try {
+        const res = await ApiClient.request('/CashRegisters/session');
+        if (!res.hasOpenSession) {
+            // Load branches for modal
+            const branches = await ApiClient.request('/Branches') || [];
+            const select = document.getElementById('register-branch');
+            select.innerHTML = '';
+            branches.forEach(b => {
+                if (b.status === 'OPEN') {
+                    select.innerHTML += `<option value="${b.id}">${b.name}</option>`;
+                }
+            });
+            const openRegisterModal = new bootstrap.Modal(document.getElementById('openRegisterModal'));
+            openRegisterModal.show();
+        }
+    } catch (e) {
+        console.error("Error checking cash register", e);
+    }
+}
+
+async function openCashRegister() {
+    const branchId = document.getElementById('register-branch').value;
+    const balance = document.getElementById('register-opening-balance').value;
+
+    if (!branchId) {
+        showToast('Debe seleccionar una sucursal.', 'warning');
+        return;
+    }
+
+    try {
+        const res = await ApiClient.request('/CashRegisters/open', 'POST', {
+            branchId: parseInt(branchId),
+            openingBalance: parseFloat(balance) || 0
+        });
+        
+        if (res.success) {
+            showToast('Caja aperturada exitosamente.', 'success');
+            // Hide modal and remove backdrop
+            const modalEl = document.getElementById('openRegisterModal');
+            const modal = bootstrap.Modal.getInstance(modalEl);
+            modal.hide();
+        } else {
+            showToast(res.message || 'Error al aperturar caja.', 'error');
+        }
+    } catch (e) {
+        showToast('Error de conexión al aperturar caja.', 'error');
+    }
+}
 
 async function loadCustomers() {
     try {
@@ -436,4 +488,33 @@ function generateTicketPDF(ticketNumber, items, subtotal, discount, total) {
 function logout() {
     ApiClient.clearToken();
     window.location.href = 'login.html';
+}
+
+function showCloseRegisterModal() {
+    const closeRegisterModal = new bootstrap.Modal(document.getElementById('closeRegisterModal'));
+    closeRegisterModal.show();
+}
+
+async function closeCashRegister() {
+    const balance = document.getElementById('register-closing-balance').value;
+
+    try {
+        const res = await ApiClient.request('/CashRegisters/close', 'POST', {
+            declaredBalance: parseFloat(balance) || 0
+        });
+        
+        if (res.success) {
+            showToast('Caja cerrada. Fondos trasladados a la sucursal.', 'success');
+            const modalEl = document.getElementById('closeRegisterModal');
+            const modal = bootstrap.Modal.getInstance(modalEl);
+            modal.hide();
+            setTimeout(() => {
+                window.location.reload(); // Reload to force open register modal if they want to sell again
+            }, 1500);
+        } else {
+            showToast(res.message || 'Error al cerrar caja.', 'error');
+        }
+    } catch (e) {
+        showToast('Error de conexión al cerrar caja.', 'error');
+    }
 }

@@ -21,10 +21,17 @@ async function loadBranches(page = 1) {
                 <tr>
                     <td class="ps-4">#${b.id}</td>
                     <td class="fw-medium">${b.name}</td>
-                    <td>${b.address || '-'}</td>
+                    <td>
+                        <span class="badge ${b.status === 'CLOSED' ? 'bg-danger' : 'bg-success'} mb-1">${b.status === 'CLOSED' ? 'CERRADA' : 'ABIERTA'}</span><br>
+                        <small class="text-muted fw-bold">Fondos: $${(b.availableFunds || 0).toFixed(2)}</small>
+                    </td>
                     <td>${b.phone || '-'}</td>
-                    <td><span class="badge bg-light text-dark border">${b.seriesPrefix}</span></td>
+                    <td><span class="badge bg-light text-dark border">${b.seriesPrefix || '-'}</span></td>
                     <td class="text-end pe-4">
+                        ${b.status === 'CLOSED' 
+                            ? `<button class="btn btn-sm btn-success me-1" onclick='toggleBranchStatus(${b.id}, "open")' title="Aperturar"><i class="bi bi-unlock"></i></button>`
+                            : `<button class="btn btn-sm btn-warning me-1" onclick='toggleBranchStatus(${b.id}, "close")' title="Cerrar (Corte)"><i class="bi bi-lock"></i></button>`
+                        }
                         <button class="btn btn-sm btn-outline-primary rounded-circle" onclick='editBranch(${JSON.stringify(b)})'><i class="bi bi-pencil"></i></button>
                     </td>
                 </tr>
@@ -100,6 +107,22 @@ async function saveBranch() {
         const btn = document.getElementById('btnSaveBranch');
         btn.disabled = false;
         btn.innerHTML = 'Guardar Sucursal';
+    }
+}
+
+async function toggleBranchStatus(id, action) {
+    if (!confirm(`¿Está seguro que desea ${action === 'open' ? 'aperturar' : 'cerrar'} esta sucursal?`)) return;
+    
+    try {
+        const res = await ApiClient.request(`/Branches/${id}/${action}`, 'POST');
+        if (res && res.success) {
+            showToast(res.message, 'success');
+            await loadBranches(currentPage);
+        } else {
+            showToast(res.message || 'Error al cambiar estado de la sucursal', 'error');
+        }
+    } catch (e) {
+        showToast('Error de conexión', 'error');
     }
 }
 

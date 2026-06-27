@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es" data-bs-theme="light">
 <head>
     <meta charset="UTF-8">
@@ -44,6 +44,7 @@
                     <button class="btn btn-light d-lg-none" id="sidebarToggle"><i class="bi bi-list"></i></button>
                 </div>
                 <div class="d-flex align-items-center gap-4">
+                    <button class="btn btn-outline-danger btn-sm fw-bold" onclick="showCloseRegisterModal()"><i class="bi bi-lock-fill"></i> Corte de Caja</button>
                     <div class="dropdown">
                         <button class="btn border-0 bg-transparent text-body p-2" type="button" data-bs-toggle="dropdown" onclick="loadNotifications()">
                             <div class="position-relative d-inline-block">
@@ -174,6 +175,65 @@
           <div class="modal-footer border-0 pt-0">
             <button class="btn btn-primary w-100 py-3 fs-5 shadow-sm fw-bold rounded-pill" id="btn-confirm-pay" onclick="confirmSale()">
                 <i class="bi bi-check-circle me-2"></i> Confirmar Venta
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Open Register Modal -->
+    <div class="modal fade" id="openRegisterModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0">
+          <div class="modal-header border-0 pb-0">
+            <h5 class="modal-title fw-bold text-danger"><i class="bi bi-exclamation-triangle-fill me-2"></i>Apertura de Caja Requerida</h5>
+          </div>
+          <div class="modal-body p-4">
+            <p class="text-secondary">Debes aperturar tu caja (registrar el fondo de cambio) antes de poder realizar ventas en esta sucursal.</p>
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Sucursal</label>
+                <select class="form-select" id="register-branch">
+                    <!-- Loaded via JS -->
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Fondo Inicial (Caja Chica)</label>
+                <div class="input-group">
+                    <span class="input-group-text">$</span>
+                    <input type="number" class="form-control" id="register-opening-balance" value="0.00" min="0" step="0.01">
+                </div>
+            </div>
+          </div>
+          <div class="modal-footer border-0 pt-0">
+            <button class="btn btn-primary w-100 py-3 fs-5 shadow-sm fw-bold rounded-pill" onclick="openCashRegister()">
+                <i class="bi bi-unlock-fill me-2"></i> Aperturar Caja
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Close Register Modal -->
+    <div class="modal fade" id="closeRegisterModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0">
+          <div class="modal-header border-0 pb-0">
+            <h5 class="modal-title fw-bold text-primary"><i class="bi bi-lock-fill me-2"></i>Corte de Caja (Z-Report)</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body p-4">
+            <p class="text-secondary">Ingrese el dinero total contado en la caja para finalizar su turno y transferir los fondos a la sucursal.</p>
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Dinero Total Contado</label>
+                <div class="input-group">
+                    <span class="input-group-text">$</span>
+                    <input type="number" class="form-control" id="register-closing-balance" value="0.00" min="0" step="0.01">
+                </div>
+            </div>
+          </div>
+          <div class="modal-footer border-0 pt-0">
+            <button class="btn btn-danger w-100 py-3 fs-5 shadow-sm fw-bold rounded-pill" onclick="closeCashRegister()">
+                <i class="bi bi-check-circle me-2"></i> Cerrar Caja
             </button>
           </div>
         </div>
