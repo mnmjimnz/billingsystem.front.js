@@ -466,3 +466,17 @@ body {
     padding: 3px 6px;
 }
 .cursor-pointer { cursor: pointer; }
+
+
+/* Mobile Notification Dropdown Fix */
+@media (max-width: 576px) {
+    #notif-list {
+        position: fixed !important;
+        top: 65px !important;
+        left: 15px !important;
+        right: 15px !important;
+        width: auto !important;
+        max-width: none !important;
+    }
+}
+
