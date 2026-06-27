@@ -1,4 +1,4 @@
-﻿﻿<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es" data-bs-theme="light">
 <head>
     <meta charset="UTF-8">
@@ -223,13 +223,18 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
           </div>
           <div class="modal-body p-4">
-            <p class="text-secondary">Ingrese el dinero total contado en la caja para finalizar su turno y transferir los fondos a la sucursal.</p>
-            <div class="mb-3">
-                <label class="form-label fw-semibold">Dinero Total Contado</label>
-                <div class="input-group">
-                    <span class="input-group-text">$</span>
-                    <input type="number" class="form-control" id="register-closing-balance" value="0.00" min="0" step="0.01">
-                </div>
+            <p class="text-secondary mb-4">A continuación se muestra el resumen de su turno. Al cerrar caja, este monto se transferirá automáticamente a la sucursal.</p>
+            <div class="d-flex justify-content-between mb-2">
+                <span class="text-muted">Fondo de apertura:</span>
+                <span class="fw-bold" id="summary-opening-balance">$0.00</span>
+            </div>
+            <div class="d-flex justify-content-between mb-3 border-bottom pb-3">
+                <span class="text-muted">Ventas del turno:</span>
+                <span class="fw-bold text-success" id="summary-sales-total">+$0.00</span>
+            </div>
+            <div class="d-flex justify-content-between mb-2 fs-5">
+                <span class="fw-bold text-dark">Total a reportar:</span>
+                <span class="fw-bold text-primary" id="summary-expected-balance">$0.00</span>
             </div>
           </div>
           <div class="modal-footer border-0 pt-0">

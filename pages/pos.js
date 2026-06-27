@@ -48,11 +48,12 @@ async function checkCashRegister() {
             select.innerHTML = '';
 
             if (openBranches.length === 0) {
-                // No open branches at all — block everything
+                // No open branches at all - block everything
                 showBlockedOverlay(
                     'bi-buildings text-danger',
                     'Ninguna sucursal disponible',
-                    'No hay sucursales aperturadas. Por favor, pida a un administrador que aperture una sucursal antes de operar.'
+                    'No hay sucursales aperturadas. Por favor, pida a un administrador que aperture una sucursal antes de operar.',
+                    true
                 );
                 return;
             }
@@ -69,7 +70,7 @@ async function checkCashRegister() {
     }
 }
 
-function showBlockedOverlay(iconClass, title, message) {
+function showBlockedOverlay(iconClass, title, message, showBranchesBtn = false) {
     // Remove existing overlay
     const existing = document.getElementById('pos-blocked-overlay');
     if (existing) existing.remove();
@@ -86,6 +87,7 @@ function showBlockedOverlay(iconClass, title, message) {
             <i class="bi ${iconClass}" style="font-size: 3.5rem;"></i>
             <h4 class="fw-bold mt-3 mb-2">${title}</h4>
             <p class="text-muted mb-0">${message}</p>
+            ${showBranchesBtn ? '<a href="branches.html" class="btn btn-primary mt-4 fw-semibold w-100"><i class="bi bi-buildings me-2"></i>Ir a Sucursales</a>' : ''}
         </div>
     `;
     document.body.appendChild(overlay);
@@ -584,18 +586,24 @@ function logout() {
     window.location.href = 'login.html';
 }
 
-function showCloseRegisterModal() {
+async function showCloseRegisterModal() {
+    try {
+        const res = await ApiClient.request('/CashRegisters/session-summary');
+        if (res.success && res.data) {
+            document.getElementById('summary-opening-balance').textContent = `$${res.data.openingBalance.toFixed(2)}`;
+            document.getElementById('summary-sales-total').textContent = `+$${res.data.salesTotal.toFixed(2)}`;
+            document.getElementById('summary-expected-balance').textContent = `$${res.data.expectedBalance.toFixed(2)}`;
+        }
+    } catch (e) {
+        console.error("Error fetching session summary", e);
+    }
     const closeRegisterModal = new bootstrap.Modal(document.getElementById('closeRegisterModal'));
     closeRegisterModal.show();
 }
 
 async function closeCashRegister() {
-    const balance = document.getElementById('register-closing-balance').value;
-
     try {
-        const res = await ApiClient.request('/CashRegisters/close', 'POST', {
-            declaredBalance: parseFloat(balance) || 0
-        });
+        const res = await ApiClient.request('/CashRegisters/close', 'POST', {});
         
         if (res.success) {
             showToast('Caja cerrada. Fondos trasladados a la sucursal.', 'success');
