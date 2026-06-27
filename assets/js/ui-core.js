@@ -82,21 +82,21 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 3. Tabs
-    const tabToggles = document.querySelectorAll('[data-bs-toggle="tab"]');
+    // 3. Tabs and List Groups
+    const tabToggles = document.querySelectorAll('[data-bs-toggle="tab"], [data-bs-toggle="list"]');
     tabToggles.forEach(toggle => {
         toggle.addEventListener('click', (e) => {
             e.preventDefault();
             // Remove active from all tabs in this nav
-            const nav = toggle.closest('.nav-tabs');
+            const nav = toggle.closest('.nav-tabs, .list-group');
             if (nav) {
-                nav.querySelectorAll('.nav-link').forEach(t => t.classList.remove('active'));
+                nav.querySelectorAll('.nav-link, .list-group-item').forEach(t => t.classList.remove('active'));
             }
             // Add active to clicked
             toggle.classList.add('active');
 
             // Hide all tab panes
-            const targetSelector = toggle.getAttribute('data-bs-target');
+            let targetSelector = toggle.getAttribute('data-bs-target') || toggle.getAttribute('href');
             // We need to find the container. Usually tab panes have class tab-pane
             document.querySelectorAll('.tab-pane').forEach(pane => {
                 pane.classList.remove('show', 'active');
