@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Usuarios - Sistema de Facturación Premium</title>
+    <title>Movimientos de Sucursal - Sistema de Facturación</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-        <link rel="stylesheet" href="../assets/css/devextreme-theme.css?v=20260627004119">
+    <link rel="stylesheet" href="../assets/css/devextreme-theme.css?v=20260627004119">
 </head>
 <body>
     <div class="app-container">
@@ -28,10 +28,10 @@
                 <a href="categories.html" class="nav-link"><i class="bi bi-tags"></i> Categorías</a>
                 <a href="customers.html" class="nav-link"><i class="bi bi-people"></i> Clientes</a>
                 <a href="suppliers.html" class="nav-link"><i class="bi bi-truck"></i> Proveedores</a>
-                <a href="users.html" class="nav-link active"><i class="bi bi-person-badge"></i> Usuarios</a>
+                <a href="users.html" class="nav-link"><i class="bi bi-person-badge"></i> Usuarios</a>
                 <a href="roles.html" class="nav-link"><i class="bi bi-shield-lock"></i> Roles y Permisos</a>
                 <a href="branches.html" class="nav-link"><i class="bi bi-buildings"></i> Sucursales</a>
-                <a href="branch-movements.html" class="nav-link"><i class="bi bi-arrow-left-right"></i> Movimientos</a>
+                <a href="branch-movements.html" class="nav-link active"><i class="bi bi-arrow-left-right"></i> Movimientos</a>
                 <a href="settings.html" class="nav-link"><i class="bi bi-gear"></i> Configuración</a>
             </nav>
             <div class="sidebar-footer">
@@ -46,7 +46,7 @@
                     <button class="btn btn-light d-lg-none" id="sidebarToggle"><i class="bi bi-list"></i></button>
                 </div>
                 <div class="d-flex align-items-center gap-4">
-                                        <div class="dropdown">
+                    <div class="dropdown">
                         <button class="btn border-0 bg-transparent text-body p-2" type="button" data-bs-toggle="dropdown" onclick="loadNotifications()">
                             <div class="position-relative d-inline-block">
                                 <i class="bi bi-bell fs-5"></i>
@@ -65,17 +65,22 @@
             </header>
 
             <div class="page-content">
-                <h2 class="mb-4 fw-bold text-dark">Control de Usuarios</h2>
+                <h2 class="mb-4 fw-bold text-dark">Movimientos Financieros de Sucursal</h2>
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h4 class="fw-bold mb-0 text-secondary">Personal de Sucursal</h4>
-                    <button class="btn btn-primary shadow-sm" onclick="openUserModal()">
-                        <i class="bi bi-person-plus me-1"></i> Nuevo Usuario
+                    <div class="d-flex align-items-center gap-3">
+                        <h4 class="fw-bold mb-0 text-secondary">Registro de Entradas y Salidas</h4>
+                        <select class="form-select form-select-sm" id="branchFilter" onchange="loadMovements(1)" style="width: auto;">
+                            <option value="">Seleccione una sucursal...</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#movementModal" onclick="clearForm()">
+                        <i class="bi bi-plus-lg me-1"></i> Registrar Movimiento
                     </button>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-md-4">
-                        <input type="text" id="searchInput" class="form-control" placeholder="Buscar usuarios..." onkeyup="handleSearch(event)">
+                        <input type="text" id="searchInput" class="form-control" placeholder="Buscar por categoría o descripción..." onkeyup="handleSearch(event)">
                     </div>
                 </div>
 
@@ -86,14 +91,15 @@
                                 <thead class="table-light">
                                     <tr>
                                         <th class="ps-4">ID</th>
-                                        <th>Username</th>
-                                        <th>Nombre Completo</th>
-                                        <th>Rol ID</th>
-                                        <th>Sucursal ID</th>
-                                        <th class="text-end pe-4">Acciones</th>
+                                        <th>Fecha</th>
+                                        <th>Categoría</th>
+                                        <th>Tipo</th>
+                                        <th>Monto ($)</th>
+                                        <th>Descripción</th>
+                                        <th>Usuario</th>
                                     </tr>
                                 </thead>
-                                <tbody id="users-table-body">
+                                <tbody id="movements-table-body">
                                     <!-- Dinámico -->
                                 </tbody>
                             </table>
@@ -105,73 +111,48 @@
         </main>
     </div>
 
-    <!-- User Modal -->
-    <div class="modal fade" id="userModal" tabindex="-1">
+    <!-- Movement Modal -->
+    <div class="modal fade" id="movementModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content border-0 shadow">
                 <div class="modal-header border-bottom-0 pb-0">
-                    <h5 class="modal-title fw-bold" id="userModalLabel">Nuevo Usuario</h5>
+                    <h5 class="modal-title fw-bold" id="movementModalLabel">Registrar Movimiento</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="userForm">
-                        <input type="hidden" id="userId">
+                    <form id="movementForm">
                         <div class="mb-3">
-                            <label class="form-label text-secondary small fw-semibold">Nombre de Usuario *</label>
-                            <input type="text" class="form-control" id="userUsername" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label text-secondary small fw-semibold">Nombre Completo *</label>
-                            <input type="text" class="form-control" id="userFullName" required>
+                            <label class="form-label text-secondary small fw-semibold">Tipo *</label>
+                            <select class="form-select" id="movType" required onchange="updateCategories()">
+                                <option value="IN">Ingreso (Inyección, etc.)</option>
+                                <option value="OUT">Egreso (Pago, Gastos, Planilla)</option>
+                            </select>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label text-secondary small fw-semibold">Contraseña</label>
-                            <input type="password" class="form-control" id="userPassword">
-                            <div class="form-text" id="passwordHelp" style="display:none;">Déjalo en blanco para mantener la contraseña actual.</div>
+                            <label class="form-label text-secondary small fw-semibold">Categoría *</label>
+                            <select class="form-select" id="movCategory" required onchange="toggleEmployeeField()">
+                                <!-- Dinámico -->
+                            </select>
                         </div>
-                        <div class="row g-3 mb-3">
-                            <div class="col-md-6">
-                                <label class="form-label text-secondary small fw-semibold">Rol *</label>
-                                <select class="form-select" id="userRole" required></select>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label text-secondary small fw-semibold">Sucursal *</label>
-                                <select class="form-select" id="userBranch" required></select>
-                            </div>
+                        <div class="mb-3" id="employeeGroup" style="display:none;">
+                            <label class="form-label text-secondary small fw-semibold">Empleado a Pagar *</label>
+                            <select class="form-select" id="movEmployee">
+                                <option value="">Seleccione un empleado...</option>
+                            </select>
                         </div>
-                        <hr class="my-4">
-                        <h6 class="fw-bold mb-3">Información Laboral (RRHH)</h6>
-                        <div class="row g-3 mb-3">
-                            <div class="col-md-6">
-                                <label class="form-label text-secondary small fw-semibold">Salario Base ($)</label>
-                                <input type="number" step="0.01" class="form-control" id="userSalary">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label text-secondary small fw-semibold">Fecha de Contratación</label>
-                                <input type="date" class="form-control" id="userHireDate">
-                            </div>
+                        <div class="mb-3">
+                            <label class="form-label text-secondary small fw-semibold">Monto ($) *</label>
+                            <input type="number" step="0.01" class="form-control" id="movAmount" required min="0.01">
                         </div>
-                        <div class="mb-3 form-check form-switch">
-                            <input class="form-check-input" type="checkbox" role="switch" id="userIsActive" checked onchange="toggleTerminationFields()">
-                            <label class="form-check-label" for="userIsActive">Empleado Activo</label>
-                        </div>
-                        <div id="terminationFields" style="display: none; background: #fff3cd; padding: 1rem; border-radius: 8px;">
-                            <div class="row g-3 mb-3">
-                                <div class="col-md-6">
-                                    <label class="form-label text-secondary small fw-semibold">Fecha de Baja</label>
-                                    <input type="date" class="form-control" id="userTerminationDate">
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label text-secondary small fw-semibold">Motivo de Baja</label>
-                                    <input type="text" class="form-control" id="userTerminationReason" placeholder="Ej. Renuncia voluntaria">
-                                </div>
-                            </div>
+                        <div class="mb-3">
+                            <label class="form-label text-secondary small fw-semibold">Descripción</label>
+                            <textarea class="form-control" id="movDescription" rows="3" placeholder="Detalle del movimiento"></textarea>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer border-top-0 pt-0">
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" id="btnSaveUser" onclick="saveUser()">Guardar Usuario</button>
+                    <button type="button" class="btn btn-primary" id="btnSaveMovement" onclick="saveMovement()">Guardar Movimiento</button>
                 </div>
             </div>
         </div>
@@ -183,9 +164,7 @@
     <script src="../assets/js/apiClient.js?v=20260627004119"></script>
     <script src="../assets/js/signalr-client.js?v=20260627004119"></script>
     <script src="../assets/js/pagination.js?v=20260627004119"></script>
-    <script src="users.js?v=20260627004119"></script>
+    <script src="branch-movements.js"></script>
     <script src="../assets/js/ui-core.js?v=20260627004119"></script>
 </body>
 </html>
-
-
