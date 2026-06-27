@@ -65,7 +65,7 @@
                 <div class="row h-100">
                     <!-- Products & Search -->
                     <div class="col-lg-8 mb-4">
-                        <div class="card h-100">
+                        <div class="card mb-3" style="min-height: 400px;">
                             <div class="card-body">
                                 <div class="d-flex gap-2 mb-4">
                                     <div class="input-group">
@@ -76,25 +76,31 @@
                                 <div class="row g-3" id="products-grid">
                                     <!-- Rendered by JS -->
                                 </div>
-                                <div id="pagination-container"></div>
+                                <div id="pagination-container" class="mt-4"></div>
+                            </div>
+                        </div>
+
+                        <!-- Scanner in the left column bottom -->
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body p-3">
+                                <h6 class="fw-bold text-secondary mb-3"><i class="bi bi-upc-scan me-2"></i>Escáner de Códigos</h6>
+                                <div id="reader" class="bg-dark" style="width: 100%; border-radius: 12px; overflow: hidden;"></div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Cart Sidebar -->
                     <div class="col-lg-4">
-                        <div id="reader" class="mx-auto bg-dark" style="width: 100%; max-width: 280px; border-radius: 12px; overflow: hidden; box-shadow: var(--shadow-sm); margin-bottom: 20px;"></div>
-                        
-                        <div class="card d-flex flex-column border-primary" style="border-width: 2px; height: calc(100vh - 320px); overflow: hidden;">
-                            <div class="card-header bg-transparent border-bottom pt-4 pb-3 flex-shrink-0">
+                        <div class="card border-primary shadow-sm" style="border-width: 2px;">
+                            <div class="card-header border-bottom pt-4 pb-3">
                                 <h5 class="fw-bold mb-0"><i class="bi bi-receipt text-primary me-2"></i> Detalle de Venta</h5>
                             </div>
-                            <div class="card-body flex-grow-1 overflow-auto p-0" style="min-height: 0;">
+                            <div class="card-body p-0" style="max-height: calc(100vh - 380px); overflow-y: auto;">
                                 <ul class="list-group list-group-flush" id="cart-items">
                                     <!-- Rendered by JS -->
                                 </ul>
                             </div>
-                            <div class="card-footer bg-transparent border-top p-4 flex-shrink-0">
+                            <div class="card-footer border-top p-4">
                                 <div class="d-flex justify-content-between mb-2 text-secondary">
                                     <span>Subtotal</span>
                                     <span id="cart-subtotal" class="fw-semibold">$0.00</span>
