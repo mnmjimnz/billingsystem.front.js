@@ -36,7 +36,7 @@ async function loadSuppliers() {
 }
 
 let currentProductPage = 1;
-const PAGE_SIZE = 12;
+const PAGE_SIZE = 6;
 
 function renderProducts(filter = document.getElementById('search-input').value) {
     const grid = document.getElementById('products-grid');
