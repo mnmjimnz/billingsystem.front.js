@@ -35,12 +35,22 @@ async function loadSuppliers() {
     }
 }
 
-function renderProducts(filter = '') {
+let currentProductPage = 1;
+const PAGE_SIZE = 12;
+
+function renderProducts(filter = document.getElementById('search-input').value) {
     const grid = document.getElementById('products-grid');
     grid.innerHTML = '';
     const filtered = products.filter(p => p.name.toLowerCase().includes(filter.toLowerCase()) || p.barcode?.includes(filter));
     
-    filtered.forEach(p => {
+    const totalItems = filtered.length;
+    const totalPages = Math.ceil(totalItems / PAGE_SIZE) || 1;
+    if (currentProductPage > totalPages) currentProductPage = 1;
+
+    const start = (currentProductPage - 1) * PAGE_SIZE;
+    const pagedItems = filtered.slice(start, start + PAGE_SIZE);
+    
+    pagedItems.forEach(p => {
         const div = document.createElement('div');
         div.className = 'col-md-4 col-sm-6';
         div.innerHTML = `
@@ -53,12 +63,37 @@ function renderProducts(filter = '') {
                 </div>
             </div>
         `;
-        // Make it slightly interactive
         div.firstElementChild.style.cursor = 'pointer';
         div.firstElementChild.addEventListener('mouseover', function() { this.classList.add('border-info'); });
         div.firstElementChild.addEventListener('mouseout', function() { this.classList.remove('border-info'); });
         grid.appendChild(div);
     });
+
+    renderClientPagination(totalPages);
+}
+
+function renderClientPagination(totalPages) {
+    const container = document.getElementById('pagination-container');
+    if (!container) return;
+    
+    if (totalPages <= 1) {
+        container.innerHTML = '';
+        return;
+    }
+
+    let html = `<div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+        <span class="text-muted small fw-semibold">Página ${currentProductPage} de ${totalPages}</span>
+        <div class="btn-group">
+            <button class="btn btn-sm btn-outline-secondary" ${currentProductPage === 1 ? 'disabled' : ''} onclick="changeProductPage(${currentProductPage - 1})"><i class="bi bi-chevron-left"></i></button>
+            <button class="btn btn-sm btn-outline-secondary" ${currentProductPage === totalPages ? 'disabled' : ''} onclick="changeProductPage(${currentProductPage + 1})"><i class="bi bi-chevron-right"></i></button>
+        </div>
+    </div>`;
+    container.innerHTML = html;
+}
+
+window.changeProductPage = function(page) {
+    currentProductPage = page;
+    renderProducts();
 }
 
 function addToCart(productId) {
@@ -87,29 +122,26 @@ function renderCart() {
     cart.forEach((item, index) => {
         total += item.subtotal;
         list.innerHTML += `
-            <li class="list-group-item p-3 border-bottom-0 border-top">
-                <div class="d-flex justify-content-between align-items-start mb-2">
-                    <div class="fw-semibold text-truncate me-2">${item.name}</div>
-                    <button class="btn btn-sm text-danger p-0" onclick="removeFromCart(${index})"><i class="bi bi-trash"></i></button>
+            <div class="p-3 border-bottom bg-white">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="fw-bold text-truncate me-2 text-dark fs-6">${item.name}</div>
+                    <button class="btn btn-sm btn-outline-danger py-0 px-2" onclick="removeFromCart(${index})"><i class="bi bi-trash"></i></button>
                 </div>
-                <div class="row g-2 align-items-center">
-                    <div class="col-4">
-                        <div class="input-group input-group-sm">
-                            <span class="input-group-text bg-light border-end-0">Cant</span>
-                            <input type="number" class="form-control text-center" value="${item.quantity}" min="1" onchange="updateQty(${index}, this.value)">
-                        </div>
+                <div class="d-flex align-items-center gap-2">
+                    <div class="flex-grow-1">
+                        <label class="form-label small text-muted mb-1" style="font-size: 0.75rem;">Cant.</label>
+                        <input type="number" class="form-control text-center fw-bold" value="${item.quantity}" min="1" onchange="updateQty(${index}, this.value)">
                     </div>
-                    <div class="col-5">
-                        <div class="input-group input-group-sm">
-                            <span class="input-group-text bg-light border-end-0">$</span>
-                            <input type="number" class="form-control text-end" value="${item.unitCost}" step="0.01" min="0" onchange="updateCost(${index}, this.value)" title="Costo Unitario">
-                        </div>
+                    <div class="flex-grow-1">
+                        <label class="form-label small text-muted mb-1" style="font-size: 0.75rem;">Costo ($)</label>
+                        <input type="number" class="form-control text-center fw-bold" value="${item.unitCost}" step="0.01" min="0" onchange="updateCost(${index}, this.value)">
                     </div>
-                    <div class="col-3 text-end fw-bold text-primary">
-                        $${item.subtotal.toFixed(2)}
+                    <div class="text-end" style="width: 80px;">
+                        <label class="form-label small text-muted mb-1" style="font-size: 0.75rem;">Subtotal</label>
+                        <div class="fw-bold text-primary">$${item.subtotal.toFixed(2)}</div>
                     </div>
                 </div>
-            </li>
+            </div>
         `;
     });
 
