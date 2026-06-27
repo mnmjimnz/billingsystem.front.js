@@ -47,6 +47,7 @@ body {
 .text-white { color: #fff; }
 .text-secondary { color: var(--dx-text-secondary); }
 .text-dark { color: #333; }
+.text-body { color: var(--dx-text) !important; }
 .mb-0 { margin-bottom: 0; }
 .mb-3 { margin-bottom: 1rem; }
 .mb-4 { margin-bottom: 1.5rem; }
