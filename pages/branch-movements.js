@@ -119,18 +119,42 @@ function updateCategories() {
 function toggleEmployeeField() {
     const cat = document.getElementById('movCategory').value;
     const empGroup = document.getElementById('employeeGroup');
+    const amountInput = document.getElementById('movAmount');
+    
     if (cat === 'Pago de Planilla') {
         empGroup.style.display = 'block';
         document.getElementById('movEmployee').required = true;
+        amountInput.readOnly = true;
+        updateEmployeeSalary();
     } else {
         empGroup.style.display = 'none';
         document.getElementById('movEmployee').required = false;
         document.getElementById('movEmployee').value = '';
+        amountInput.readOnly = false;
+        amountInput.value = '';
+    }
+}
+
+function updateEmployeeSalary() {
+    const empId = document.getElementById('movEmployee').value;
+    const amountInput = document.getElementById('movAmount');
+    
+    if (!empId) {
+        amountInput.value = '';
+        return;
+    }
+    
+    const user = usersList.find(u => u.id == empId);
+    if (user && user.salary) {
+        amountInput.value = user.salary.toFixed(2);
+    } else {
+        amountInput.value = '0.00';
     }
 }
 
 function clearForm() {
     document.getElementById('movementForm').reset();
+    document.getElementById('movAmount').readOnly = false;
     updateCategories();
 }
 
