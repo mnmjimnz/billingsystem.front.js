@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reportes y Estadísticas - Sistema de Facturación Premium</title>
+    <title>Reportes Empresariales - Sistema de Facturación Premium</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <!-- SheetJS for Excel -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -11,6 +11,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <link rel="stylesheet" href="../assets/css/devextreme-theme.css?v=20260627004119">
+    <style>
+        /* Estilos Empresariales Específicos para Reportes */
+        .report-table { font-size: 0.85rem; }
+        .report-table th { background-color: #f8f9fa; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; color: #495057; }
+        .report-list-group .list-group-item { font-size: 0.9rem; padding: 12px 20px; transition: all 0.2s; }
+        .report-list-group .list-group-item.active { background-color: #2c3e50; border-color: #2c3e50; }
+        .report-list-group .list-group-item:hover:not(.active) { background-color: #f1f3f5; }
+        .financial-statement-card { border-left: 4px solid #2c3e50; }
+    </style>
 </head>
 <body>
     <div class="app-container">
@@ -45,12 +54,14 @@
         </aside>
 
         <!-- Main Content -->
-        <main class="main-content">
-            <header class="topbar">
+        <main class="main-content bg-light">
+            <header class="topbar bg-white border-bottom">
                 <div class="d-flex align-items-center gap-3">
                     <button class="btn btn-light d-lg-none" id="sidebarToggle"><i class="bi bi-list"></i></button>
+                    <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-briefcase-fill text-primary"></i> Módulo Contable y Reportes Empresariales</h5>
                 </div>
                 <div class="d-flex align-items-center gap-4">
+                    <!-- ... Theme Toggle & Notifs ... -->
                     <div class="dropdown">
                         <button class="btn border-0 bg-transparent text-body p-2" type="button" data-bs-toggle="dropdown" onclick="loadNotifications()">
                             <div class="position-relative d-inline-block">
@@ -62,37 +73,35 @@
                             <li><h6 class="dropdown-header">Notificaciones Pendientes</h6></li>
                         </ul>
                     </div>
-                    <div class="form-check form-switch m-0">
-                        <input class="form-check-input" type="checkbox" role="switch" id="theme-toggle">
-                        <label class="form-check-label" for="theme-toggle"><i class="bi bi-moon-stars"></i></label>
-                    </div>
                 </div>
             </header>
 
-            <div class="page-content">
-                <h2 class="mb-4 fw-bold text-dark">Generador de Reportes y Estadísticas</h2>
+            <div class="page-content p-4">
+                
                 <!-- Filtros Universales -->
-                <div class="card shadow-sm border-0 mb-4">
-                    <div class="card-body">
-                        <h6 class="fw-bold mb-3"><i class="bi bi-funnel"></i> Filtros Globales de Reportes</h6>
+                <div class="card shadow-sm border-0 mb-4 rounded-3">
+                    <div class="card-body bg-white rounded-3">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="fw-bold mb-0 text-secondary text-uppercase" style="font-size: 0.8rem; letter-spacing: 0.5px;"><i class="bi bi-funnel"></i> Criterios de Búsqueda Global</h6>
+                        </div>
                         <div class="row g-3">
                             <div class="col-md-3">
-                                <label class="form-label small text-secondary">Fecha Inicio</label>
-                                <input type="date" class="form-control" id="filterStartDate">
+                                <label class="form-label small text-secondary fw-semibold">Período Inicio</label>
+                                <input type="date" class="form-control form-control-sm" id="filterStartDate">
                             </div>
                             <div class="col-md-3">
-                                <label class="form-label small text-secondary">Fecha Fin</label>
-                                <input type="date" class="form-control" id="filterEndDate">
+                                <label class="form-label small text-secondary fw-semibold">Período Fin</label>
+                                <input type="date" class="form-control form-control-sm" id="filterEndDate">
                             </div>
                             <div class="col-md-3">
-                                <label class="form-label small text-secondary">Sucursal</label>
-                                <select class="form-select" id="filterBranchId">
-                                    <option value="">Todas las Sucursales</option>
+                                <label class="form-label small text-secondary fw-semibold">Centro de Costo / Sucursal</label>
+                                <select class="form-select form-select-sm" id="filterBranchId">
+                                    <option value="">Consolidado (Todas)</option>
                                 </select>
                             </div>
                             <div class="col-md-3">
-                                <label class="form-label small text-secondary">Vendedor/Usuario</label>
-                                <select class="form-select" id="filterUserId">
+                                <label class="form-label small text-secondary fw-semibold">Usuario Responsable</label>
+                                <select class="form-select form-select-sm" id="filterUserId">
                                     <option value="">Todos los Usuarios</option>
                                 </select>
                             </div>
@@ -100,156 +109,276 @@
                     </div>
                 </div>
 
-                <!-- Tabs Navegación -->
-                <ul class="nav nav-tabs fw-semibold" id="reportTabs" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="sales-tab" data-bs-toggle="tab" data-bs-target="#sales" type="button" role="tab" onclick="loadSalesReport()">Ventas</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="kardex-tab" data-bs-toggle="tab" data-bs-target="#kardex" type="button" role="tab" onclick="loadKardexReport()">Kardex</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="cashflow-tab" data-bs-toggle="tab" data-bs-target="#cashflow" type="button" role="tab" onclick="loadCashFlowReport()">Flujo de Efectivo</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="stats-tab" data-bs-toggle="tab" data-bs-target="#stats" type="button" role="tab" onclick="loadStats()">Estadísticas Visuales</button>
-                    </li>
-                </ul>
-
-                <div class="tab-content card border-0 p-4 shadow-sm" id="reportTabsContent">
-                    
-                    <!-- TAB VENTAS -->
-                    <div class="tab-pane fade show active" id="sales" role="tabpanel">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <div class="btn-group" role="group">
-                                <input type="radio" class="btn-check" name="btnradio" id="btnradioCash" autocomplete="off" checked onclick="currentPaymentType='CASH'; loadSalesReport();">
-                                <label class="btn btn-outline-primary" for="btnradioCash">Ventas Contado</label>
-                              
-                                <input type="radio" class="btn-check" name="btnradio" id="btnradioCredit" autocomplete="off" onclick="currentPaymentType='CREDIT'; loadSalesReport();">
-                                <label class="btn btn-outline-primary" for="btnradioCredit">Ventas Crédito</label>
-                            </div>
-                            <div>
-                                <button class="btn btn-sm btn-danger me-2" onclick="exportPDF('salesTable', 'Reporte_Ventas')"><i class="bi bi-file-earmark-pdf"></i> Exportar PDF</button>
-                                <button class="btn btn-sm btn-success" onclick="exportExcel('salesTable', 'Reporte_Ventas')"><i class="bi bi-file-earmark-excel"></i> Exportar Excel</button>
-                            </div>
-                        </div>
-                        <div class="table-responsive">
-                            <table class="table table-hover table-bordered align-middle" id="salesTable">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>Fecha</th>
-                                        <th>No. Ticket</th>
-                                        <th>Cliente</th>
-                                        <th>Vendedor</th>
-                                        <th>Sucursal</th>
-                                        <th>Tipo Pago</th>
-                                        <th class="text-end">Total</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="salesTableBody"></tbody>
-                            </table>
+                <div class="row g-4">
+                    <!-- Menú de Reportes (Sidebar Interno) -->
+                    <div class="col-md-3 col-lg-2">
+                        <div class="list-group report-list-group shadow-sm rounded-3 border-0" id="reportTabs" role="tablist">
+                            <h6 class="px-3 py-2 text-uppercase text-muted fw-bold mb-0" style="font-size: 0.75rem; background: #f8f9fa;">Operativos</h6>
+                            <a class="list-group-item list-group-item-action active border-0" id="sales-tab" data-bs-toggle="list" href="#sales" role="tab" onclick="loadSalesReport()"><i class="bi bi-cart-check me-2"></i> Ventas</a>
+                            <a class="list-group-item list-group-item-action border-0" id="purchases-tab" data-bs-toggle="list" href="#purchases" role="tab" onclick="loadPurchasesReport()"><i class="bi bi-bag-plus me-2"></i> Compras</a>
+                            <a class="list-group-item list-group-item-action border-0" id="kardex-tab" data-bs-toggle="list" href="#kardex" role="tab" onclick="loadKardexReport()"><i class="bi bi-box-seam me-2"></i> Kardex</a>
+                            <a class="list-group-item list-group-item-action border-0" id="useractivity-tab" data-bs-toggle="list" href="#useractivity" role="tab" onclick="loadUserActivityReport()"><i class="bi bi-person-lines-fill me-2"></i> Actividad Usuarios</a>
+                            
+                            <h6 class="px-3 py-2 text-uppercase text-muted fw-bold mb-0 mt-2" style="font-size: 0.75rem; background: #f8f9fa;">Financieros</h6>
+                            <a class="list-group-item list-group-item-action border-0" id="financials-tab" data-bs-toggle="list" href="#financials" role="tab" onclick="loadFinancials()"><i class="bi bi-bank me-2"></i> Estados Financieros</a>
+                            <a class="list-group-item list-group-item-action border-0" id="cashflow-tab" data-bs-toggle="list" href="#cashflow" role="tab" onclick="loadCashFlowReport()"><i class="bi bi-water me-2"></i> Flujos de Efectivo</a>
+                            
+                            <h6 class="px-3 py-2 text-uppercase text-muted fw-bold mb-0 mt-2" style="font-size: 0.75rem; background: #f8f9fa;">Análisis</h6>
+                            <a class="list-group-item list-group-item-action border-0" id="stats-tab" data-bs-toggle="list" href="#stats" role="tab" onclick="loadStats()"><i class="bi bi-pie-chart-fill me-2"></i> Analytics & BI</a>
                         </div>
                     </div>
 
-                    <!-- TAB KARDEX -->
-                    <div class="tab-pane fade d-none" id="kardex" role="tabpanel">
-                        <div class="d-flex justify-content-end mb-3">
-                            <button class="btn btn-sm btn-danger me-2" onclick="exportPDF('kardexTable', 'Reporte_Kardex')"><i class="bi bi-file-earmark-pdf"></i> Exportar PDF</button>
-                            <button class="btn btn-sm btn-success" onclick="exportExcel('kardexTable', 'Reporte_Kardex')"><i class="bi bi-file-earmark-excel"></i> Exportar Excel</button>
-                        </div>
-                        <div class="table-responsive">
-                            <table class="table table-hover table-bordered align-middle" id="kardexTable">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>Fecha</th>
-                                        <th>Producto</th>
-                                        <th>Movimiento</th>
-                                        <th>Descripción</th>
-                                        <th class="text-end">Ctd.</th>
-                                        <th class="text-end">Stock Previo</th>
-                                        <th class="text-end">Stock Nuevo</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="kardexTableBody"></tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- TAB FLUJO EFECTIVO (CASH FLOW) -->
-                    <div class="tab-pane fade d-none" id="cashflow" role="tabpanel">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="fw-bold text-success mb-0" id="cashflowBalance">Balance Total: $0.00</h5>
-                            <div>
-                                <button class="btn btn-sm btn-danger me-2" onclick="exportPDF('cashflowTable', 'Reporte_FlujoCaja')"><i class="bi bi-file-earmark-pdf"></i> Exportar PDF</button>
-                                <button class="btn btn-sm btn-success" onclick="exportExcel('cashflowTable', 'Reporte_FlujoCaja')"><i class="bi bi-file-earmark-excel"></i> Exportar Excel</button>
-                            </div>
-                        </div>
-                        <div class="table-responsive">
-                            <table class="table table-hover table-bordered align-middle" id="cashflowTable">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>Fecha</th>
-                                        <th>Tipo</th>
-                                        <th>Descripción</th>
-                                        <th>Sucursal</th>
-                                        <th class="text-end">Entrada ($)</th>
-                                        <th class="text-end">Salida ($)</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="cashflowTableBody"></tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- TAB ESTADISTICAS VISUALES -->
-                    <div class="tab-pane fade d-none" id="stats" role="tabpanel">
-                        <div class="row g-4">
-                            <!-- Productos Mas Vendidos -->
-                            <div class="col-md-6">
-                                <div class="card shadow-sm h-100 border-0">
-                                    <div class="card-header bg-transparent fw-bold text-secondary">
-                                        <i class="bi bi-trophy text-warning"></i> Top 10 Productos Más Vendidos
+                    <!-- Contenido de los Reportes -->
+                    <div class="col-md-9 col-lg-10">
+                        <div class="tab-content bg-white shadow-sm rounded-3 p-4 border-0" style="min-height: 70vh;" id="nav-tabContent">
+                            
+                            <!-- TAB VENTAS -->
+                            <div class="tab-pane fade show active" id="sales" role="tabpanel">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="fw-bold text-dark mb-0">Detalle de Ventas Registradas</h5>
+                                    <div>
+                                        <button class="btn btn-sm btn-outline-danger me-2" onclick="exportPDF('salesTable', 'Reporte_Ventas')"><i class="bi bi-file-pdf"></i> PDF</button>
+                                        <button class="btn btn-sm btn-outline-success" onclick="exportExcel('salesTable', 'Reporte_Ventas')"><i class="bi bi-file-excel"></i> Excel</button>
                                     </div>
-                                    <div class="card-body">
-                                        <div style="position: relative; height: 350px; width: 100%;">
-                                            <canvas id="topProductsChart"></canvas>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-hover table-bordered report-table align-middle" id="salesTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Fecha y Hora</th>
+                                                <th>Comprobante</th>
+                                                <th>Cliente</th>
+                                                <th>Responsable</th>
+                                                <th>Sucursal</th>
+                                                <th>Condición</th>
+                                                <th class="text-end">Monto Total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="salesTableBody"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- TAB COMPRAS -->
+                            <div class="tab-pane fade" id="purchases" role="tabpanel">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="fw-bold text-dark mb-0">Detalle de Adquisiciones (Compras)</h5>
+                                    <div>
+                                        <button class="btn btn-sm btn-outline-danger me-2" onclick="exportPDF('purchasesTable', 'Reporte_Compras')"><i class="bi bi-file-pdf"></i> PDF</button>
+                                        <button class="btn btn-sm btn-outline-success" onclick="exportExcel('purchasesTable', 'Reporte_Compras')"><i class="bi bi-file-excel"></i> Excel</button>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-hover table-bordered report-table align-middle" id="purchasesTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Fecha Compra</th>
+                                                <th>No. Factura</th>
+                                                <th>Proveedor</th>
+                                                <th>Responsable</th>
+                                                <th>Sucursal</th>
+                                                <th>Estado</th>
+                                                <th class="text-end">Total Facturado</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="purchasesTableBody"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- TAB KARDEX -->
+                            <div class="tab-pane fade" id="kardex" role="tabpanel">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="fw-bold text-dark mb-0">Movimientos de Inventario (Kardex)</h5>
+                                    <div>
+                                        <button class="btn btn-sm btn-outline-danger me-2" onclick="exportPDF('kardexTable', 'Reporte_Kardex')"><i class="bi bi-file-pdf"></i> PDF</button>
+                                        <button class="btn btn-sm btn-outline-success" onclick="exportExcel('kardexTable', 'Reporte_Kardex')"><i class="bi bi-file-excel"></i> Excel</button>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-hover table-bordered report-table align-middle" id="kardexTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Fecha Registro</th>
+                                                <th>Producto / Artículo</th>
+                                                <th>Tipo Operación</th>
+                                                <th>Referencia</th>
+                                                <th class="text-end">Cantidad</th>
+                                                <th class="text-end">Existencia Previa</th>
+                                                <th class="text-end">Nueva Existencia</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="kardexTableBody"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- TAB ACTIVIDAD USUARIOS -->
+                            <div class="tab-pane fade" id="useractivity" role="tabpanel">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="fw-bold text-dark mb-0">Actividad y Cortes de Caja por Usuario</h5>
+                                    <div>
+                                        <button class="btn btn-sm btn-outline-danger me-2" onclick="exportPDF('activityTable', 'Reporte_Actividad')"><i class="bi bi-file-pdf"></i> PDF</button>
+                                        <button class="btn btn-sm btn-outline-success" onclick="exportExcel('activityTable', 'Reporte_Actividad')"><i class="bi bi-file-excel"></i> Excel</button>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-hover table-bordered report-table align-middle" id="activityTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Usuario</th>
+                                                <th>Sucursal</th>
+                                                <th>Apertura</th>
+                                                <th>Cierre</th>
+                                                <th class="text-end">Saldo Inicial</th>
+                                                <th class="text-end">Saldo Final / Esperado</th>
+                                                <th>Estado Turno</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="activityTableBody"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- TAB ESTADOS FINANCIEROS -->
+                            <div class="tab-pane fade" id="financials" role="tabpanel">
+                                <div class="row g-4">
+                                    <!-- Balance General -->
+                                    <div class="col-md-6">
+                                        <div class="card border-0 shadow-sm financial-statement-card h-100">
+                                            <div class="card-header bg-white border-0 pt-4 pb-0">
+                                                <h6 class="fw-bold text-dark text-uppercase mb-0">Estado de Situación Financiera</h6>
+                                                <small class="text-muted">Balance General Consolidado (A la fecha actual)</small>
+                                            </div>
+                                            <div class="card-body">
+                                                <table class="table table-sm report-table border-top">
+                                                    <tbody>
+                                                        <tr class="table-light"><td colspan="2" class="fw-bold">Activos (Recursos Controlados)</td></tr>
+                                                        <tr><td>Efectivo y Equivalentes</td><td class="text-end font-monospace" id="bs-cash">$0.00</td></tr>
+                                                        <tr><td>Cuentas por Cobrar Comerciales</td><td class="text-end font-monospace" id="bs-ar">$0.00</td></tr>
+                                                        <tr><td>Inventarios (Al Costo)</td><td class="text-end font-monospace" id="bs-inv">$0.00</td></tr>
+                                                        <tr class="fw-bold bg-light"><td>Total Activos</td><td class="text-end font-monospace text-primary" id="bs-total-assets">$0.00</td></tr>
+                                                        
+                                                        <tr class="table-light"><td colspan="2" class="fw-bold mt-3">Pasivos (Obligaciones)</td></tr>
+                                                        <tr><td>Cuentas por Pagar (Proveedores)</td><td class="text-end font-monospace text-danger" id="bs-ap">$0.00</td></tr>
+                                                        <tr class="fw-bold bg-light"><td>Total Pasivos</td><td class="text-end font-monospace text-danger" id="bs-total-liab">$0.00</td></tr>
+
+                                                        <tr class="table-light"><td colspan="2" class="fw-bold mt-3">Patrimonio Neto</td></tr>
+                                                        <tr><td>Capital / Resultados Acumulados</td><td class="text-end font-monospace" id="bs-equity">$0.00</td></tr>
+                                                        <tr class="fw-bold bg-light"><td>Total Pasivo + Patrimonio</td><td class="text-end font-monospace text-primary" id="bs-total-le">$0.00</td></tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Estado de Resultados -->
+                                    <div class="col-md-6">
+                                        <div class="card border-0 shadow-sm financial-statement-card h-100" style="border-left-color: #28a745;">
+                                            <div class="card-header bg-white border-0 pt-4 pb-0 d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <h6 class="fw-bold text-dark text-uppercase mb-0">Estado de Resultados Integrales</h6>
+                                                    <small class="text-muted">Pérdidas y Ganancias (Según Filtro de Fechas)</small>
+                                                </div>
+                                            </div>
+                                            <div class="card-body">
+                                                <table class="table table-sm report-table border-top">
+                                                    <tbody>
+                                                        <tr class="table-light"><td colspan="2" class="fw-bold">Ingresos de Operación</td></tr>
+                                                        <tr><td>Ventas Totales</td><td class="text-end font-monospace text-success" id="is-rev">$0.00</td></tr>
+                                                        <tr><td>(-) Costo de Ventas (COGS)</td><td class="text-end font-monospace text-danger" id="is-cogs">$0.00</td></tr>
+                                                        <tr class="fw-bold bg-light"><td>Utilidad Bruta</td><td class="text-end font-monospace text-primary" id="is-gross">$0.00</td></tr>
+                                                        
+                                                        <tr class="table-light"><td colspan="2" class="fw-bold mt-3">Gastos de Operación</td></tr>
+                                                        <tr><td>Gastos Operativos (Egresos de Sucursal)</td><td class="text-end font-monospace text-danger" id="is-opex">$0.00</td></tr>
+                                                        
+                                                        <tr class="table-light"><td colspan="2" class="fw-bold mt-3">Resultados</td></tr>
+                                                        <tr class="fw-bold bg-light"><td>Utilidad Neta del Ejercicio</td><td class="text-end font-monospace" id="is-net">$0.00</td></tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Proveedores -->
-                            <div class="col-md-6">
-                                <div class="card shadow-sm h-100 border-0">
-                                    <div class="card-header bg-transparent fw-bold text-secondary">
-                                        <i class="bi bi-truck text-info"></i> Top Proveedores por Volumen
+                            <!-- TAB FLUJO EFECTIVO (CASH FLOW) -->
+                            <div class="tab-pane fade" id="cashflow" role="tabpanel">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="fw-bold text-dark mb-0">Estado de Flujos de Efectivo</h5>
+                                    <div>
+                                        <span class="fw-bold bg-light border px-3 py-1 rounded me-3" style="font-size: 0.9rem;">Flujo Neto: <span id="cashflowBalance" class="text-success">$0.00</span></span>
+                                        <button class="btn btn-sm btn-outline-danger me-2" onclick="exportPDF('cashflowTable', 'Estado_Flujos_Efectivo')"><i class="bi bi-file-pdf"></i> PDF</button>
+                                        <button class="btn btn-sm btn-outline-success" onclick="exportExcel('cashflowTable', 'Estado_Flujos_Efectivo')"><i class="bi bi-file-excel"></i> Excel</button>
                                     </div>
-                                    <div class="card-body">
-                                        <div style="position: relative; height: 350px; width: 100%;">
-                                            <canvas id="topSuppliersChart"></canvas>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-hover table-bordered report-table align-middle" id="cashflowTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Fecha de Transacción</th>
+                                                <th>Clasificación</th>
+                                                <th>Concepto Operativo</th>
+                                                <th>Centro de Costo (Sucursal)</th>
+                                                <th class="text-end">Entradas (+)</th>
+                                                <th class="text-end">Salidas (-)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="cashflowTableBody"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- TAB ANALYTICS & BI -->
+                            <div class="tab-pane fade" id="stats" role="tabpanel">
+                                <div class="row g-4">
+                                    <!-- Comparativo de Ventas Contado vs Credito -->
+                                    <div class="col-12">
+                                        <div class="card shadow-sm border-0">
+                                            <div class="card-header bg-transparent fw-bold text-secondary d-flex justify-content-between align-items-center border-0 pt-3 pb-0">
+                                                <span><i class="bi bi-pie-chart-fill text-primary"></i> Análisis de Ingresos (Contado vs Crédito)</span>
+                                                <select class="form-select form-select-sm w-auto" id="analyticsPeriod" onchange="loadStats()">
+                                                    <option value="day">Análisis Diario</option>
+                                                    <option value="month">Análisis Mensual</option>
+                                                </select>
+                                            </div>
+                                            <div class="card-body">
+                                                <div style="position: relative; height: 300px; width: 100%;">
+                                                    <canvas id="salesAnalyticsChart"></canvas>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Productos Mas Vendidos -->
+                                    <div class="col-md-6">
+                                        <div class="card shadow-sm h-100 border-0">
+                                            <div class="card-header bg-transparent fw-bold text-secondary border-0 pt-3 pb-0">
+                                                <i class="bi bi-trophy-fill text-warning"></i> Top 10 Productos Más Vendidos
+                                            </div>
+                                            <div class="card-body">
+                                                <div style="position: relative; height: 300px; width: 100%;">
+                                                    <canvas id="topProductsChart"></canvas>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Proveedores -->
+                                    <div class="col-md-6">
+                                        <div class="card shadow-sm h-100 border-0">
+                                            <div class="card-header bg-transparent fw-bold text-secondary border-0 pt-3 pb-0">
+                                                <i class="bi bi-truck text-info"></i> Compras por Proveedor (Top 10)
+                                            </div>
+                                            <div class="card-body">
+                                                <div style="position: relative; height: 300px; width: 100%;">
+                                                    <canvas id="topSuppliersChart"></canvas>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Comparativo de Ventas -->
-                            <div class="col-12">
-                                <div class="card shadow-sm border-0">
-                                    <div class="card-header bg-transparent fw-bold text-secondary d-flex justify-content-between align-items-center">
-                                        <span><i class="bi bi-graph-up-arrow text-primary"></i> Comparativo de Ventas</span>
-                                        <select class="form-select form-select-sm w-auto" id="comparisonPeriod" onchange="loadStats()">
-                                            <option value="day">Por Día (Últimos 30)</option>
-                                            <option value="month">Por Mes</option>
-                                            <option value="dayofweek">Por Día de la Semana</option>
-                                        </select>
-                                    </div>
-                                    <div class="card-body">
-                                        <div style="position: relative; height: 400px; width: 100%;">
-                                            <canvas id="salesComparisonChart"></canvas>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -268,4 +397,3 @@
     <script src="../assets/js/ui-core.js?v=20260627004119"></script>
 </body>
 </html>
-
