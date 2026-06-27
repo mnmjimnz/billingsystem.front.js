@@ -28,6 +28,10 @@
     --dx-primary-hover: #4fc3f7;
 }
 
+[data-bs-theme="dark"] .text-dark { color: var(--dx-text) !important; }
+[data-bs-theme="dark"] .btn-light { background: #4d4d4d; color: var(--dx-text); border: none; }
+[data-bs-theme="dark"] .btn-light:hover { background: #5c5c5c; color: #fff; }
+
 * { box-sizing: border-box; }
 body {
     font-family: 'Roboto', sans-serif;
