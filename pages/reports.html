@@ -13,12 +13,13 @@
     <link rel="stylesheet" href="../assets/css/devextreme-theme.css?v=20260627004119">
     <style>
         /* Estilos Empresariales Específicos para Reportes */
-        .report-table { font-size: 0.85rem; }
-        .report-table th { background-color: #f8f9fa; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; color: #495057; }
-        .report-list-group .list-group-item { font-size: 0.9rem; padding: 12px 20px; transition: all 0.2s; }
-        .report-list-group .list-group-item.active { background-color: #2c3e50; border-color: #2c3e50; }
-        .report-list-group .list-group-item:hover:not(.active) { background-color: #f1f3f5; }
+        .report-table { font-size: 0.85rem; background-color: #ffffff; }
+        .report-table th { background-color: #ffffff; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; color: #495057; border-bottom: 2px solid #e0e0e0; }
         .financial-statement-card { border-left: 4px solid #2c3e50; }
+        .nav-tabs .nav-link { color: #495057; font-weight: 500; border: none; padding: 12px 20px; transition: all 0.3s; border-bottom: 2px solid transparent; }
+        .nav-tabs .nav-link:hover { color: #03a9f4; border-bottom: 2px solid #03a9f4; }
+        .nav-tabs .nav-link.active { color: #03a9f4; border-bottom: 2px solid #03a9f4; background: transparent; font-weight: bold; }
+        .nav-tabs { border-bottom: 1px solid #dee2e6; margin-bottom: 20px; }
     </style>
 </head>
 <body>
@@ -109,28 +110,33 @@
                     </div>
                 </div>
 
-                <div class="row g-4">
-                    <!-- Menú de Reportes (Sidebar Interno) -->
-                    <div class="col-md-3 col-lg-2">
-                        <div class="list-group report-list-group shadow-sm rounded-3 border-0" id="reportTabs" role="tablist">
-                            <h6 class="px-3 py-2 text-uppercase text-muted fw-bold mb-0" style="font-size: 0.75rem; background: #f8f9fa;">Operativos</h6>
-                            <a class="list-group-item list-group-item-action active border-0" id="sales-tab" data-bs-toggle="list" href="#sales" role="tab" onclick="loadSalesReport()"><i class="bi bi-cart-check me-2"></i> Ventas</a>
-                            <a class="list-group-item list-group-item-action border-0" id="purchases-tab" data-bs-toggle="list" href="#purchases" role="tab" onclick="loadPurchasesReport()"><i class="bi bi-bag-plus me-2"></i> Compras</a>
-                            <a class="list-group-item list-group-item-action border-0" id="kardex-tab" data-bs-toggle="list" href="#kardex" role="tab" onclick="loadKardexReport()"><i class="bi bi-box-seam me-2"></i> Kardex</a>
-                            <a class="list-group-item list-group-item-action border-0" id="useractivity-tab" data-bs-toggle="list" href="#useractivity" role="tab" onclick="loadUserActivityReport()"><i class="bi bi-person-lines-fill me-2"></i> Actividad Usuarios</a>
-                            
-                            <h6 class="px-3 py-2 text-uppercase text-muted fw-bold mb-0 mt-2" style="font-size: 0.75rem; background: #f8f9fa;">Financieros</h6>
-                            <a class="list-group-item list-group-item-action border-0" id="financials-tab" data-bs-toggle="list" href="#financials" role="tab" onclick="loadFinancials()"><i class="bi bi-bank me-2"></i> Estados Financieros</a>
-                            <a class="list-group-item list-group-item-action border-0" id="cashflow-tab" data-bs-toggle="list" href="#cashflow" role="tab" onclick="loadCashFlowReport()"><i class="bi bi-water me-2"></i> Flujos de Efectivo</a>
-                            
-                            <h6 class="px-3 py-2 text-uppercase text-muted fw-bold mb-0 mt-2" style="font-size: 0.75rem; background: #f8f9fa;">Análisis</h6>
-                            <a class="list-group-item list-group-item-action border-0" id="stats-tab" data-bs-toggle="list" href="#stats" role="tab" onclick="loadStats()"><i class="bi bi-pie-chart-fill me-2"></i> Analytics & BI</a>
-                        </div>
-                    </div>
+                <!-- Menú de Reportes (Tabs Horizontales) -->
+                <ul class="nav nav-tabs" id="reportTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link active" id="sales-tab" data-bs-toggle="tab" href="#sales" role="tab" onclick="loadSalesReport()"><i class="bi bi-cart-check"></i> Ventas</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="purchases-tab" data-bs-toggle="tab" href="#purchases" role="tab" onclick="loadPurchasesReport()"><i class="bi bi-bag-plus"></i> Compras</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="kardex-tab" data-bs-toggle="tab" href="#kardex" role="tab" onclick="loadKardexReport()"><i class="bi bi-box-seam"></i> Kardex</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="useractivity-tab" data-bs-toggle="tab" href="#useractivity" role="tab" onclick="loadUserActivityReport()"><i class="bi bi-person-lines-fill"></i> Actividad Usuarios</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="financials-tab" data-bs-toggle="tab" href="#financials" role="tab" onclick="loadFinancials()"><i class="bi bi-bank"></i> Estados Financieros</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="cashflow-tab" data-bs-toggle="tab" href="#cashflow" role="tab" onclick="loadCashFlowReport()"><i class="bi bi-water"></i> Flujos de Efectivo</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="stats-tab" data-bs-toggle="tab" href="#stats" role="tab" onclick="loadStats()"><i class="bi bi-pie-chart-fill"></i> Analytics & BI</a>
+                    </li>
+                </ul>
 
-                    <!-- Contenido de los Reportes -->
-                    <div class="col-md-9 col-lg-10">
-                        <div class="tab-content bg-white shadow-sm rounded-3 p-4 border-0" style="min-height: 70vh;" id="nav-tabContent">
+                <!-- Contenido de los Reportes -->
+                <div class="tab-content bg-white shadow-sm rounded-3 p-4 border-0" style="min-height: 70vh;" id="nav-tabContent">
                             
                             <!-- TAB VENTAS -->
                             <div class="tab-pane fade show active" id="sales" role="tabpanel">
@@ -142,7 +148,7 @@
                                     </div>
                                 </div>
                                 <div class="table-responsive">
-                                    <table class="table table-sm table-hover table-bordered report-table align-middle" id="salesTable">
+                                    <table class="table table-sm align-middle report-table" id="salesTable">
                                         <thead>
                                             <tr>
                                                 <th>Fecha y Hora</th>
@@ -169,7 +175,7 @@
                                     </div>
                                 </div>
                                 <div class="table-responsive">
-                                    <table class="table table-sm table-hover table-bordered report-table align-middle" id="purchasesTable">
+                                    <table class="table table-sm align-middle report-table" id="purchasesTable">
                                         <thead>
                                             <tr>
                                                 <th>Fecha Compra</th>
@@ -196,7 +202,7 @@
                                     </div>
                                 </div>
                                 <div class="table-responsive">
-                                    <table class="table table-sm table-hover table-bordered report-table align-middle" id="kardexTable">
+                                    <table class="table table-sm align-middle report-table" id="kardexTable">
                                         <thead>
                                             <tr>
                                                 <th>Fecha Registro</th>
@@ -223,7 +229,7 @@
                                     </div>
                                 </div>
                                 <div class="table-responsive">
-                                    <table class="table table-sm table-hover table-bordered report-table align-middle" id="activityTable">
+                                    <table class="table table-sm align-middle report-table" id="activityTable">
                                         <thead>
                                             <tr>
                                                 <th>Usuario</th>
@@ -312,7 +318,7 @@
                                     </div>
                                 </div>
                                 <div class="table-responsive">
-                                    <table class="table table-sm table-hover table-bordered report-table align-middle" id="cashflowTable">
+                                    <table class="table table-sm align-middle report-table" id="cashflowTable">
                                         <thead>
                                             <tr>
                                                 <th>Fecha de Transacción</th>
@@ -380,8 +386,6 @@
                             </div>
 
                         </div>
-                    </div>
-                </div>
 
             </div>
         </main>

@@ -90,7 +90,7 @@ async function loadSalesReport() {
         });
         
         tbody.innerHTML += `
-            <tr class="table-light report-total-row">
+            <tr class="report-total-row border-top border-2">
                 <td colspan="6" class="text-end fw-bold">TOTAL:</td>
                 <td class="text-end fw-bold text-primary fs-5">$${totalSum.toFixed(2)}</td>
             </tr>
@@ -124,7 +124,7 @@ async function loadPurchasesReport() {
         });
         
         tbody.innerHTML += `
-            <tr class="table-light report-total-row">
+            <tr class="report-total-row border-top border-2">
                 <td colspan="6" class="text-end fw-bold">TOTAL:</td>
                 <td class="text-end fw-bold text-danger fs-5">$${totalSum.toFixed(2)}</td>
             </tr>
@@ -255,7 +255,7 @@ async function loadCashFlowReport() {
         balanceEl.className = `${balance >= 0 ? 'text-success' : 'text-danger'}`;
         
         tbody.innerHTML += `
-            <tr class="table-light fw-bold report-total-row">
+            <tr class="report-total-row fw-bold border-top border-2">
                 <td colspan="4" class="text-end">FLUJO NETO CONSOLIDADO:</td>
                 <td class="text-end text-success fs-6">$${totalIn.toFixed(2)}</td>
                 <td class="text-end text-danger fs-6">$${totalOut.toFixed(2)}</td>
