@@ -64,11 +64,32 @@ function reloadCurrentTab() {
     if (activeTab === 'stats-tab') loadStats();
 }
 
+
+function updateReportMeta(prefix) {
+    const branchSel = document.getElementById('filterBranchId');
+    const branchName = branchSel.options[branchSel.selectedIndex].text;
+    const userSel = document.getElementById('filterUserId');
+    const userName = userSel.options[userSel.selectedIndex].text;
+    const start = document.getElementById('filterStartDate').value;
+    const end = document.getElementById('filterEndDate').value;
+    
+    const elBranch = document.getElementById(prefix + '-meta-branch');
+    const elUser = document.getElementById(prefix + '-meta-user');
+    const elPeriod = document.getElementById(prefix + '-meta-period');
+    const elPrinted = document.getElementById(prefix + '-meta-printed');
+    
+    if(elBranch) elBranch.innerText = branchName;
+    if(elUser) elUser.innerText = userName;
+    if(elPeriod) elPeriod.innerText = `${start} a ${end}`;
+    if(elPrinted) elPrinted.innerText = new Date().toLocaleDateString();
+}
+
 /* ================= VENTAS ================= */
 async function loadSalesReport() {
     try {
         let query = getFilterParams();
         const data = await ApiClient.request(`/Reports/sales${query}`);
+        updateReportMeta("sales");
         
         const tbody = document.getElementById('salesTableBody');
         tbody.innerHTML = '';
@@ -103,6 +124,7 @@ async function loadPurchasesReport() {
     try {
         let query = getFilterParams();
         const data = await ApiClient.request(`/Reports/purchases${query}`);
+        updateReportMeta("purchases");
         
         const tbody = document.getElementById('purchasesTableBody');
         tbody.innerHTML = '';
@@ -136,6 +158,7 @@ async function loadPurchasesReport() {
 async function loadKardexReport() {
     try {
         const data = await ApiClient.request(`/Reports/kardex${getFilterParams()}`);
+        updateReportMeta("kardex");
         const tbody = document.getElementById('kardexTableBody');
         tbody.innerHTML = '';
 
@@ -160,6 +183,7 @@ async function loadKardexReport() {
 async function loadUserActivityReport() {
     try {
         const data = await ApiClient.request(`/Reports/user-activity${getFilterParams()}`);
+        updateReportMeta("activity");
         const tbody = document.getElementById('activityTableBody');
         tbody.innerHTML = '';
 
@@ -217,6 +241,7 @@ async function loadFinancials() {
 async function loadCashFlowReport() {
     try {
         const data = await ApiClient.request(`/Reports/cash-flow${getFilterParams()}`);
+        updateReportMeta("cashflow");
         const tbody = document.getElementById('cashflowTableBody');
         tbody.innerHTML = '';
         

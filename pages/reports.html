@@ -12,10 +12,25 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <link rel="stylesheet" href="../assets/css/devextreme-theme.css?v=20260627004119">
     <style>
-        /* Estilos Empresariales Específicos para Reportes */
-        .report-table { font-size: 0.85rem; background-color: #ffffff; }
-        .report-table th { background-color: #ffffff; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; color: #495057; border-bottom: 2px solid #e0e0e0; }
-        .financial-statement-card { border-left: 4px solid #2c3e50; }
+        /* Estilos Formales de Reportes Empresariales */
+        .report-page { background: #ffffff; padding: 40px 50px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; border-radius: 4px; margin-top: 10px; margin-bottom: 30px; }
+        .report-header-title { color: #2a3a52; font-weight: 700; font-size: 2rem; margin-bottom: 25px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; letter-spacing: -0.5px; }
+        .report-meta-box { background-color: #f4f6f9; padding: 15px 20px; font-size: 0.85rem; border: 1px solid #eef0f3; width: 100%; }
+        .report-meta-box p { margin-bottom: 4px; color: #495057; }
+        .report-meta-label { color: #868e96; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; width: 120px; display: inline-block; }
+        .report-meta-value { font-weight: 500; color: #2c3e50; }
+        .formal-table { width: 100%; border-collapse: collapse; margin-top: 30px; font-size: 0.85rem; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .formal-table th { background-color: #45828e; color: #ffffff; padding: 12px 15px; text-transform: uppercase; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.5px; border: none; text-align: left; }
+        .formal-table th.text-end { text-align: right; }
+        .formal-table th:first-child { border-top-left-radius: 4px; }
+        .formal-table th:last-child { border-top-right-radius: 4px; }
+        .formal-table td { padding: 10px 15px; border-bottom: 1px solid #e9ecef; color: #343a40; vertical-align: middle; }
+        .formal-table tbody tr:nth-child(even) { background-color: #f8fafc; }
+        .formal-table tbody tr:hover { background-color: #f1f5f9; }
+        .formal-table .group-header td { background-color: #d2dcea; color: #2c3e50; font-weight: bold; font-size: 0.9rem; padding: 12px 15px; border-bottom: 2px solid #b8c7dd; text-align: center; letter-spacing: 0.5px; }
+        .formal-table .report-total-row td { background-color: #ffffff !important; font-weight: bold; font-size: 0.95rem; border-top: 2px solid #45828e !important; border-bottom: 2px solid #45828e !important; color: #2a3a52; padding: 15px; }
+        .formal-table .badge { font-size: 0.7rem; padding: 5px 8px; font-weight: 600; letter-spacing: 0.5px; border-radius: 4px; }
+        .financial-statement-card { border-left: 4px solid #45828e; }
         .nav-tabs .nav-link { color: #495057; font-weight: 500; border: none; padding: 12px 20px; transition: all 0.3s; border-bottom: 2px solid transparent; }
         .nav-tabs .nav-link:hover { color: #03a9f4; border-bottom: 2px solid #03a9f4; }
         .nav-tabs .nav-link.active { color: #03a9f4; border-bottom: 2px solid #03a9f4; background: transparent; font-weight: bold; }
@@ -136,19 +151,35 @@
                 </ul>
 
                 <!-- Contenido de los Reportes -->
-                <div class="tab-content bg-white shadow-sm rounded-3 p-4 border-0" style="min-height: 70vh;" id="nav-tabContent">
+                <div class="tab-content border-0" style="min-height: 70vh;" id="nav-tabContent">
                             
                             <!-- TAB VENTAS -->
-                            <div class="tab-pane fade show active" id="sales" role="tabpanel">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h5 class="fw-bold text-dark mb-0">Detalle de Ventas Registradas</h5>
-                                    <div>
-                                        <button class="btn btn-sm btn-outline-danger me-2" onclick="exportPDF('salesTable', 'Reporte_Ventas')"><i class="bi bi-file-pdf"></i> PDF</button>
-                                        <button class="btn btn-sm btn-outline-success" onclick="exportExcel('salesTable', 'Reporte_Ventas')"><i class="bi bi-file-excel"></i> Excel</button>
+                            <div class="tab-pane fade show active report-page" id="sales" role="tabpanel">
+                                                                <div class="d-flex justify-content-between align-items-start mb-4">
+                                    <div style="flex: 1;">
+                                        <h2 class="report-header-title">Reporte General de Ventas</h2>
+                                        <div class="row w-100 m-0">
+                                            <div class="col-md-6 p-0">
+                                                <div class="report-meta-box me-3">
+                                                    <p><span class="report-meta-label">Sucursal:</span> <span class="report-meta-value" id="sales-meta-branch">Consolidado</span></p>
+                                                    <p><span class="report-meta-label">Usuario:</span> <span class="report-meta-value" id="sales-meta-user">Todos</span></p>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 p-0">
+                                                <div class="report-meta-box">
+                                                    <p><span class="report-meta-label">Per�odo:</span> <span class="report-meta-value" id="sales-meta-period">01/01/2026 - 31/01/2026</span></p>
+                                                    <p><span class="report-meta-label">Generado el:</span> <span class="report-meta-value" id="sales-meta-printed"></span></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="ms-4">
+                                        <button class="btn btn-sm btn-outline-danger mb-2 w-100" onclick="exportPDF('salesTable', 'Reporte_Reporte_General_de_Ventas')"><i class="bi bi-file-pdf"></i> PDF</button>
+                                        <button class="btn btn-sm btn-outline-success w-100" onclick="exportExcel('salesTable', 'Reporte_Reporte_General_de_Ventas')"><i class="bi bi-file-excel"></i> Excel</button>
                                     </div>
                                 </div>
                                 <div class="table-responsive">
-                                    <table class="table table-sm align-middle report-table" id="salesTable">
+                                    <table class="formal-table" id="salesTable">
                                         <thead>
                                             <tr>
                                                 <th>Fecha y Hora</th>
@@ -166,16 +197,32 @@
                             </div>
 
                             <!-- TAB COMPRAS -->
-                            <div class="tab-pane fade d-none" id="purchases" role="tabpanel">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h5 class="fw-bold text-dark mb-0">Detalle de Adquisiciones (Compras)</h5>
-                                    <div>
-                                        <button class="btn btn-sm btn-outline-danger me-2" onclick="exportPDF('purchasesTable', 'Reporte_Compras')"><i class="bi bi-file-pdf"></i> PDF</button>
-                                        <button class="btn btn-sm btn-outline-success" onclick="exportExcel('purchasesTable', 'Reporte_Compras')"><i class="bi bi-file-excel"></i> Excel</button>
+                            <div class="tab-pane fade d-none report-page" id="purchases" role="tabpanel">
+                                                                <div class="d-flex justify-content-between align-items-start mb-4">
+                                    <div style="flex: 1;">
+                                        <h2 class="report-header-title">Reporte General de Compras</h2>
+                                        <div class="row w-100 m-0">
+                                            <div class="col-md-6 p-0">
+                                                <div class="report-meta-box me-3">
+                                                    <p><span class="report-meta-label">Sucursal:</span> <span class="report-meta-value" id="purchases-meta-branch">Consolidado</span></p>
+                                                    <p><span class="report-meta-label">Usuario:</span> <span class="report-meta-value" id="purchases-meta-user">Todos</span></p>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 p-0">
+                                                <div class="report-meta-box">
+                                                    <p><span class="report-meta-label">Per�odo:</span> <span class="report-meta-value" id="purchases-meta-period">01/01/2026 - 31/01/2026</span></p>
+                                                    <p><span class="report-meta-label">Generado el:</span> <span class="report-meta-value" id="purchases-meta-printed"></span></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="ms-4">
+                                        <button class="btn btn-sm btn-outline-danger mb-2 w-100" onclick="exportPDF('purchasesTable', 'Reporte_Reporte_General_de_Compras')"><i class="bi bi-file-pdf"></i> PDF</button>
+                                        <button class="btn btn-sm btn-outline-success w-100" onclick="exportExcel('purchasesTable', 'Reporte_Reporte_General_de_Compras')"><i class="bi bi-file-excel"></i> Excel</button>
                                     </div>
                                 </div>
                                 <div class="table-responsive">
-                                    <table class="table table-sm align-middle report-table" id="purchasesTable">
+                                    <table class="formal-table" id="purchasesTable">
                                         <thead>
                                             <tr>
                                                 <th>Fecha Compra</th>
@@ -193,16 +240,32 @@
                             </div>
 
                             <!-- TAB KARDEX -->
-                            <div class="tab-pane fade d-none" id="kardex" role="tabpanel">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h5 class="fw-bold text-dark mb-0">Movimientos de Inventario (Kardex)</h5>
-                                    <div>
-                                        <button class="btn btn-sm btn-outline-danger me-2" onclick="exportPDF('kardexTable', 'Reporte_Kardex')"><i class="bi bi-file-pdf"></i> PDF</button>
-                                        <button class="btn btn-sm btn-outline-success" onclick="exportExcel('kardexTable', 'Reporte_Kardex')"><i class="bi bi-file-excel"></i> Excel</button>
+                            <div class="tab-pane fade d-none report-page" id="kardex" role="tabpanel">
+                                                                <div class="d-flex justify-content-between align-items-start mb-4">
+                                    <div style="flex: 1;">
+                                        <h2 class="report-header-title">Movimientos de Inventario (Kardex)</h2>
+                                        <div class="row w-100 m-0">
+                                            <div class="col-md-6 p-0">
+                                                <div class="report-meta-box me-3">
+                                                    <p><span class="report-meta-label">Sucursal:</span> <span class="report-meta-value" id="kardex-meta-branch">Consolidado</span></p>
+                                                    <p><span class="report-meta-label">Usuario:</span> <span class="report-meta-value" id="kardex-meta-user">Todos</span></p>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 p-0">
+                                                <div class="report-meta-box">
+                                                    <p><span class="report-meta-label">Per�odo:</span> <span class="report-meta-value" id="kardex-meta-period">01/01/2026 - 31/01/2026</span></p>
+                                                    <p><span class="report-meta-label">Generado el:</span> <span class="report-meta-value" id="kardex-meta-printed"></span></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="ms-4">
+                                        <button class="btn btn-sm btn-outline-danger mb-2 w-100" onclick="exportPDF('kardexTable', 'Reporte_Movimientos_de_Inventario_(Kardex)')"><i class="bi bi-file-pdf"></i> PDF</button>
+                                        <button class="btn btn-sm btn-outline-success w-100" onclick="exportExcel('kardexTable', 'Reporte_Movimientos_de_Inventario_(Kardex)')"><i class="bi bi-file-excel"></i> Excel</button>
                                     </div>
                                 </div>
                                 <div class="table-responsive">
-                                    <table class="table table-sm align-middle report-table" id="kardexTable">
+                                    <table class="formal-table" id="kardexTable">
                                         <thead>
                                             <tr>
                                                 <th>Fecha Registro</th>
@@ -220,16 +283,32 @@
                             </div>
 
                             <!-- TAB ACTIVIDAD USUARIOS -->
-                            <div class="tab-pane fade d-none" id="useractivity" role="tabpanel">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h5 class="fw-bold text-dark mb-0">Actividad y Cortes de Caja por Usuario</h5>
-                                    <div>
-                                        <button class="btn btn-sm btn-outline-danger me-2" onclick="exportPDF('activityTable', 'Reporte_Actividad')"><i class="bi bi-file-pdf"></i> PDF</button>
-                                        <button class="btn btn-sm btn-outline-success" onclick="exportExcel('activityTable', 'Reporte_Actividad')"><i class="bi bi-file-excel"></i> Excel</button>
+                            <div class="tab-pane fade d-none report-page" id="useractivity" role="tabpanel">
+                                                                <div class="d-flex justify-content-between align-items-start mb-4">
+                                    <div style="flex: 1;">
+                                        <h2 class="report-header-title">Actividad de Usuarios y Turnos</h2>
+                                        <div class="row w-100 m-0">
+                                            <div class="col-md-6 p-0">
+                                                <div class="report-meta-box me-3">
+                                                    <p><span class="report-meta-label">Sucursal:</span> <span class="report-meta-value" id="activity-meta-branch">Consolidado</span></p>
+                                                    <p><span class="report-meta-label">Usuario:</span> <span class="report-meta-value" id="activity-meta-user">Todos</span></p>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 p-0">
+                                                <div class="report-meta-box">
+                                                    <p><span class="report-meta-label">Per�odo:</span> <span class="report-meta-value" id="activity-meta-period">01/01/2026 - 31/01/2026</span></p>
+                                                    <p><span class="report-meta-label">Generado el:</span> <span class="report-meta-value" id="activity-meta-printed"></span></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="ms-4">
+                                        <button class="btn btn-sm btn-outline-danger mb-2 w-100" onclick="exportPDF('activityTable', 'Reporte_Actividad_de_Usuarios_y_Turnos')"><i class="bi bi-file-pdf"></i> PDF</button>
+                                        <button class="btn btn-sm btn-outline-success w-100" onclick="exportExcel('activityTable', 'Reporte_Actividad_de_Usuarios_y_Turnos')"><i class="bi bi-file-excel"></i> Excel</button>
                                     </div>
                                 </div>
                                 <div class="table-responsive">
-                                    <table class="table table-sm align-middle report-table" id="activityTable">
+                                    <table class="formal-table" id="activityTable">
                                         <thead>
                                             <tr>
                                                 <th>Usuario</th>
@@ -247,7 +326,7 @@
                             </div>
 
                             <!-- TAB ESTADOS FINANCIEROS -->
-                            <div class="tab-pane fade d-none" id="financials" role="tabpanel">
+                            <div class="tab-pane fade d-none report-page" id="financials" role="tabpanel">
                                 <div class="row g-4">
                                     <!-- Balance General -->
                                     <div class="col-md-6">
@@ -308,17 +387,32 @@
                             </div>
 
                             <!-- TAB FLUJO EFECTIVO (CASH FLOW) -->
-                            <div class="tab-pane fade d-none" id="cashflow" role="tabpanel">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h5 class="fw-bold text-dark mb-0">Estado de Flujos de Efectivo</h5>
-                                    <div>
-                                        <span class="fw-bold bg-light border px-3 py-1 rounded me-3" style="font-size: 0.9rem;">Flujo Neto: <span id="cashflowBalance" class="text-success">$0.00</span></span>
-                                        <button class="btn btn-sm btn-outline-danger me-2" onclick="exportPDF('cashflowTable', 'Estado_Flujos_Efectivo')"><i class="bi bi-file-pdf"></i> PDF</button>
-                                        <button class="btn btn-sm btn-outline-success" onclick="exportExcel('cashflowTable', 'Estado_Flujos_Efectivo')"><i class="bi bi-file-excel"></i> Excel</button>
+                            <div class="tab-pane fade d-none report-page" id="cashflow" role="tabpanel">
+                                                                <div class="d-flex justify-content-between align-items-start mb-4">
+                                    <div style="flex: 1;">
+                                        <h2 class="report-header-title">Estado de Flujos de Efectivo</h2>
+                                        <div class="row w-100 m-0">
+                                            <div class="col-md-6 p-0">
+                                                <div class="report-meta-box me-3">
+                                                    <p><span class="report-meta-label">Sucursal:</span> <span class="report-meta-value" id="cashflow-meta-branch">Consolidado</span></p>
+                                                    <p><span class="report-meta-label">Usuario:</span> <span class="report-meta-value" id="cashflow-meta-user">Todos</span></p>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 p-0">
+                                                <div class="report-meta-box">
+                                                    <p><span class="report-meta-label">Per�odo:</span> <span class="report-meta-value" id="cashflow-meta-period">01/01/2026 - 31/01/2026</span></p>
+                                                    <p><span class="report-meta-label">Generado el:</span> <span class="report-meta-value" id="cashflow-meta-printed"></span></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="ms-4">
+                                        <button class="btn btn-sm btn-outline-danger mb-2 w-100" onclick="exportPDF('cashflowTable', 'Reporte_Estado_de_Flujos_de_Efectivo')"><i class="bi bi-file-pdf"></i> PDF</button>
+                                        <button class="btn btn-sm btn-outline-success w-100" onclick="exportExcel('cashflowTable', 'Reporte_Estado_de_Flujos_de_Efectivo')"><i class="bi bi-file-excel"></i> Excel</button>
                                     </div>
                                 </div>
                                 <div class="table-responsive">
-                                    <table class="table table-sm align-middle report-table" id="cashflowTable">
+                                    <table class="formal-table" id="cashflowTable">
                                         <thead>
                                             <tr>
                                                 <th>Fecha de Transacción</th>
@@ -335,7 +429,7 @@
                             </div>
 
                             <!-- TAB ANALYTICS & BI -->
-                            <div class="tab-pane fade d-none" id="stats" role="tabpanel">
+                            <div class="tab-pane fade d-none report-page" id="stats" role="tabpanel">
                                 <div class="row g-4">
                                     <!-- Comparativo de Ventas Contado vs Credito -->
                                     <div class="col-12">
