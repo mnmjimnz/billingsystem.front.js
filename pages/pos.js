@@ -62,11 +62,41 @@ async function checkCashRegister() {
                 select.innerHTML += `<option value="${b.id}">${b.name}</option>`;
             });
 
+            // Fetch cash registers for the initially selected branch
+            await fetchCashRegistersForBranch();
+
             const openRegisterModal = new bootstrap.Modal(document.getElementById('openRegisterModal'));
             openRegisterModal.show();
         }
     } catch (e) {
         console.error("Error checking cash register", e);
+    }
+}
+
+async function fetchCashRegistersForBranch() {
+    const branchId = document.getElementById('register-branch').value;
+    const select = document.getElementById('register-caja');
+    select.innerHTML = '<option value="">Cargando...</option>';
+
+    if (!branchId) {
+        select.innerHTML = '<option value="">Seleccione una sucursal primero</option>';
+        return;
+    }
+
+    try {
+        const registers = await ApiClient.request(`/CashRegistersAdmin/branch/${branchId}`);
+        select.innerHTML = '';
+        const activeRegisters = registers.filter(r => r.isActive);
+        if (activeRegisters.length === 0) {
+            select.innerHTML = '<option value="">No hay cajas activas en esta sucursal</option>';
+            return;
+        }
+        activeRegisters.forEach(r => {
+            select.innerHTML += `<option value="${r.id}">${r.name}</option>`;
+        });
+    } catch (e) {
+        select.innerHTML = '<option value="">Error al cargar cajas</option>';
+        console.error("Error fetching cash registers", e);
     }
 }
 
@@ -95,16 +125,21 @@ function showBlockedOverlay(iconClass, title, message, showBranchesBtn = false) 
 
 async function openCashRegister() {
     const branchId = document.getElementById('register-branch').value;
+    const cajaId = document.getElementById('register-caja').value;
     const balance = document.getElementById('register-opening-balance').value;
 
     if (!branchId) {
         showToast('Debe seleccionar una sucursal.', 'warning');
         return;
     }
+    if (!cajaId) {
+        showToast('Debe seleccionar una caja.', 'warning');
+        return;
+    }
 
     try {
         const res = await ApiClient.request('/CashRegisters/open', 'POST', {
-            branchId: parseInt(branchId),
+            cashRegisterId: parseInt(cajaId),
             openingBalance: parseFloat(balance) || 0
         });
         
@@ -445,7 +480,11 @@ async function confirmSale() {
         btn.disabled = false;
         btn.innerHTML = '<i class="bi bi-check-circle me-2"></i> Confirmar Venta';
     } catch (e) {
-        showToast('Error al procesar la venta', 'error');
+        let msg = 'Error al procesar la venta';
+        if (e.message && e.message.includes('físico para dar el cambio')) {
+            msg = e.message;
+        }
+        showToast(msg, 'error');
         document.getElementById('btn-confirm-pay').disabled = false;
         document.getElementById('btn-confirm-pay').innerHTML = '<i class="bi bi-check-circle me-2"></i> Confirmar Venta';
     }

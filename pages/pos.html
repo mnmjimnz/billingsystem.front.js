@@ -193,8 +193,14 @@
             <p class="text-secondary">Debes aperturar tu caja (registrar el fondo de cambio) antes de poder realizar ventas en esta sucursal.</p>
             <div class="mb-3">
                 <label class="form-label fw-semibold">Sucursal</label>
-                <select class="form-select" id="register-branch">
+                <select class="form-select" id="register-branch" onchange="fetchCashRegistersForBranch()">
                     <!-- Loaded via JS -->
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Caja Registradora</label>
+                <select class="form-select" id="register-caja">
+                    <option value="">Seleccione una sucursal primero</option>
                 </select>
             </div>
             <div class="mb-3">
@@ -205,10 +211,13 @@
                 </div>
             </div>
           </div>
-          <div class="modal-footer border-0 pt-0">
+          <div class="modal-footer border-0 pt-0 d-flex flex-column gap-2">
             <button class="btn btn-primary w-100 py-3 fs-5 shadow-sm fw-bold rounded-pill" onclick="openCashRegister()">
                 <i class="bi bi-unlock-fill me-2"></i> Aperturar Caja
             </button>
+            <a href="branches.html" class="btn btn-outline-secondary w-100 rounded-pill">
+                <i class="bi bi-buildings"></i> Ir a Sucursales
+            </a>
           </div>
         </div>
       </div>

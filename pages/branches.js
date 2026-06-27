@@ -1,6 +1,7 @@
 let branchesList = [];
 let branchModalInstance;
 let confirmStatusModalInstance;
+let cashRegistersModalInstance;
 let currentPage = 1;
 let currentSearch = '';
 let searchTimeout = null;
@@ -9,6 +10,7 @@ let pendingStatusAction = null; // { id, action }
 document.addEventListener('DOMContentLoaded', async () => {
     branchModalInstance = new bootstrap.Modal(document.getElementById('branchModal'));
     confirmStatusModalInstance = new bootstrap.Modal(document.getElementById('confirmStatusModal'));
+    cashRegistersModalInstance = new bootstrap.Modal(document.getElementById('cashRegistersModal'));
     await loadBranches();
 });
 
@@ -49,7 +51,11 @@ async function loadBranches(page = 1) {
                         <small class="text-muted"><i class="bi bi-cash-coin me-1"></i>Fondos: <strong>$${(b.availableFunds || 0).toFixed(2)}</strong></small>
                     </td>
                     <td>${b.phone || '<span class="text-muted">-</span>'}</td>
-                    <td><span class="badge bg-light text-dark border">${b.seriesPrefix || '-'}</span></td>
+                    <td class="text-center">
+                        <button class="btn btn-sm btn-outline-info rounded-circle" onclick='openCashRegisters(${b.id}, "${b.name}")' title="Gestionar Cajas">
+                            <i class="bi bi-display"></i>
+                        </button>
+                    </td>
                     <td class="text-end pe-4">
                         ${toggleBtn}
                         <button class="btn btn-sm btn-outline-primary rounded-circle" onclick='editBranch(${JSON.stringify(b)})' title="Editar">
@@ -77,6 +83,8 @@ function handleSearch(event) {
 function clearForm() {
     document.getElementById('branchId').value = '';
     document.getElementById('branchForm').reset();
+    document.getElementById('branchFunds').value = '0.00';
+    document.getElementById('fundsContainer').style.display = 'block';
     document.getElementById('branchModalLabel').innerText = 'Nueva Sucursal';
 }
 
@@ -85,6 +93,7 @@ function editBranch(branch) {
     document.getElementById('branchName').value = branch.name;
     document.getElementById('branchAddress').value = branch.address || '';
     document.getElementById('branchPhone').value = branch.phone || '';
+    document.getElementById('fundsContainer').style.display = 'none'; // Hide when editing
     document.getElementById('branchModalLabel').innerText = 'Editar Sucursal';
     branchModalInstance.show();
 }
@@ -111,6 +120,7 @@ async function saveBranch() {
             await ApiClient.request(`/Branches/${id}`, 'PUT', payload);
             showToast('Sucursal actualizada exitosamente', 'success');
         } else {
+            payload.availableFunds = parseFloat(document.getElementById('branchFunds').value || 0);
             await ApiClient.request('/Branches', 'POST', payload);
             showToast('Sucursal creada exitosamente', 'success');
         }
@@ -181,6 +191,100 @@ async function executeBranchToggle() {
     } finally {
         pendingStatusAction = null;
         confirmBtn.disabled = false;
+    }
+}
+
+// Cash Registers functions
+async function openCashRegisters(branchId, branchName) {
+    document.getElementById('crBranchId').value = branchId;
+    document.getElementById('crBranchName').innerText = branchName;
+    document.getElementById('cashRegisterForm').reset();
+    document.getElementById('crId').value = '';
+    await loadCashRegisters(branchId);
+    cashRegistersModalInstance.show();
+}
+
+async function loadCashRegisters(branchId) {
+    try {
+        const result = await ApiClient.request(`/CashRegistersAdmin/branch/${branchId}`);
+        const tbody = document.getElementById('cr-table-body');
+        tbody.innerHTML = '';
+        if (result.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">No hay cajas registradas</td></tr>';
+            return;
+        }
+
+        result.forEach(cr => {
+            const isClosed = !cr.isActive;
+            const statusBadge = cr.isActive ? '<span class="badge bg-success">Activa</span>' : '<span class="badge bg-danger">Inactiva</span>';
+            const toggleIcon = cr.isActive ? 'bi-toggle-on text-success' : 'bi-toggle-off text-secondary';
+            
+            tbody.innerHTML += `
+                <tr>
+                    <td>#${cr.id}</td>
+                    <td class="fw-semibold">${cr.name}</td>
+                    <td>${cr.description || '-'}</td>
+                    <td>${statusBadge}</td>
+                    <td class="text-end">
+                        <button class="btn btn-sm btn-light border" onclick='toggleCashRegisterStatus(${cr.id}, ${!cr.isActive})' title="Cambiar Estado">
+                            <i class="bi ${toggleIcon} fs-5"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-primary" onclick='editCashRegister(${JSON.stringify(cr)})' title="Editar">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+        });
+    } catch (e) {
+        showToast('Error al cargar cajas', 'error');
+        console.error(e);
+    }
+}
+
+async function saveCashRegister(e) {
+    e.preventDefault();
+    const branchId = document.getElementById('crBranchId').value;
+    const id = document.getElementById('crId').value;
+    const name = document.getElementById('crName').value;
+    const desc = document.getElementById('crDesc').value;
+
+    const payload = { branchId: parseInt(branchId), name, description: desc };
+
+    try {
+        const btn = document.getElementById('btnSaveCR');
+        btn.disabled = true;
+        if (id) {
+            await ApiClient.request(`/CashRegistersAdmin/${id}`, 'PUT', payload);
+            showToast('Caja actualizada', 'success');
+        } else {
+            await ApiClient.request('/CashRegistersAdmin', 'POST', payload);
+            showToast('Caja agregada', 'success');
+        }
+        document.getElementById('cashRegisterForm').reset();
+        document.getElementById('crId').value = '';
+        await loadCashRegisters(branchId);
+    } catch (error) {
+        showToast('Error al guardar la caja', 'error');
+    } finally {
+        document.getElementById('btnSaveCR').disabled = false;
+    }
+}
+
+function editCashRegister(cr) {
+    document.getElementById('crId').value = cr.id;
+    document.getElementById('crName').value = cr.name;
+    document.getElementById('crDesc').value = cr.description || '';
+}
+
+async function toggleCashRegisterStatus(id, isActive) {
+    try {
+        const branchId = document.getElementById('crBranchId').value;
+        await ApiClient.request(`/CashRegistersAdmin/${id}/status`, 'PUT', { isActive });
+        showToast('Estado de la caja actualizado', 'success');
+        await loadCashRegisters(branchId);
+    } catch (e) {
+        showToast('Error al actualizar estado', 'error');
     }
 }
 

@@ -7,76 +7,228 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="../assets/css/devextreme-theme.css">
     <style>
+        /* Custom native grid styling for settings layout, no Bootstrap required */
+        .settings-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .settings-header {
+            margin-bottom: 2rem;
+        }
+        
+        .settings-header h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 0 0 0.5rem 0;
+            color: var(--dx-text);
+        }
+        
+        .settings-header p {
+            margin: 0;
+            color: var(--dx-text-secondary);
+        }
+        
+        .settings-card {
+            background: var(--dx-card-bg);
+            border-radius: 12px;
+            box-shadow: var(--shadow-1);
+            margin-bottom: 2rem;
+            overflow: hidden;
+            border: 1px solid var(--dx-border);
+        }
+        
+        .settings-card-body {
+            padding: 2rem;
+        }
+        
         .settings-section-header {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            padding-bottom: 1rem;
+            gap: 1rem;
+            padding-bottom: 1.5rem;
             margin-bottom: 1.5rem;
-            border-bottom: 2px solid var(--border-color, #e9ecef);
+            border-bottom: 1px solid var(--dx-border);
         }
+        
         .settings-section-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.1rem;
+            font-size: 1.4rem;
             flex-shrink: 0;
         }
-        .settings-section-icon.blue { background: rgba(13,110,253,0.1); color: #0d6efd; }
-        .settings-section-icon.orange { background: rgba(253,126,20,0.1); color: #fd7e14; }
-
-        .settings-field label {
-            font-size: 0.78rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-            color: var(--text-muted, #6c757d);
-            margin-bottom: 0.4rem;
-        }
-        .settings-field .form-control,
-        .settings-field .input-group .form-control {
-            border: 1.5px solid var(--border-color, #dee2e6);
-            border-radius: 8px;
-            padding: 0.65rem 0.9rem;
-            font-size: 0.95rem;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            background: var(--card-bg, #fff);
-        }
-        .settings-field .form-control:focus {
-            border-color: #0d6efd;
-            box-shadow: 0 0 0 3px rgba(13,110,253,0.12);
-        }
-        .settings-field .input-group-text {
-            border: 1.5px solid var(--border-color, #dee2e6);
-            border-left: none;
-            border-radius: 0 8px 8px 0;
-            background: var(--bg-secondary, #f8f9fa);
-            color: var(--text-muted, #6c757d);
+        
+        .settings-section-icon.blue { background: rgba(3, 169, 244, 0.1); color: var(--dx-primary); }
+        .settings-section-icon.orange { background: rgba(255, 152, 0, 0.1); color: var(--dx-warning); }
+        
+        .settings-section-title h6 {
+            margin: 0 0 0.25rem 0;
+            font-size: 1.1rem;
             font-weight: 600;
+            color: var(--dx-text);
         }
-        .settings-field .input-group .form-control {
-            border-right: none;
-            border-radius: 8px 0 0 8px;
+        
+        .settings-section-title small {
+            color: var(--dx-text-secondary);
+            font-size: 0.85rem;
         }
-        .settings-card {
-            border: 0;
-            border-radius: 16px;
-            box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+        
+        /* Grid Layout */
+        .settings-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        
+        .full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .settings-field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .settings-field label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--dx-text-secondary);
+            text-transform: uppercase;
+        }
+        
+        .settings-input-group {
+            display: flex;
+            align-items: center;
+            border: 1px solid var(--dx-border);
+            border-radius: 8px;
             overflow: hidden;
+            background: var(--dx-bg);
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
-        .info-note {
-            font-size: 0.8rem;
-            color: var(--text-muted, #6c757d);
-            margin-top: 0.4rem;
+        
+        .settings-input-group:focus-within {
+            border-color: var(--dx-primary);
+            box-shadow: 0 0 0 3px rgba(3, 169, 244, 0.1);
         }
-        .save-bar {
-            background: var(--card-bg, #fff);
-            border-top: 1px solid var(--border-color, #e9ecef);
+        
+        .settings-input-icon {
+            padding: 0 1rem;
+            color: var(--dx-text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .settings-input-icon.right {
+            border-left: 1px solid var(--dx-border);
+        }
+        
+        .settings-input {
+            flex: 1;
+            border: none;
+            padding: 0.75rem 1rem;
+            background: transparent;
+            color: var(--dx-text);
+            outline: none;
+            font-size: 0.95rem;
+            width: 100%;
+        }
+        
+        textarea.settings-input {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        /* Info box */
+        .info-box {
+            display: flex;
+            gap: 1rem;
             padding: 1rem 1.5rem;
-            border-radius: 0 0 16px 16px;
+            background: rgba(255, 152, 0, 0.05);
+            border: 1px solid rgba(255, 152, 0, 0.2);
+            border-radius: 8px;
+            align-items: center;
+        }
+        
+        .info-box i {
+            color: var(--dx-warning);
+            font-size: 1.2rem;
+        }
+        
+        .info-box p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--dx-text-secondary);
+            line-height: 1.5;
+        }
+        
+        /* Save bar */
+        .save-bar {
+            background: var(--dx-bg);
+            border-top: 1px solid var(--dx-border);
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .save-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--dx-text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .save-info i {
+            color: var(--dx-success);
+        }
+        
+        .btn-save {
+            background: var(--dx-primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: background 0.2s;
+        }
+        
+        .btn-save:hover {
+            background: var(--dx-primary-hover);
+        }
+        
+        /* Layout overrides for tax card */
+        .tax-grid {
+            display: grid;
+            grid-template-columns: 1fr 2.5fr;
+            gap: 2rem;
+            align-items: center;
+        }
+        
+        @media (max-width: 768px) {
+            .settings-form-grid, .tax-grid {
+                grid-template-columns: 1fr;
+            }
+            .save-bar {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            .btn-save {
+                width: 100%;
+                justify-content: center;
+            }
         }
     </style>
 </head>
@@ -114,141 +266,121 @@
         <!-- Main Content -->
         <main class="main-content">
             <header class="topbar">
-                <div class="d-flex align-items-center gap-3">
-                    <button class="btn btn-light d-lg-none" id="sidebarToggle"><i class="bi bi-list"></i></button>
+                <div style="display:flex; align-items:center; gap: 1rem;">
+                    <button class="btn" style="background:transparent; border:none; display:none;" id="sidebarToggle"><i class="bi bi-list fs-4"></i></button>
                 </div>
-                <div class="d-flex align-items-center gap-4">
+                <div style="display:flex; align-items:center; gap: 1.5rem;">
                     <div class="dropdown">
-                        <button class="btn border-0 bg-transparent text-body p-2" type="button" data-bs-toggle="dropdown" onclick="loadNotifications()">
-                            <div class="position-relative d-inline-block">
-                                <i class="bi bi-bell fs-5"></i>
-                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notif-badge" style="display:none; font-size: 0.6em; transform: translate(-30%, -30%) !important;"></span>
-                            </div>
+                        <button class="btn" style="background:transparent; border:none; padding:0.5rem; position:relative;" type="button" data-bs-toggle="dropdown" onclick="loadNotifications()">
+                            <i class="bi bi-bell fs-5"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notif-badge" style="display:none; font-size: 0.6em; transform: translate(-30%, -30%) !important;"></span>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="width: 300px; max-height: 400px; overflow-y: auto;" id="notif-list">
                             <li><h6 class="dropdown-header">Notificaciones Pendientes</h6></li>
                         </ul>
                     </div>
-                    <div class="form-check form-switch m-0">
-                        <input class="form-check-input" type="checkbox" role="switch" id="theme-toggle">
-                        <label class="form-check-label" for="theme-toggle"><i class="bi bi-moon-stars"></i></label>
+                    <div class="form-check form-switch m-0" style="display:flex; align-items:center;">
+                        <input class="form-check-input mt-0 me-2" type="checkbox" role="switch" id="theme-toggle">
+                        <label class="form-check-label mb-0" for="theme-toggle"><i class="bi bi-moon-stars"></i></label>
                     </div>
                 </div>
             </header>
 
-            <div class="page-content">
-                <div class="mb-4">
-                    <h2 class="fw-bold mb-1">Configuración General</h2>
-                    <p class="text-muted mb-0">Administra la información de tu empresa y los parámetros de facturación.</p>
+            <div class="settings-container">
+                <div class="settings-header">
+                    <h2>Configuración General</h2>
+                    <p>Administra la información de tu empresa y los parámetros de facturación.</p>
                 </div>
 
-                <div class="row g-4" style="max-width: 860px;">
+                <!-- Company Profile Card -->
+                <div class="settings-card">
+                    <div class="settings-card-body">
+                        <div class="settings-section-header">
+                            <div class="settings-section-icon blue">
+                                <i class="bi bi-building"></i>
+                            </div>
+                            <div class="settings-section-title">
+                                <h6>Perfil de la Empresa</h6>
+                                <small>Datos que aparecerán en tickets y reportes</small>
+                            </div>
+                        </div>
 
-                    <!-- Company Profile Card -->
-                    <div class="col-12">
-                        <div class="settings-card card">
-                            <div class="card-body p-4">
-                                <div class="settings-section-header">
-                                    <div class="settings-section-icon blue">
-                                        <i class="bi bi-building"></i>
-                                    </div>
-                                    <div>
-                                        <h6 class="fw-bold mb-0">Perfil de la Empresa</h6>
-                                        <small class="text-muted">Datos que aparecerán en tickets y reportes</small>
-                                    </div>
+                        <div class="settings-form-grid">
+                            <div class="settings-field full-width">
+                                <label for="companyName">Nombre de la Empresa *</label>
+                                <div class="settings-input-group">
+                                    <input type="text" class="settings-input" id="companyName" placeholder="Ej. Mi Empresa S.A. de C.V." required>
                                 </div>
-
-                                <div class="row g-3">
-                                    <div class="col-12">
-                                        <div class="settings-field">
-                                            <label for="companyName">Nombre de la Empresa *</label>
-                                            <input type="text" class="form-control" id="companyName" placeholder="Ej. Mi Empresa S.A. de C.V." required>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="settings-field">
-                                            <label for="companyPhone">Teléfono</label>
-                                            <div class="input-group">
-                                                <span class="input-group-text" style="border-right:none; border-radius:8px 0 0 8px; border:1.5px solid var(--border-color,#dee2e6); background:var(--bg-secondary,#f8f9fa);">
-                                                    <i class="bi bi-telephone text-muted"></i>
-                                                </span>
-                                                <input type="text" class="form-control" id="companyPhone" placeholder="Ej. 2222-3333" style="border-left:none; border-radius:0 8px 8px 0;">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="settings-field">
-                                            <label for="companyEmail">Correo Electrónico</label>
-                                            <div class="input-group">
-                                                <span class="input-group-text" style="border-right:none; border-radius:8px 0 0 8px; border:1.5px solid var(--border-color,#dee2e6); background:var(--bg-secondary,#f8f9fa);">
-                                                    <i class="bi bi-envelope text-muted"></i>
-                                                </span>
-                                                <input type="email" class="form-control" id="companyEmail" placeholder="correo@empresa.com" style="border-left:none; border-radius:0 8px 8px 0;">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <div class="settings-field">
-                                            <label for="companyAddress">Dirección</label>
-                                            <div class="input-group align-items-start">
-                                                <span class="input-group-text" style="border-right:none; border-radius:8px 0 0 8px; border:1.5px solid var(--border-color,#dee2e6); background:var(--bg-secondary,#f8f9fa); padding-top:0.7rem;">
-                                                    <i class="bi bi-geo-alt text-muted"></i>
-                                                </span>
-                                                <textarea class="form-control" id="companyAddress" rows="2" placeholder="Dirección completa de la empresa" style="border-left:none; border-radius:0 8px 8px 0; resize:none;"></textarea>
-                                            </div>
-                                        </div>
-                                    </div>
+                            </div>
+                            
+                            <div class="settings-field">
+                                <label for="companyPhone">Teléfono</label>
+                                <div class="settings-input-group">
+                                    <div class="settings-input-icon"><i class="bi bi-telephone"></i></div>
+                                    <input type="text" class="settings-input" id="companyPhone" placeholder="Ej. 2222-3333">
+                                </div>
+                            </div>
+                            
+                            <div class="settings-field">
+                                <label for="companyEmail">Correo Electrónico</label>
+                                <div class="settings-input-group">
+                                    <div class="settings-input-icon"><i class="bi bi-envelope"></i></div>
+                                    <input type="email" class="settings-input" id="companyEmail" placeholder="correo@empresa.com">
+                                </div>
+                            </div>
+                            
+                            <div class="settings-field full-width">
+                                <label for="companyAddress">Dirección</label>
+                                <div class="settings-input-group" style="align-items: flex-start;">
+                                    <div class="settings-input-icon" style="padding-top: 0.75rem;"><i class="bi bi-geo-alt"></i></div>
+                                    <textarea class="settings-input" id="companyAddress" placeholder="Dirección completa de la empresa"></textarea>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Tax Card -->
-                    <div class="col-12">
-                        <div class="settings-card card">
-                            <div class="card-body p-4">
-                                <div class="settings-section-header">
-                                    <div class="settings-section-icon orange">
-                                        <i class="bi bi-receipt-cutoff"></i>
-                                    </div>
-                                    <div>
-                                        <h6 class="fw-bold mb-0">Impuestos y Facturación</h6>
-                                        <small class="text-muted">Configura el porcentaje de IVA aplicado en ventas</small>
-                                    </div>
-                                </div>
+                <!-- Tax Card -->
+                <div class="settings-card">
+                    <div class="settings-card-body">
+                        <div class="settings-section-header">
+                            <div class="settings-section-icon orange">
+                                <i class="bi bi-receipt-cutoff"></i>
+                            </div>
+                            <div class="settings-section-title">
+                                <h6>Impuestos y Facturación</h6>
+                                <small>Configura el porcentaje de IVA aplicado en ventas</small>
+                            </div>
+                        </div>
 
-                                <div class="row g-3 align-items-center">
-                                    <div class="col-md-4">
-                                        <div class="settings-field">
-                                            <label for="taxPercentage">Porcentaje de IVA *</label>
-                                            <div class="input-group">
-                                                <input type="number" step="0.01" min="0" max="100" class="form-control" id="taxPercentage" placeholder="13.00" required>
-                                                <span class="input-group-text">%</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-8 d-flex align-items-end pb-1">
-                                        <div class="d-flex align-items-start gap-2 p-3 rounded-3" style="background: rgba(253,126,20,0.08); border: 1px solid rgba(253,126,20,0.2);">
-                                            <i class="bi bi-info-circle text-warning mt-1" style="flex-shrink:0;"></i>
-                                            <p class="mb-0 text-muted" style="font-size:0.82rem; line-height:1.5;">
-                                                Este porcentaje se aplica <strong>únicamente a productos no exentos</strong> al momento de realizar una venta. Los productos exentos mantienen su precio base.
-                                            </p>
-                                        </div>
-                                    </div>
+                        <div class="tax-grid">
+                            <div class="settings-field">
+                                <label for="taxPercentage">Porcentaje de IVA *</label>
+                                <div class="settings-input-group">
+                                    <input type="number" step="0.01" min="0" max="100" class="settings-input" id="taxPercentage" placeholder="13.00" required>
+                                    <div class="settings-input-icon right">%</div>
                                 </div>
                             </div>
-
-                            <!-- Save Bar -->
-                            <div class="save-bar d-flex justify-content-between align-items-center">
-                                <p class="mb-0 text-muted small"><i class="bi bi-shield-check me-1 text-success"></i>Los cambios se reflejan en todo el sistema al guardar.</p>
-                                <button type="button" class="btn btn-primary px-4 py-2 fw-semibold" id="btnSaveSettings" onclick="saveSettings()">
-                                    <i class="bi bi-floppy me-2"></i>Guardar Configuración
-                                </button>
+                            
+                            <div class="info-box">
+                                <i class="bi bi-info-circle"></i>
+                                <p>Este porcentaje se aplica <strong>únicamente a productos no exentos</strong> al momento de realizar una venta. Los productos exentos mantienen su precio base.</p>
                             </div>
                         </div>
                     </div>
 
+                    <!-- Save Bar -->
+                    <div class="save-bar">
+                        <div class="save-info">
+                            <i class="bi bi-shield-check"></i>
+                            <span>Los cambios se reflejan en todo el sistema al guardar.</span>
+                        </div>
+                        <button type="button" class="btn-save" id="btnSaveSettings" onclick="saveSettings()">
+                            <i class="bi bi-floppy"></i> Guardar Configuración
+                        </button>
+                    </div>
                 </div>
+
             </div>
         </main>
     </div>

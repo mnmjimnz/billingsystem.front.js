@@ -89,6 +89,7 @@
                                         <th>Estado / Fondos</th>
                                         <th>Teléfono</th>
                                         <th>Serie Venta</th>
+                                        <th class="text-center">Cajas</th>
                                         <th class="text-end pe-4">Acciones</th>
                                     </tr>
                                 </thead>
@@ -127,11 +128,67 @@
                             <label class="form-label text-secondary small fw-semibold">Teléfono</label>
                             <input type="text" class="form-control" id="branchPhone">
                         </div>
+                        <div class="mb-3" id="fundsContainer">
+                            <label class="form-label text-secondary small fw-semibold">Fondo Inicial (Saldo Disponible) *</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" class="form-control" id="branchFunds" step="0.01" min="0" value="0.00" required>
+                            </div>
+                            <small class="text-muted">Este saldo no podrá ser editado después. Solo cambiará por movimientos de caja.</small>
+                        </div>
                     </form>
                 </div>
                 <div class="modal-footer border-top-0 pt-0">
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
                     <button type="button" class="btn btn-primary" id="btnSaveBranch" onclick="saveBranch()">Guardar Sucursal</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cash Registers Modal -->
+    <div class="modal fade" id="cashRegistersModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header border-bottom-0 pb-0">
+                    <h5 class="modal-title fw-bold">Cajas Registradoras - <span id="crBranchName"></span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="crBranchId">
+                    <form id="cashRegisterForm" class="mb-4 p-3 bg-light rounded" onsubmit="saveCashRegister(event)">
+                        <input type="hidden" id="crId">
+                        <div class="row g-2 align-items-end">
+                            <div class="col-md-5">
+                                <label class="form-label small fw-semibold">Nombre de la Caja *</label>
+                                <input type="text" class="form-control" id="crName" required placeholder="Ej. Caja 1">
+                            </div>
+                            <div class="col-md-5">
+                                <label class="form-label small fw-semibold">Descripción</label>
+                                <input type="text" class="form-control" id="crDesc" placeholder="Opcional">
+                            </div>
+                            <div class="col-md-2">
+                                <button type="submit" class="btn btn-primary w-100" id="btnSaveCR">Guardar</button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre</th>
+                                    <th>Descripción</th>
+                                    <th>Estado</th>
+                                    <th class="text-end">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cr-table-body">
+                                <!-- Dinámico -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
