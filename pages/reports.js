@@ -45,8 +45,15 @@ function getFilterParams() {
     const user = document.getElementById('filterUserId').value;
     
     let query = `?`;
-    if (start) query += `startDate=${start}&`;
-    if (end) query += `endDate=${end}T23:59:59&`;
+    if (start) {
+        // Convert to UTC ISO string to ensure backend compares correctly regardless of timezone
+        const startDateUtc = new Date(start + 'T00:00:00').toISOString();
+        query += `startDate=${startDateUtc}&`;
+    }
+    if (end) {
+        const endDateUtc = new Date(end + 'T23:59:59').toISOString();
+        query += `endDate=${endDateUtc}&`;
+    }
     if (branch) query += `branchId=${branch}&`;
     if (user) query += `userId=${user}&`;
     
