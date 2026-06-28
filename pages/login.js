@@ -18,7 +18,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 localStorage.setItem('userRole', data.user.role);
                 localStorage.setItem('userName', data.user.name);
                 localStorage.setItem('userId', data.user.id);
-                window.location.href = 'reports.html';
+                localStorage.setItem('userPermissions', JSON.stringify(data.permissions || []));
+                window.location.href = 'pos.html';
             } else {
                 showError('Respuesta inesperada del servidor.');
                 resetButton(btn, originalText);
