@@ -562,3 +562,33 @@ body {
 @media (min-width: 992px) {
     .mobile-cart-header { display: none; }
 }
+
+.cart-items-container {
+    overflow-y: auto;
+    flex: 1 1 auto;
+}
+@media (min-width: 992px) {
+    .cart-items-container {
+        max-height: calc(100vh - 480px);
+    }
+}
+@media (max-width: 991px) {
+    .cart-items-container {
+        max-height: none !important;
+    }
+}
+
+.pos-cart-items-container {
+    overflow-y: auto;
+    flex: 1 1 auto;
+}
+@media (min-width: 992px) {
+    .pos-cart-items-container {
+        max-height: calc(100vh - 380px);
+    }
+}
+@media (max-width: 991px) {
+    .pos-cart-items-container {
+        max-height: none !important;
+    }
+}
