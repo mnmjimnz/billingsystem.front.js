@@ -12,9 +12,14 @@
         <!-- Sidebar -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <a href="#" class="sidebar-brand">
+                <div class="d-flex w-100 justify-content-between align-items-center pe-3">
+                <a href="#" class="sidebar-brand mb-0">
                     <i class="bi bi-hexagon-fill"></i> <span id="brand-name">Nexus POS</span>
                 </a>
+                <button class="btn p-1 text-danger border-0" onclick="logout()" title="Cerrar Sesi�n">
+                    <i class="bi bi-power fs-4"></i>
+                </button>
+            </div>
             </div>
             <nav class="sidebar-nav">
                 <a href="pos.html" class="nav-link"><i class="bi bi-shop"></i> Punto de Venta</a>
@@ -33,9 +38,7 @@
                 <a href="branch-movements.html" class="nav-link"><i class="bi bi-arrow-left-right"></i> Movimientos</a>
                 <a href="settings.html" class="nav-link"><i class="bi bi-gear"></i> Configuración</a>
             </nav>
-            <div class="sidebar-footer">
-                <button class="btn btn-outline-danger w-100 fw-semibold" onclick="logout()"><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</button>
-            </div>
+            
         </aside>
 
         <!-- Main Content -->
@@ -85,8 +88,13 @@
                     </div>
 
                     <!-- Cart Sidebar -->
-                    <div class="col-lg-4">
+                    <div class="col-lg-4" id="cart-panel">
                         <div class="card border-info shadow-sm" style="border-width: 2px;">
+                            
+                            <div class="mobile-cart-header" onclick="document.getElementById('cart-panel').classList.toggle('expanded')">
+                                <div class="mobile-cart-handle"></div>
+                                <div class="mobile-cart-title">detalles de compra</div>
+                            </div>
                             <div class="card-header border-bottom pt-4 pb-3">
                                 <h5 class="fw-bold mb-0"><i class="bi bi-journal-text text-info me-2"></i> Detalles de la Compra</h5>
                             </div>
