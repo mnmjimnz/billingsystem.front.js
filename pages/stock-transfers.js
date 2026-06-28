@@ -74,11 +74,11 @@ async function loadTransfers() {
         tbody.innerHTML = transfers.map(t => `
             <tr>
                 <td>${new Date(t.createdAt).toLocaleString()}</td>
-                <td class="fw-semibold">${t.productName}</td>
-                <td><span class="badge bg-light text-dark border">${t.fromBranchName}</span></td>
-                <td><span class="badge bg-info text-white">${t.toBranchName}</span></td>
+                <td class="fw-semibold">${t.product?.name || ""}</td>
+                <td><span class="badge bg-light text-dark border">${t.fromBranch?.name || ""}</span></td>
+                <td><span class="badge bg-info text-white">${t.toBranch?.name || ""}</span></td>
                 <td class="fw-bold">${t.quantity}</td>
-                <td>${t.userName}</td>
+                <td>${t.user?.fullName || ""}</td>
                 <td class="small text-muted">${t.notes || ''}</td>
             </tr>
         `).join('');
