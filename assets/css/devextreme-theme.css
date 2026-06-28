@@ -569,7 +569,7 @@ body {
 }
 @media (min-width: 992px) {
     .cart-items-container {
-        max-height: calc(100vh - 480px);
+        /* max-height handled by flex */
     }
 }
 @media (max-width: 991px) {
@@ -584,7 +584,7 @@ body {
 }
 @media (min-width: 992px) {
     .pos-cart-items-container {
-        max-height: calc(100vh - 380px);
+        /* max-height handled by flex */
     }
 }
 @media (max-width: 991px) {
