@@ -22,28 +22,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
     
-    document.getElementById('btn-modal-save-purchase').addEventListener('click', () => {
-        savePurchase();
-    });
     
-    function handleResponsiveCheckout() {
-        const formContainer = document.getElementById('checkout-form-container');
-        const desktopParent = document.getElementById('desktop-checkout-parent');
-        const mobileParent = document.getElementById('mobile-checkout-modal-body');
-
-        if (window.innerWidth < 992) {
-            if (formContainer && formContainer.parentElement !== mobileParent) {
-                mobileParent.appendChild(formContainer);
-            }
-        } else {
-            if (formContainer && formContainer.parentElement !== desktopParent) {
-                desktopParent.appendChild(formContainer);
-            }
-        }
-    }
     
-    window.addEventListener('resize', handleResponsiveCheckout);
-    handleResponsiveCheckout();
+    
 
 });
 

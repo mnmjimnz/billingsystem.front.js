@@ -592,3 +592,15 @@ body {
         max-height: none !important;
     }
 }
+
+/* Responsive Utilities */
+@media (min-width: 992px) {
+    .d-lg-block { display: block !important; }
+    .d-lg-flex { display: flex !important; }
+    .d-lg-none { display: none !important; }
+}
+@media (min-width: 768px) {
+    .d-md-block { display: block !important; }
+    .d-md-flex { display: flex !important; }
+    .d-md-none { display: none !important; }
+}

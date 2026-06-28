@@ -46,7 +46,9 @@ async function loadProducts(page = 1) {
                     <td>$${p.cost.toFixed(2)}</td>
                     <td><span class="badge ${p.stock > 10 ? 'bg-success' : 'bg-danger'} rounded-pill">${p.stock}</span></td>
                     <td class="text-end pe-4">
-                        <button class="btn btn-sm btn-outline-info me-1 rounded-circle" onclick='showBarcodes(${JSON.stringify(p)})' title="Ver Códigos"><i class="bi bi-upc-scan"></i></button>
+                        
+                          <button class="btn btn-sm btn-outline-success me-1 rounded-circle" onclick='showStockBreakdown(${JSON.stringify(p)})' title="Ver Stock Sucursales"><i class="bi bi-boxes"></i></button>
+                          <button class="btn btn-sm btn-outline-info me-1 rounded-circle" onclick='showBarcodes(${JSON.stringify(p)})' title="Ver Códigos"><i class="bi bi-upc-scan"></i></button>
                         <button class="btn btn-sm btn-outline-primary rounded-circle" onclick='editProduct(${JSON.stringify(p)})' title="Editar"><i class="bi bi-pencil"></i></button>
                     </td>
                 </tr>
@@ -182,4 +184,25 @@ function triggerDownload(url, filename) {
 function logout() {
     ApiClient.clearToken();
     window.location.href = 'login.html';
+}
+
+async function showStockBreakdown(product) {
+    try {
+        const stocks = await ApiClient.request(`/Products/${product.id}/stock`);
+        const tbody = document.getElementById('stockBreakdownBody');
+        if (stocks && stocks.length > 0) {
+            tbody.innerHTML = stocks.map(s => `
+                <tr>
+                    <td>${s.branchName}</td>
+                    <td class="text-end fw-bold ${s.stock > 10 ? 'text-success' : 'text-danger'}">${s.stock}</td>
+                </tr>
+            `).join('');
+        } else {
+            tbody.innerHTML = '<tr><td colspan="2" class="text-center">No hay registros de stock por sucursal para este producto.</td></tr>';
+        }
+        document.getElementById('stockBreakdownProductName').innerText = product.name;
+        new bootstrap.Modal(document.getElementById('stockBreakdownModal')).show();
+    } catch (e) {
+        showToast("Error al cargar el stock por sucursal", "error");
+    }
 }
