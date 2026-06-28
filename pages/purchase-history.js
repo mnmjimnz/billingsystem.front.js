@@ -78,25 +78,40 @@ async function viewPurchaseDetails(id) {
         }
 
         const p = data.purchase;
-        document.getElementById('detailInvoice').innerText = p.invoiceNumber;
-        document.getElementById('detailDate').innerText = new Date(p.createdAt || p.date).toLocaleString();
-        document.getElementById('detailSupplier').innerText = p.supplierName || 'N/A';
-        document.getElementById('detailStatus').innerText = `${p.status} - ${p.paymentType}`;
-        document.getElementById('detailTotal').innerText = `$${p.total.toFixed(2)}`;
+        const invoiceNumber = p.InvoiceNumber || p.invoiceNumber || p.invoicenumber || '-';
+        const dateVal = p.CreatedAt || p.createdAt || p.createdat || p.Date || p.date || new Date();
+        const supplierName = p.SupplierName || p.supplierName || p.suppliername || 'N/A';
+        const status = p.Status || p.status || '-';
+        const paymentType = p.PaymentType || p.paymentType || p.paymenttype || '-';
+        const total = p.Total || p.total || 0;
+
+        document.getElementById('detailInvoice').innerText = invoiceNumber;
+        document.getElementById('detailDate').innerText = new Date(dateVal).toLocaleString();
+        document.getElementById('detailSupplier').innerText = supplierName;
+        document.getElementById('detailStatus').innerText = `${status} - ${paymentType}`;
+        document.getElementById('detailTotal').innerText = `$${Number(total).toFixed(2)}`;
 
         const tbody = document.getElementById('detailProductsBody');
         tbody.innerHTML = '';
         
-        data.details.forEach(d => {
-            tbody.innerHTML += `
-                <tr>
-                    <td>${d.productCode || '-'}</td>
-                    <td>${d.productName || 'Producto Eliminado'}</td>
-                    <td class="text-center">${d.quantity}</td>
-                    <td class="text-end">$${d.unitCost.toFixed(2)}</td>
-                    <td class="text-end fw-bold">$${d.subtotal.toFixed(2)}</td>
-                </tr>`;
-        });
+        if (data.details && data.details.length > 0) {
+            data.details.forEach(d => {
+                const productCode = d.ProductCode || d.productCode || d.productcode || '-';
+                const productName = d.ProductName || d.productName || d.productname || 'Producto Eliminado';
+                const quantity = d.Quantity || d.quantity || 0;
+                const unitCost = d.UnitCost || d.unitCost || d.unitcost || 0;
+                const subtotal = d.Subtotal || d.subtotal || 0;
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${productCode}</td>
+                        <td>${productName}</td>
+                        <td class="text-center">${quantity}</td>
+                        <td class="text-end">$${Number(unitCost).toFixed(2)}</td>
+                        <td class="text-end fw-bold">$${Number(subtotal).toFixed(2)}</td>
+                    </tr>`;
+            });
+        }
 
         const modal = new bootstrap.Modal(document.getElementById('purchaseDetailsModal'));
         modal.show();
