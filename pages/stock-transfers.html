@@ -1,4 +1,5 @@
-<!-- Transfer Modal -->
+
+    <!-- Transfer Modal -->
     <div class="modal fade" id="transferModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg rounded-4">
@@ -53,14 +54,70 @@
         </div>
     </div>
 
-    <div class="page-content p-4">
-        <h2 class="mb-4 fw-bold text-dark">Traslados de Sucursal</h2>
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="fw-bold mb-0 text-secondary">Historial de Traslados</h4>
-            <button class="btn btn-primary shadow-sm rounded-pill px-4 fw-semibold" onclick="openTransferModal()">
-                <i class="bi bi-truck me-2"></i> Nuevo Traslado
-            </button>
-        </div>
+    <!DOCTYPE html>
+<html lang="es" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traslados de Sucursal - Sistema de Facturaci�n Premium</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+        <link rel="stylesheet" href="../assets/css/devextreme-theme.css?v=20260627004119">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="d-flex w-100 justify-content-between align-items-center pe-3">
+                <a href="#" class="sidebar-brand mb-0">
+                    <i class="bi bi-hexagon-fill"></i> <span id="brand-name">Nexus POS</span>
+                </a>
+                <button class="btn p-1 text-danger border-0" onclick="logout()" title="Cerrar Sesi�n">
+                    <i class="bi bi-power fs-4"></i>
+                </button>
+            </div>
+            </div>
+            <nav class="sidebar-nav"></nav>
+            
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="topbar">
+                <div class="d-flex align-items-center gap-3">
+                    <button class="btn btn-light d-lg-none" id="sidebarToggle"><i class="bi bi-list"></i></button>
+                    <a href="purchase-history.html" class="btn btn-outline-info ms-3 rounded-pill shadow-sm"><i class="bi bi-clock-history me-1"></i> Ver Historial</a>
+                </div>
+                <div class="d-flex align-items-center gap-4">
+                                        
+                    <div class="dropdown me-3">
+                          <button class="btn border-0 bg-transparent text-body p-2" type="button" data-bs-toggle="dropdown" onclick="loadNotifications()">
+                              <div class="position-relative d-inline-block">
+                                  <i class="bi bi-bell fs-5"></i>
+                                  <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notif-badge" style="display:none; font-size: 0.6em; transform: translate(-30%, -30%) !important;"></span>
+                              </div>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="width: 300px; max-height: 400px; overflow-y: auto;" id="notif-list">
+                              <li><h6 class="dropdown-header">Notificaciones Pendientes</h6></li>
+                              <!-- Loaded via JS -->
+                          </ul>
+                      </div>
+                      <div class="form-check form-switch m-0">
+                        <input class="form-check-input" type="checkbox" role="switch" id="theme-toggle">
+                        <label class="form-check-label" for="theme-toggle"><i class="bi bi-moon-stars"></i></label>
+                    </div>
+                </div>
+            </header>
+
+            
+            <div class="page-content p-4">
+                <h2 class="mb-4 fw-bold text-dark">Traslados de Sucursal</h2>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="fw-bold mb-0 text-secondary">Historial de Traslados</h4>
+                    <button class="btn btn-primary shadow-sm rounded-pill px-4 fw-semibold" onclick="openTransferModal()">
+                        <i class="bi bi-truck me-2"></i> Nuevo Traslado
+                    </button>
+                </div>
                 <div class="card shadow-sm border-0 rounded-4">
                     <div class="card-header bg-white border-bottom pt-4 pb-3 px-4">
                         <div class="row align-items-center">
@@ -91,238 +148,70 @@
                     </div>
                 </div>
             </div>
-        <!DOCTYPE html>
-<html lang="es" data-bs-theme="light">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Productos - Sistema de Facturación Premium</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-        <link rel="stylesheet" href="../assets/css/devextreme-theme.css?v=20260627004119">
-</head>
-<body>
-    <div class="app-container">
-        <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <div class="d-flex w-100 justify-content-between align-items-center pe-3">
-                <a href="#" class="sidebar-brand mb-0">
-                    <i class="bi bi-hexagon-fill"></i> <span id="brand-name">Nexus POS</span>
-                </a>
-                <button class="btn p-1 text-danger border-0" onclick="logout()" title="Cerrar Sesi�n">
-                    <i class="bi bi-power fs-4"></i>
-                </button>
-            </div>
-            </div>
-            <nav class="sidebar-nav"></nav>
-            
-        </aside>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <header class="topbar">
-                <div class="d-flex align-items-center gap-3">
-                    <button class="btn btn-light d-lg-none" id="sidebarToggle"><i class="bi bi-list"></i></button>
-                </div>
-                <div class="d-flex align-items-center gap-4">
-                                        
-                    <div class="dropdown me-3">
-                          <button class="btn border-0 bg-transparent text-body p-2" type="button" data-bs-toggle="dropdown" onclick="loadNotifications()">
-                              <div class="position-relative d-inline-block">
-                                  <i class="bi bi-bell fs-5"></i>
-                                  <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notif-badge" style="display:none; font-size: 0.6em; transform: translate(-30%, -30%) !important;"></span>
-                              </div>
-                          </button>
-                          <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="width: 300px; max-height: 400px; overflow-y: auto;" id="notif-list">
-                              <li><h6 class="dropdown-header">Notificaciones Pendientes</h6></li>
-                              <!-- Loaded via JS -->
-                          </ul>
-                      </div>
-                      <div class="form-check form-switch m-0">
-                        <input class="form-check-input" type="checkbox" role="switch" id="theme-toggle">
-                        <label class="form-check-label" for="theme-toggle"><i class="bi bi-moon-stars"></i></label>
-                    </div>
-                </div>
-            </header>
-
-            <div class="page-content">
-                <h2 class="mb-4 fw-bold text-dark">Inventario y Productos</h2>
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h4 class="fw-bold mb-0 text-secondary">Catálogo General</h4>
-                    <button class="btn btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#productModal" onclick="clearForm()">
-                        <i class="bi bi-plus-lg me-1"></i> Nuevo Producto
-                    </button>
-                </div>
-
-                <div class="row mb-3">
-                    <div class="col-md-4">
-                        <input type="text" id="searchInput" class="form-control" placeholder="Buscar productos..." onkeyup="handleSearch(event)">
-                    </div>
-                </div>
-
-                <div class="card border-0">
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle mb-0">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th class="ps-4">ID</th>
-                                        <th>Código</th>
-                                        <th>Nombre del Producto</th>
-                                        <th>Precio</th>
-                                        <th>Costo</th>
-                                        <th>Stock</th>
-                                        <th class="text-end pe-4">Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="products-table-body">
-                                    <!-- Dinámico -->
-                                </tbody>
-                            </table>
-                        </div>
-                        <div id="pagination-container" class="p-3 border-top"></div>
-                    </div>
-                </div>
-            </div>
         </main>
     </div>
 
-    <!-- Modal -->
-    <div class="modal fade" id="productModal" tabindex="-1">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0">
-          <div class="modal-header border-0 pb-0">
-            <h5 class="modal-title fw-bold" id="modalTitle">Nuevo Producto</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body p-4">
-            <form id="productForm">
-                <input type="hidden" id="productId">
-                <div class="form-floating mb-3">
-                    <input type="text" class="form-control" id="productBarcode" placeholder="Código" required>
-                    <label>Código de Barras</label>
-                </div>
-                <div class="form-floating mb-3">
-                    <input type="text" class="form-control" id="productName" placeholder="Nombre" required>
-                    <label>Nombre del Producto</label>
-                </div>
-                <div class="row g-3 mb-3">
-                    <div class="col-6">
-                        <div class="form-floating">
-                            <input type="number" step="0.01" class="form-control" id="productPrice" placeholder="Precio" required>
-                            <label>Precio Venta ($)</label>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="form-floating">
-                            <input type="number" step="0.01" class="form-control" id="productCost" placeholder="Costo" required>
-                            <label>Costo ($)</label>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-floating">
-                    <select class="form-select" id="productCategory" required>
-                        <!-- Loaded dynamically -->
-                    </select>
-                    <label>Categoría</label>
-                </div>
-            
-                  <div class="form-check mt-3 mb-2">
-                      <input class="form-check-input" type="checkbox" id="productIsTaxExempt">
-                      <label class="form-check-label" for="productIsTaxExempt">
-                          Producto Exento de Impuestos
-                      </label>
-                  </div>
-              </form>
-          </div>
-          <div class="modal-footer border-0 pt-0 pe-4 pb-4">
-            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
-            <button type="button" class="btn btn-primary px-4" onclick="saveProduct()">Guardar</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Barcode/QR Modal -->
-    <div class="modal fade" id="barcodeModal" tabindex="-1">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0">
-          <div class="modal-header border-0 pb-0">
-            <h5 class="modal-title fw-bold" id="barcodeModalTitle">Códigos del Producto</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body text-center p-4">
-            <div class="mb-4">
-                <h6 class="fw-bold text-secondary mb-3">Código de Barras</h6>
-                <div class="bg-light p-3 rounded mb-2 d-inline-block">
-                    <svg id="barcodeSvg"></svg>
-                </div>
-                <div>
-                    <button class="btn btn-sm btn-outline-primary" onclick="downloadBarcode()"><i class="bi bi-download"></i> Descargar Barcode</button>
-                </div>
-            </div>
-            <hr>
-            <div class="mt-4">
-                <h6 class="fw-bold text-secondary mb-3">Código QR</h6>
-                <div class="bg-light p-3 rounded mb-2 d-inline-block">
-                    <canvas id="qrcodeCanvas"></canvas>
-                </div>
-                <div>
-                    <button class="btn btn-sm btn-outline-primary" onclick="downloadQR()"><i class="bi bi-download"></i> Descargar QR</button>
-                </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.1/qrcode.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+    <!-- Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
     <script src="../assets/js/theme.js?v=20260627004119"></script>
     <script src="../assets/js/toast.js?v=20260627004119"></script>
     <script src="../assets/js/apiClient.js?v=20260627004119"></script>
     <script src="../assets/js/signalr-client.js?v=20260627004119"></script>
-    <script src="../assets/js/pagination.js?v=20260627004119"></script>
     <script src="stock-transfers.js"></script>
     <script src="../assets/js/ui-core.js?v=20260627004119"></script>
+
+    <!-- Mobile Checkout Modal -->
+    <div class="modal fade" id="mobileCheckoutModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0">
+          <div class="modal-header border-0 pb-0">
+            <h5 class="modal-title fw-bold">Completar Compra</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body p-4" id="mobile-checkout-modal-body">
+            
+            <div id="checkout-form-container">
+                <div class="form-floating mb-3 position-relative">
+                <select class="form-select border-info" id="branchSelect" onchange="updateAvailableFunds()">
+                </select>
+                <label>Sucursal</label>
+                <span class="badge bg-success position-absolute top-0 end-0 mt-2 me-2" id="available-funds-badge">Fondos: $0.00</span>
+            </div>
+            <div class="form-floating mb-3">
+                <select class="form-select border-info" id="supplierSelect">
+                </select>
+                <label>Proveedor</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control border-info" id="invoiceInput" placeholder="Factura">
+                <label>Nº de Factura/Documento</label>
+            </div>
+            <div class="form-floating mb-3">
+                <select class="form-select border-info" id="paymentTypeSelect" onchange="toggleAdvancePayment()">
+                    <option value="CASH">Efectivo (Contado)</option>
+                    <option value="CREDIT">Crédito</option>
+                </select>
+                <label>Tipo de Pago</label>
+            </div>
+            <div class="form-floating mb-3" id="divAdvancePayment" style="display:none;">
+                <input type="number" class="form-control border-info" id="advanceInput" step="0.01" min="0" value="0">
+                <label>Abono Inicial</label>
+            </div>
+            </div>
+
+          </div>
+          <div class="modal-footer border-0 pt-0">
+            <button class="btn btn-primary w-100 py-3 fs-5 shadow-sm fw-bold rounded-pill" id="btn-modal-save-purchase">
+                <i class="bi bi-check-circle me-2"></i> Confirmar Ingreso
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script src="../assets/js/menu.js"></script>
-
-
-    <!-- Stock Breakdown Modal -->
-    <div class="modal fade" id="stockBreakdownModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0">
-                <div class="modal-header border-0 pb-0">
-                    <h5 class="modal-title fw-bold">Stock por Sucursal</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body p-4">
-                    <h6 class="text-secondary mb-3" id="stockBreakdownProductName"></h6>
-                    <table class="table table-sm table-borderless">
-                        <tbody id="stockBreakdownBody">
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Barcodes Modal -->
-    <div class="modal fade" id="barcodesModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0">
-                <div class="modal-header border-0 pb-0">
-                    <h5 class="modal-title fw-bold">C�digos de Barras</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body p-4">
-                    <h6 class="text-secondary mb-3" id="barcodesProductName"></h6>
-                    <div id="barcodesList" class="d-flex flex-wrap gap-2"></div>
-                </div>
-            </div>
-        </div>
-    </div>
 </body>
 </html>
+
 
