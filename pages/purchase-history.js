@@ -38,7 +38,12 @@ async function loadPurchases(page = 1) {
                     <td>${item.supplierName || 'Prov-'+item.supplierId}</td>
                     <td>${new Date(item.createdAt).toLocaleString()}</td>
                     <td><span class="badge ${item.paymentType === 'CASH' ? 'bg-success' : 'bg-warning text-dark'}">${paymentType}</span></td>
-                    <td class="fw-bold">$${item.total.toFixed(2)}</td>
+                    <td class="fw-bold">${item.total.toFixed(2)}</td>
+                    <td class="text-center">
+                        <button class="btn btn-sm btn-outline-primary" onclick="viewPurchaseDetails(${item.id})">
+                            <i class="bi bi-eye"></i> Ver
+                        </button>
+                    </td>
                 </tr>
             `;
         });
