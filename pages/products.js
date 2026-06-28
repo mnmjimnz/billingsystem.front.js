@@ -193,7 +193,7 @@ async function showStockBreakdown(product) {
         if (stocks && stocks.length > 0) {
             tbody.innerHTML = stocks.map(s => `
                 <tr>
-                    <td>${s.branchName}</td>
+                    <td>${s.branchname || s.branchName}</td>
                     <td class="text-end fw-bold ${s.stock > 10 ? 'text-success' : 'text-danger'}">${s.stock}</td>
                 </tr>
             `).join('');
