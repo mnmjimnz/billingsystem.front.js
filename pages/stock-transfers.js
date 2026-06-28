@@ -193,8 +193,10 @@ function initUserProfile() {
     const userName = localStorage.getItem('userName');
     const roleName = localStorage.getItem('roleName');
     if (userName) {
-        document.getElementById('userProfileName').innerText = userName;
-        document.getElementById('userProfileRole').innerText = roleName;
+        const nameEl = document.getElementById('userProfileName');
+        const roleEl = document.getElementById('userProfileRole');
+        if (nameEl) nameEl.innerText = userName;
+        if (roleEl) roleEl.innerText = roleName;
     }
 }
 function logout() {
