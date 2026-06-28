@@ -29,7 +29,7 @@ async function loadAllNotifications() {
             const rowClass = isResolved ? '' : 'fw-bold bg-light';
 
             tbody.innerHTML += `
-                <tr class="${rowClass}">
+                <tr class="${rowClass}" style="cursor: pointer;" onclick="window.location.href='${n.type === 'WARNING' ? 'payables.html' : 'receivables.html'}'">
                     <td class="text-muted"><small>${dateStr}</small></td>
                     <td><i class="bi ${typeIcon} fs-5"></i></td>
                     <td>${n.title}</td>
