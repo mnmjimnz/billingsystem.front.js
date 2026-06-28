@@ -16,6 +16,26 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById(id).addEventListener('change', reloadCurrentTab);
     });
 
+    const startInput = document.getElementById('filterStartDate');
+    const endInput = document.getElementById('filterEndDate');
+    
+    startInput.addEventListener('change', (e) => {
+        endInput.min = e.target.value;
+        if (endInput.value && endInput.value < e.target.value) {
+            endInput.value = e.target.value;
+            reloadCurrentTab();
+        }
+    });
+
+    endInput.addEventListener('change', (e) => {
+        startInput.max = e.target.value;
+        if (startInput.value && startInput.value > e.target.value) {
+            startInput.value = e.target.value;
+            reloadCurrentTab();
+        }
+    });
+
+
     await loadFilterOptions();
     loadSalesReport(); // Load first tab by default
 });
@@ -46,12 +66,11 @@ function getFilterParams() {
     
     let query = `?`;
     if (start) {
-        // Convert to UTC ISO string to ensure backend compares correctly regardless of timezone
-        const startDateUtc = new Date(start + 'T00:00:00').toISOString();
+        const startDateUtc = encodeURIComponent(new Date(start + 'T00:00:00').toISOString());
         query += `startDate=${startDateUtc}&`;
     }
     if (end) {
-        const endDateUtc = new Date(end + 'T23:59:59').toISOString();
+        const endDateUtc = encodeURIComponent(new Date(end + 'T23:59:59').toISOString());
         query += `endDate=${endDateUtc}&`;
     }
     if (branch) query += `branchId=${branch}&`;
