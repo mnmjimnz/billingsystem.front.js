@@ -1,3 +1,99 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traslados de Sucursal - Sistema de Facturaci�n Premium</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../assets/css/devextreme-theme.css?v=20260627004119">
+    <script>
+        const theme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-bs-theme', theme);
+    </script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="d-flex w-100 justify-content-between align-items-center pe-3">
+                <a href="#" class="sidebar-brand mb-0">
+                    <i class="bi bi-hexagon-fill"></i> <span id="brand-name">Nexus POS</span>
+                </a>
+                <button class="btn p-1 text-danger border-0" onclick="logout()" title="Cerrar Sesi�n">
+                    <i class="bi bi-power fs-4"></i>
+                </button>
+            </div>
+            </div>
+            <nav class="sidebar-nav"></nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="topbar">
+                <div class="d-flex align-items-center gap-3">
+                    <button class="btn btn-light d-lg-none" id="sidebarToggle"><i class="bi bi-list"></i></button>
+                </div>
+                <div class="d-flex align-items-center gap-4">
+                    <div class="dropdown me-3">
+                          <button class="btn border-0 bg-transparent text-body p-2" type="button" data-bs-toggle="dropdown" onclick="loadNotifications()">
+                              <div class="position-relative d-inline-block">
+                                  <i class="bi bi-bell fs-5"></i>
+                                  <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notif-badge" style="display:none; font-size: 0.6em; transform: translate(-30%, -30%) !important;"></span>
+                              </div>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="width: 300px; max-height: 400px; overflow-y: auto;" id="notif-list">
+                              <li><h6 class="dropdown-header">Notificaciones Pendientes</h6></li>
+                              <!-- Loaded via JS -->
+                          </ul>
+                      </div>
+                      <div class="form-check form-switch m-0">
+                        <input class="form-check-input" type="checkbox" role="switch" id="theme-toggle">
+                        <label class="form-check-label" for="theme-toggle"><i class="bi bi-moon-stars"></i></label>
+                    </div>
+                </div>
+            </header>
+
+            <div class="page-content p-4">
+                <h2 class="mb-4 fw-bold text-dark">Traslados de Sucursal</h2>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="fw-bold mb-0 text-secondary">Historial de Traslados</h4>
+                    <button class="btn btn-primary shadow-sm rounded-pill px-4 fw-semibold" onclick="openTransferModal()">
+                        <i class="bi bi-truck me-2"></i> Nuevo Traslado
+                    </button>
+                </div>
+                <div class="card shadow-sm border-0 rounded-4">
+                    <div class="card-header bg-white border-bottom pt-4 pb-3 px-4">
+                        <div class="row align-items-center">
+                            <div class="col-md-6">
+                                <h5 class="fw-bold mb-0 text-secondary"><i class="bi bi-clock-history me-2"></i> Historial de Traslados</h5>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0" id="transfersTable">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="ps-4">Fecha</th>
+                                        <th>Producto</th>
+                                        <th>Origen</th>
+                                        <th>Destino</th>
+                                        <th>Cantidad</th>
+                                        <th>Usuario</th>
+                                        <th>Notas</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="transfersList">
+                                    <tr><td colspan="7" class="text-center py-4">Cargando traslados...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
 
     <!-- Transfer Modal -->
     <div class="modal fade" id="transferModal" tabindex="-1">
@@ -54,109 +150,6 @@
         </div>
     </div>
 
-    <!DOCTYPE html>
-<html lang="es" data-bs-theme="light">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Traslados de Sucursal - Sistema de Facturaci�n Premium</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-        <link rel="stylesheet" href="../assets/css/devextreme-theme.css?v=20260627004119">
-
-    <script>
-        const theme = localStorage.getItem('theme') || 'light';
-        document.documentElement.setAttribute('data-bs-theme', theme);
-    </script>
-</head>
-<body>
-    <div class="app-container">
-        <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <div class="d-flex w-100 justify-content-between align-items-center pe-3">
-                <a href="#" class="sidebar-brand mb-0">
-                    <i class="bi bi-hexagon-fill"></i> <span id="brand-name">Nexus POS</span>
-                </a>
-                <button class="btn p-1 text-danger border-0" onclick="logout()" title="Cerrar Sesi�n">
-                    <i class="bi bi-power fs-4"></i>
-                </button>
-            </div>
-            </div>
-            <nav class="sidebar-nav"></nav>
-            
-        </aside>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <header class="topbar">
-                <div class="d-flex align-items-center gap-3">
-                    <button class="btn btn-light d-lg-none" id="sidebarToggle"><i class="bi bi-list"></i></button>
-                    <a href="purchase-history.html" class="btn btn-outline-info ms-3 rounded-pill shadow-sm"><i class="bi bi-clock-history me-1"></i> Ver Historial</a>
-                </div>
-                <div class="d-flex align-items-center gap-4">
-                                        
-                    <div class="dropdown me-3">
-                          <button class="btn border-0 bg-transparent text-body p-2" type="button" data-bs-toggle="dropdown" onclick="loadNotifications()">
-                              <div class="position-relative d-inline-block">
-                                  <i class="bi bi-bell fs-5"></i>
-                                  <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notif-badge" style="display:none; font-size: 0.6em; transform: translate(-30%, -30%) !important;"></span>
-                              </div>
-                          </button>
-                          <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="width: 300px; max-height: 400px; overflow-y: auto;" id="notif-list">
-                              <li><h6 class="dropdown-header">Notificaciones Pendientes</h6></li>
-                              <!-- Loaded via JS -->
-                          </ul>
-                      </div>
-                      <div class="form-check form-switch m-0">
-                        <input class="form-check-input" type="checkbox" role="switch" id="theme-toggle">
-                        <label class="form-check-label" for="theme-toggle"><i class="bi bi-moon-stars"></i></label>
-                    </div>
-                </div>
-            </header>
-
-            
-            <div class="page-content p-4">
-                <h2 class="mb-4 fw-bold text-dark">Traslados de Sucursal</h2>
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h4 class="fw-bold mb-0 text-secondary">Historial de Traslados</h4>
-                    <button class="btn btn-primary shadow-sm rounded-pill px-4 fw-semibold" onclick="openTransferModal()">
-                        <i class="bi bi-truck me-2"></i> Nuevo Traslado
-                    </button>
-                </div>
-                <div class="card shadow-sm border-0 rounded-4">
-                    <div class="card-header bg-white border-bottom pt-4 pb-3 px-4">
-                        <div class="row align-items-center">
-                            <div class="col-md-6">
-                                <h5 class="fw-bold mb-0 text-secondary"><i class="bi bi-clock-history me-2"></i> Historial de Traslados</h5>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle mb-0" id="transfersTable">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th class="ps-4">Fecha</th>
-                                        <th>Producto</th>
-                                        <th>Origen</th>
-                                        <th>Destino</th>
-                                        <th>Cantidad</th>
-                                        <th>Usuario</th>
-                                        <th>Notas</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="transfersList">
-                                    <tr><td colspan="7" class="text-center py-4">Cargando traslados...</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </main>
-    </div>
-
     <!-- Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
     <script src="../assets/js/theme.js?v=20260627004119"></script>
@@ -165,58 +158,6 @@
     <script src="../assets/js/signalr-client.js?v=20260627004119"></script>
     <script src="stock-transfers.js"></script>
     <script src="../assets/js/ui-core.js?v=20260627004119"></script>
-
-    <!-- Mobile Checkout Modal -->
-    <div class="modal fade" id="mobileCheckoutModal" tabindex="-1">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0">
-          <div class="modal-header border-0 pb-0">
-            <h5 class="modal-title fw-bold">Completar Compra</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body p-4" id="mobile-checkout-modal-body">
-            
-            <div id="checkout-form-container">
-                <div class="form-floating mb-3 position-relative">
-                <select class="form-select border-info" id="branchSelect" onchange="updateAvailableFunds()">
-                </select>
-                <label>Sucursal</label>
-                <span class="badge bg-success position-absolute top-0 end-0 mt-2 me-2" id="available-funds-badge">Fondos: $0.00</span>
-            </div>
-            <div class="form-floating mb-3">
-                <select class="form-select border-info" id="supplierSelect">
-                </select>
-                <label>Proveedor</label>
-            </div>
-            <div class="form-floating mb-3">
-                <input type="text" class="form-control border-info" id="invoiceInput" placeholder="Factura">
-                <label>Nº de Factura/Documento</label>
-            </div>
-            <div class="form-floating mb-3">
-                <select class="form-select border-info" id="paymentTypeSelect" onchange="toggleAdvancePayment()">
-                    <option value="CASH">Efectivo (Contado)</option>
-                    <option value="CREDIT">Crédito</option>
-                </select>
-                <label>Tipo de Pago</label>
-            </div>
-            <div class="form-floating mb-3" id="divAdvancePayment" style="display:none;">
-                <input type="number" class="form-control border-info" id="advanceInput" step="0.01" min="0" value="0">
-                <label>Abono Inicial</label>
-            </div>
-            </div>
-
-          </div>
-          <div class="modal-footer border-0 pt-0">
-            <button class="btn btn-primary w-100 py-3 fs-5 shadow-sm fw-bold rounded-pill" id="btn-modal-save-purchase">
-                <i class="bi bi-check-circle me-2"></i> Confirmar Ingreso
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <script src="../assets/js/menu.js"></script>
 </body>
 </html>
-
-
