@@ -1,5 +1,6 @@
 let products = [];
 let cart = [];
+        const modalEl = document.getElementById('mobileCheckoutModal'); if(modalEl) { const modal = bootstrap.Modal.getInstance(modalEl); if(modal) modal.hide(); }
 let suppliers = [];
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -11,7 +12,39 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderProducts(e.target.value);
     });
 
-    document.getElementById('btn-save-purchase').addEventListener('click', savePurchase);
+    
+    document.getElementById('btn-save-purchase').addEventListener('click', () => {
+        if (window.innerWidth < 992) {
+            const m = new bootstrap.Modal(document.getElementById('mobileCheckoutModal'));
+            m.show();
+        } else {
+            savePurchase();
+        }
+    });
+    
+    document.getElementById('btn-modal-save-purchase').addEventListener('click', () => {
+        savePurchase();
+    });
+    
+    function handleResponsiveCheckout() {
+        const formContainer = document.getElementById('checkout-form-container');
+        const desktopParent = document.getElementById('desktop-checkout-parent');
+        const mobileParent = document.getElementById('mobile-checkout-modal-body');
+
+        if (window.innerWidth < 992) {
+            if (formContainer && formContainer.parentElement !== mobileParent) {
+                mobileParent.appendChild(formContainer);
+            }
+        } else {
+            if (formContainer && formContainer.parentElement !== desktopParent) {
+                desktopParent.appendChild(formContainer);
+            }
+        }
+    }
+    
+    window.addEventListener('resize', handleResponsiveCheckout);
+    handleResponsiveCheckout();
+
 });
 
 async function loadProducts() {
@@ -268,8 +301,9 @@ async function savePurchase() {
 
     try {
         const btn = document.getElementById('btn-save-purchase');
-        btn.disabled = true;
-        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Procesando...';
+        const btnModal = document.getElementById('btn-modal-save-purchase');
+        btn.disabled = true; if(btnModal) btnModal.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Procesando...'; if(btnModal) btnModal.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Procesando...';
 
         await ApiClient.request('/Purchases', 'POST', dto);
         
@@ -288,8 +322,8 @@ async function savePurchase() {
         updateAvailableFunds();
     } catch (e) {
         showToast("Error procesando la compra o fondos insuficientes.", "error");
-        document.getElementById('btn-save-purchase').disabled = false;
-        document.getElementById('btn-save-purchase').innerHTML = '<i class="bi bi-check-circle me-2"></i> Procesar Ingreso';
+        document.getElementById('btn-save-purchase').disabled = false; if(document.getElementById('btn-modal-save-purchase')) document.getElementById('btn-modal-save-purchase').disabled = false;
+        document.getElementById('btn-save-purchase').innerHTML = '<i class="bi bi-check-circle me-2"></i> Procesar Ingreso'; if(document.getElementById('btn-modal-save-purchase')) document.getElementById('btn-modal-save-purchase').innerHTML = '<i class="bi bi-check-circle me-2"></i> Confirmar Ingreso';
     }
 }
 

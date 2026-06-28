@@ -98,8 +98,9 @@
                             <div class="card-header border-bottom pt-4 pb-3">
                                 <h5 class="fw-bold mb-0"><i class="bi bi-journal-text text-info me-2"></i> Detalles de la Compra</h5>
                             </div>
-                            <div class="card-body p-3 border-bottom bg-light bg-opacity-50">
-                                <div class="form-floating mb-3 position-relative">
+                            <div class="card-body p-3 border-bottom bg-light bg-opacity-50 d-none d-lg-block" id="desktop-checkout-parent">
+                                <div id="checkout-form-container">
+                                  <div class="form-floating mb-3 position-relative">
                                     <select class="form-select border-info" id="branchSelect" onchange="updateAvailableFunds()">
                                         <!-- Loaded by JS -->
                                     </select>
@@ -128,7 +129,9 @@
                                     <label>Abono Inicial</label>
                                 </div>
                             </div>
-                            <div class="card-body p-0" style="max-height: calc(100vh - 480px); overflow-y: auto;">
+                            </div>
+                              </div>
+                              <div class="card-body p-0" style="max-height: calc(100vh - 480px); overflow-y: auto;">
                                 <ul class="list-group list-group-flush" id="cart-items">
                                     <!-- Rendered by JS -->
                                 </ul>
@@ -157,6 +160,27 @@
     <script src="../assets/js/signalr-client.js?v=20260627004119"></script>
     <script src="purchases.js?v=20260627004119"></script>
     <script src="../assets/js/ui-core.js?v=20260627004119"></script>
+
+    <!-- Mobile Checkout Modal -->
+    <div class="modal fade" id="mobileCheckoutModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0">
+          <div class="modal-header border-0 pb-0">
+            <h5 class="modal-title fw-bold">Completar Compra</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body p-4" id="mobile-checkout-modal-body">
+            <!-- Form moves here on mobile -->
+          </div>
+          <div class="modal-footer border-0 pt-0">
+            <button class="btn btn-primary w-100 py-3 fs-5 shadow-sm fw-bold rounded-pill" id="btn-modal-save-purchase">
+                <i class="bi bi-check-circle me-2"></i> Confirmar Ingreso
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
 </body>
 </html>
 
