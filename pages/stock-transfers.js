@@ -108,7 +108,7 @@ async function loadProductStock() {
         try {
             // Need to get specific stock for this branch
             const stock = await ApiClient.request(`/Products/${productId}/stock`);
-            const branchStock = stock.find(s => s.branchId == branchId);
+            const branchStock = stock.find(s => (s.branchid || s.branchId) == branchId);
             const currentStock = branchStock ? branchStock.stock : 0;
             
             stockLabel.innerText = currentStock;
@@ -169,25 +169,7 @@ async function processTransfer() {
     }
 }
 
-function showToast(message, type = 'info') {
-    const toastContainer = document.getElementById('toastContainer');
-    const toastId = 'toast' + Date.now();
-    const bgColor = type === 'success' ? 'bg-success' : type === 'error' ? 'bg-danger' : 'bg-info';
-    
-    const toastHtml = `
-        <div id="${toastId}" class="toast align-items-center text-white ${bgColor} border-0" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="d-flex">
-                <div class="toast-body">${message}</div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-        </div>
-    `;
-    toastContainer.insertAdjacentHTML('beforeend', toastHtml);
-    const toastElement = document.getElementById(toastId);
-    const toast = new bootstrap.Toast(toastElement);
-    toast.show();
-    toastElement.addEventListener('hidden.bs.toast', () => toastElement.remove());
-}
+
 function initUserProfile() {
     document.getElementById('logoutBtn')?.addEventListener('click', logout);
     const userName = localStorage.getItem('userName');
