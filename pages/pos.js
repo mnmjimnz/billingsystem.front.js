@@ -205,7 +205,7 @@ function renderProducts(filter = document.getElementById('search-input').value) 
     
     pagedItems.forEach(p => {
         const div = document.createElement('div');
-        div.className = 'col-md-4 col-sm-6';
+        div.className = 'col-6 col-md-4';
         div.innerHTML = `
             <div class="card h-100 shadow-sm cursor-pointer border-0" onclick="addToCart(${p.id})">
                 <div class="card-body text-center p-4">
