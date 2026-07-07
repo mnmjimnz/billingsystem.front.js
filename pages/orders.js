@@ -227,7 +227,7 @@ async function saveOrder() {
     const lng = document.getElementById('orderLng').value;
 
     if (!customerId || !branchId || !address || !lat || !lng) {
-        showToast("Complete cliente, sucursal, direcci¿n y asegure el pin en el mapa.", "error");
+        showToast("Complete cliente, sucursal, dirección y asegure el pin en el mapa.", "error");
         return;
     }
 
@@ -266,8 +266,9 @@ async function saveOrder() {
 
 function openDeliverModal(id) {
     if (!deliverModalInstance) deliverModalInstance = new bootstrap.Modal(document.getElementById('deliverModal'));
-    confirmStatusModalInstance = new bootstrap.Modal(document.getElementById('confirmStatusModal'));
-    viewOrderModalInstance = new bootstrap.Modal(document.getElementById('viewOrderModal'));
+    if (!confirmStatusModalInstance) confirmStatusModalInstance = new bootstrap.Modal(document.getElementById('confirmStatusModal'));
+    if (!viewOrderModalInstance) viewOrderModalInstance = new bootstrap.Modal(document.getElementById('viewOrderModal'));
+    
     document.getElementById('deliverOrderId').value = id;
     document.getElementById('deliverReceiver').value = '';
     deliverModalInstance.show();
@@ -294,6 +295,7 @@ async function confirmDelivery() {
 }
 
 function cancelOrder(id) {
+    if (!confirmStatusModalInstance) confirmStatusModalInstance = new bootstrap.Modal(document.getElementById('confirmStatusModal'));
     document.getElementById('confirm-icon-wrap').innerHTML = '<i class="bi bi-exclamation-triangle text-danger"></i>';
     document.getElementById('confirm-title').innerText = 'Cancelar Pedido';
     document.getElementById('confirm-message').innerText = '¿Seguro que deseas cancelar este pedido? El stock reservado será devuelto al inventario.';
@@ -308,7 +310,7 @@ function cancelOrder(id) {
             await ApiClient.request(`/Orders/${id}/status`, 'PUT', { Status: 'CANCELLED' });
             showToast("Pedido cancelado y stock devuelto.", "success");
             confirmStatusModalInstance.hide();
-            loadOrders(currentPage);
+            loadOrders();
         } catch(e) {
             showToast(e.message, "error");
         } finally {
@@ -317,7 +319,6 @@ function cancelOrder(id) {
         }
     };
     confirmStatusModalInstance.show();
-} catch (e) { showToast("Error al cancelar", "error"); }
 }
 
 // LOGICAL ROUTING
@@ -381,7 +382,8 @@ function calculateRoute() {
     showToast(`Ruta trazada óptimamente para ${waypoints.length - 1} entregas.`, "success");
 }
 
-async async function viewOrder(id) {
+async function viewOrder(id) {
+    if (!viewOrderModalInstance) viewOrderModalInstance = new bootstrap.Modal(document.getElementById('viewOrderModal'));
     try {
         const order = await ApiClient.request(`/Orders/${id}`);
         document.getElementById('viewOrderId').innerText = '#' + order.id;
@@ -410,8 +412,8 @@ async async function viewOrder(id) {
                     <tr>
                         <td class="fw-medium">${d.productName || 'Producto ' + d.productId}</td>
                         <td>${d.quantity}</td>
-                        <td>${d.unitPrice.toFixed(2)}</td>
-                        <td class="fw-bold">${subtotal.toFixed(2)}</td>
+                        <td>$${d.unitPrice.toFixed(2)}</td>
+                        <td class="fw-bold">$${subtotal.toFixed(2)}</td>
                     </tr>
                 `;
             });
@@ -419,12 +421,11 @@ async async function viewOrder(id) {
             tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">No hay productos</td></tr>';
         }
         
-        document.getElementById('viewOrderTotal').innerText = '
- + total.toFixed(2);
+        document.getElementById('viewOrderTotal').innerText = '$' + total.toFixed(2);
         
         viewOrderModalInstance.show();
     } catch(e) {
-        showToast(e.message, "error");
+        showToast(e.message || "Error al cargar pedido", "error");
     }
 }
 
@@ -449,43 +450,6 @@ window.useMyLocation = function(type) {
         showToast("Geolocalización no soportada en este navegador.", "error");
     }
 }
- + total.toFixed(2);
-        
-        viewOrderModalInstance.show();
-    } catch(e) {
-        showToast(e.message, "error");
-    }
-}
- + total.toFixed(2);
-        
-        viewOrderModalInstance.show();
-    } catch(e) {
-        showToast(e.message, "error");
-    }
-}
-
-
-window.useMyLocation = function(type) {
-    if ("geolocation" in navigator) {
-        navigator.geolocation.getCurrentPosition(function(position) {
-            const lat = position.coords.latitude;
-            const lng = position.coords.longitude;
-            if (type === 'order') {
-                modalMap.setView([lat, lng], 16);
-                modalMarker.setLatLng([lat, lng]);
-                document.getElementById('orderLat').value = lat;
-                document.getElementById('orderLng').value = lng;
-                showToast("Ubicación obtenida.", "success");
-                if (window.updateAddressFromCoords) window.updateAddressFromCoords(lat, lng, 'deliveryAddress');
-            }
-        }, function(error) {
-            showToast("No se pudo obtener la ubicación. Permisos denegados.", "error");
-        });
-    } else {
-        showToast("Geolocalización no soportada en este navegador.", "error");
-    }
-}
-
 
 function logout() {
     localStorage.removeItem('token');
