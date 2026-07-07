@@ -136,20 +136,23 @@ function initMaps() {
     document.getElementById('orderModal').addEventListener('shown.bs.modal', function () {
         setTimeout(() => {
             modalMap.invalidateSize();
-        }, 100);
-        // If branch has coordinates, center map there
-        const branchSelect = document.getElementById('branchSelect');
-        if (branchSelect.selectedIndex > 0) {
-            const opt = branchSelect.options[branchSelect.selectedIndex];
-            if (opt.dataset.lat && opt.dataset.lng) {
-                const lat = parseFloat(opt.dataset.lat);
-                const lng = parseFloat(opt.dataset.lng);
-                modalMap.setView([lat, lng], 14);
-                modalMarker.setLatLng([lat, lng]);
-                document.getElementById('orderLat').value = lat.toFixed(6);
-                document.getElementById('orderLng').value = lng.toFixed(6);
+            // If branch has coordinates, center map there
+            const branchSelect = document.getElementById('branchSelect');
+            if (branchSelect.selectedIndex > 0) {
+                const opt = branchSelect.options[branchSelect.selectedIndex];
+                if (opt.dataset.lat && opt.dataset.lng) {
+                    const lat = parseFloat(opt.dataset.lat);
+                    const lng = parseFloat(opt.dataset.lng);
+                    modalMap.setView([lat, lng], 14);
+                    modalMarker.setLatLng([lat, lng]);
+                    document.getElementById('orderLat').value = lat.toFixed(6);
+                    document.getElementById('orderLng').value = lng.toFixed(6);
+                }
+            } else {
+                modalMap.setView([14.6349, -90.5069], 13);
+                modalMarker.setLatLng([14.6349, -90.5069]);
             }
-        }
+        }, 300);
     });
     
     // Also fix main map when tab is shown

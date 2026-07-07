@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     branchModalInstance = new bootstrap.Modal(document.getElementById('branchModal'));
     confirmStatusModalInstance = new bootstrap.Modal(document.getElementById('confirmStatusModal'));
     cashRegistersModalInstance = new bootstrap.Modal(document.getElementById('cashRegistersModal'));
+    initBranchMap();
     await loadBranches();
 });
 
@@ -323,14 +324,19 @@ function initBranchMap() {
 document.getElementById('branchModal').addEventListener('shown.bs.modal', function () {
     initBranchMap();
     setTimeout(() => {
-        branchMap.invalidateSize();
-        const lat = document.getElementById('branchLatitude').value;
-        const lng = document.getElementById('branchLongitude').value;
-        if (lat && lng) {
-            branchMap.setView([lat, lng], 16);
-            branchMarker.setLatLng([lat, lng]);
+        if (branchMap) {
+            branchMap.invalidateSize();
+            const lat = document.getElementById('branchLatitude').value;
+            const lng = document.getElementById('branchLongitude').value;
+            if (lat && lng) {
+                branchMap.setView([lat, lng], 16);
+                branchMarker.setLatLng([lat, lng]);
+            } else {
+                branchMap.setView([14.6349, -90.5069], 13);
+                branchMarker.setLatLng([14.6349, -90.5069]);
+            }
         }
-    }, 100);
+    }, 300);
 });
 
 window.useMyLocation = function(type) {
