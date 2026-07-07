@@ -351,12 +351,12 @@ window.useMyLocation = function(type) {
                 branchMarker.setLatLng([lat, lng]);
                 document.getElementById('branchLatitude').value = lat;
                 document.getElementById('branchLongitude').value = lng;
-                showToast("Ubicaci�n obtenida.", "success");
+                showToast("Ubicación obtenida.", "success");
             }
         }, function(error) {
             showToast("No se pudo obtener la ubicaci�n. Permisos denegados.", "error");
         });
     } else {
-        showToast("Geolocalizaci�n no soportada en este navegador.", "error");
+        showToast("Geolocalización no soportada en este navegador.", "error");
     }
 }

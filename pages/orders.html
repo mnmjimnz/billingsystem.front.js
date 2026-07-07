@@ -28,7 +28,7 @@
                 <a href="#" class="sidebar-brand mb-0">
                     <i class="bi bi-hexagon-fill"></i> <span id="brand-name">Nexus POS</span>
                 </a>
-                <button class="btn p-1 text-danger border-0" onclick="logout()" title="Cerrar Sesi�n">
+                <button class="btn p-1 text-danger border-0" onclick="logout()" title="Cerrar Sesión">
                     <i class="bi bi-power fs-4"></i>
                 </button>
             </div>
@@ -78,7 +78,7 @@
                                                 <th class="ps-4">No. Pedido</th>
                                                 <th>Fecha</th>
                                                 <th>Cliente</th>
-                                                <th>Direcci�n</th>
+                                                <th>Dirección</th>
                                                 <th>Total</th>
                                                 <th>Estado</th>
                                                 <th>Acciones</th>
@@ -137,10 +137,10 @@
                                 </div>
                                 <div class="form-floating mb-3">
                                     <input type="text" class="form-control" id="deliveryAddress" required placeholder="Ej. Calle 123">
-                                    <label>Direcci�n de Entrega</label>
+                                    <label>Dirección de Entrega</label>
                                 </div>
                                 
-                                <h6 class="fw-bold text-secondary mt-4 mb-3">Selecci�n de Productos</h6>
+                                <h6 class="fw-bold text-secondary mt-4 mb-3">Selección de Productos</h6>
                                 <div class="input-group mb-3">
                                     <select class="form-select" id="productSelect"></select>
                                     <input type="number" class="form-control" id="productQty" value="1" min="1" style="max-width: 100px;">
@@ -171,11 +171,11 @@
                         <div class="mb-2">
                             <div class="d-flex justify-content-between align-items-end mb-3">
                                 <div>
-                                    <h6 class="fw-bold text-secondary mb-1"><i class="bi bi-geo-alt"></i> Ubicaci�n de Entrega (Mapa)</h6>
+                                    <h6 class="fw-bold text-secondary mb-1"><i class="bi bi-geo-alt"></i> Ubicación de Entrega (Mapa)</h6>
                                     <p class="small text-muted mb-0">Haz clic en el mapa o arrastra el marcador para la entrega.</p>
                                 </div>
-                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="useMyLocation('order')">
-                                    <i class="bi bi-crosshair"></i> Usar Mi Ubicaci�n
+                                <button type="button" class="btn btn-sm btn-outline-primary d-inline-flex align-items-center gap-1" style="height: fit-content;" onclick="useMyLocation('order')">
+                                    <i class="bi bi-crosshair"></i> Mi Ubicación
                                 </button>
                             </div>
                             <div id="order-map"></div>
