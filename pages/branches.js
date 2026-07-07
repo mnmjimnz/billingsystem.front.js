@@ -332,8 +332,10 @@ document.getElementById('branchModal').addEventListener('shown.bs.modal', functi
                 branchMap.setView([lat, lng], 16);
                 branchMarker.setLatLng([lat, lng]);
             } else {
+                // Automatically request location for new records
                 branchMap.setView([14.6349, -90.5069], 13);
                 branchMarker.setLatLng([14.6349, -90.5069]);
+                window.useMyLocation('branch');
             }
         }
     }, 300);

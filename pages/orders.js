@@ -151,6 +151,7 @@ function initMaps() {
             } else {
                 modalMap.setView([14.6349, -90.5069], 13);
                 modalMarker.setLatLng([14.6349, -90.5069]);
+                window.useMyLocation('order');
             }
         }, 300);
     });
