@@ -385,8 +385,11 @@ function calculateRoute() {
 async function viewOrder(id) {
     if (!viewOrderModalInstance) viewOrderModalInstance = new bootstrap.Modal(document.getElementById('viewOrderModal'));
     try {
-        const order = await ApiClient.request(`/Orders/${id}`);
-        document.getElementById('viewOrderId').innerText = '#' + order.id;
+        const res = await ApiClient.request(`/Orders/${id}`);
+        const order = res.order || res;
+        const details = res.details || order.details || [];
+
+        document.getElementById('viewOrderId').innerText = '#' + (order.id || order.orderNumber || '');
         document.getElementById('viewOrderCustomer').innerText = order.customerName || 'N/A';
         document.getElementById('viewOrderBranch').innerText = order.branchName || 'N/A';
         document.getElementById('viewOrderAddress').innerText = order.deliveryAddress || 'N/A';
@@ -396,7 +399,7 @@ async function viewOrder(id) {
             case 'PENDING': statusBadge = '<span class="badge bg-warning text-dark px-3 py-2">PENDIENTE</span>'; break;
             case 'DELIVERED': statusBadge = '<span class="badge bg-success px-3 py-2">ENTREGADO</span>'; break;
             case 'CANCELLED': statusBadge = '<span class="badge bg-danger px-3 py-2">CANCELADO</span>'; break;
-            default: statusBadge = `<span class="badge bg-secondary px-3 py-2">${order.status}</span>`; break;
+            default: statusBadge = `<span class="badge bg-secondary px-3 py-2">${order.status || ''}</span>`; break;
         }
         document.getElementById('viewOrderStatus').innerHTML = statusBadge;
         
@@ -404,15 +407,17 @@ async function viewOrder(id) {
         tbody.innerHTML = '';
         let total = 0;
         
-        if (order.details && order.details.length > 0) {
-            order.details.forEach(d => {
-                const subtotal = d.quantity * d.unitPrice;
+        if (details.length > 0) {
+            details.forEach(d => {
+                const price = d.price || 0;
+                const qty = d.quantity || 1;
+                const subtotal = qty * price;
                 total += subtotal;
                 tbody.innerHTML += `
                     <tr>
                         <td class="fw-medium">${d.productName || 'Producto ' + d.productId}</td>
-                        <td>${d.quantity}</td>
-                        <td>$${d.unitPrice.toFixed(2)}</td>
+                        <td>${qty}</td>
+                        <td>$${price.toFixed(2)}</td>
                         <td class="fw-bold">$${subtotal.toFixed(2)}</td>
                     </tr>
                 `;
