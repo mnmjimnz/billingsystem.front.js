@@ -312,12 +312,14 @@ function initBranchMap() {
         const coords = e.target.getLatLng();
         document.getElementById('branchLatitude').value = coords.lat.toFixed(6);
         document.getElementById('branchLongitude').value = coords.lng.toFixed(6);
+        if (window.updateAddressFromCoords) window.updateAddressFromCoords(coords.lat, coords.lng, 'branchAddress');
     });
 
     branchMap.on('click', function (e) {
         branchMarker.setLatLng(e.latlng);
         document.getElementById('branchLatitude').value = e.latlng.lat.toFixed(6);
         document.getElementById('branchLongitude').value = e.latlng.lng.toFixed(6);
+        if (window.updateAddressFromCoords) window.updateAddressFromCoords(e.latlng.lat, e.latlng.lng, 'branchAddress');
     });
 }
 
@@ -352,6 +354,7 @@ window.useMyLocation = function(type) {
                 document.getElementById('branchLatitude').value = lat;
                 document.getElementById('branchLongitude').value = lng;
                 showToast("Ubicación obtenida.", "success");
+                if (window.updateAddressFromCoords) window.updateAddressFromCoords(lat, lng, 'branchAddress');
             }
         }, function(error) {
             showToast("No se pudo obtener la ubicaci�n. Permisos denegados.", "error");

@@ -124,12 +124,14 @@ function initMaps() {
         const coords = e.target.getLatLng();
         document.getElementById('orderLat').value = coords.lat.toFixed(6);
         document.getElementById('orderLng').value = coords.lng.toFixed(6);
+        if (window.updateAddressFromCoords) window.updateAddressFromCoords(coords.lat, coords.lng, 'deliveryAddress');
     });
 
     modalMap.on('click', function (e) {
         modalMarker.setLatLng(e.latlng);
         document.getElementById('orderLat').value = e.latlng.lat.toFixed(6);
         document.getElementById('orderLng').value = e.latlng.lng.toFixed(6);
+        if (window.updateAddressFromCoords) window.updateAddressFromCoords(e.latlng.lat, e.latlng.lng, 'deliveryAddress');
     });
 
     // Fix map rendering issue in Bootstrap Modal
@@ -374,6 +376,7 @@ window.useMyLocation = function(type) {
                 document.getElementById('orderLat').value = lat;
                 document.getElementById('orderLng').value = lng;
                 showToast("Ubicación obtenida.", "success");
+                if (window.updateAddressFromCoords) window.updateAddressFromCoords(lat, lng, 'deliveryAddress');
             }
         }, function(error) {
             showToast("No se pudo obtener la ubicaci�n. Permisos denegados.", "error");

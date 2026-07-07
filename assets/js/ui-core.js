@@ -138,3 +138,19 @@ window.bootstrap = {
         }
     }
 };
+
+
+window.updateAddressFromCoords = async function(lat, lng, inputId) {
+    try {
+        const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`, {
+            headers: { 'Accept-Language': 'es' }
+        });
+        const data = await response.json();
+        if (data && data.display_name) {
+            const el = document.getElementById(inputId);
+            if (el) el.value = data.display_name;
+        }
+    } catch (e) {
+        console.error("Geocoding error:", e);
+    }
+};
