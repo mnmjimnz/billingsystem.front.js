@@ -119,6 +119,17 @@
                             <label class="form-label text-secondary small fw-semibold">Teléfono</label>
                             <input type="text" class="form-control" id="branchPhone">
                         </div>
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <label class="form-label text-secondary fw-bold mb-0">Ubicación en el Mapa</label>
+                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="useMyLocation('branch')">
+                                    <i class="bi bi-crosshair"></i> Mi Ubicación
+                                </button>
+                            </div>
+                            <div id="branch-map" style="height: 350px; width: 100%; border-radius: 8px;"></div>
+                            <input type="hidden" id="branchLatitude">
+                            <input type="hidden" id="branchLongitude">
+                        </div>
                         <div class="mb-3" id="fundsContainer">
                             <label class="form-label text-secondary small fw-semibold">Fondo Inicial (Saldo Disponible) *</label>
                             <div class="input-group">
