@@ -12,6 +12,7 @@ const MENU_ITEMS = [
     { url: 'reports.html', icon: 'bi-bar-chart-fill', text: 'Reportes', permission: 'VIEW_REPORTS' },
     { url: 'products.html', icon: 'bi-box-seam', text: 'Productos', permission: 'MANAGE_PRODUCTS' },
     { url: 'kardex.html', icon: 'bi-card-list', text: 'Kardex de Inventario', permission: 'VIEW_KARDEX' },
+    { url: 'orders.html', icon: 'bi-signpost-split', text: 'Pedidos y Entregas', permission: 'MANAGE_ORDERS' },
     { url: 'stock-transfers.html', icon: 'bi-truck', text: 'Traslados de Sucursal', permission: 'MANAGE_TRANSFERS' },
     { url: 'categories.html', icon: 'bi-tags', text: 'Categorías', permission: 'MANAGE_CATEGORIES' },
     { url: 'customers.html', icon: 'bi-people', text: 'Clientes', permission: 'MANAGE_CUSTOMERS' },
