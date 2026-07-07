@@ -357,3 +357,24 @@ function viewOrder(id) {
     // For simplicity, just shows a toast or implement a viewer modal
     showToast("Funci�n ver detalles en desarrollo.", "info");
 }
+
+
+window.useMyLocation = function(type) {
+    if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            if (type === 'order') {
+                modalMap.setView([lat, lng], 16);
+                modalMarker.setLatLng([lat, lng]);
+                document.getElementById('orderLat').value = lat;
+                document.getElementById('orderLng').value = lng;
+                showToast("Ubicaci�n obtenida.", "success");
+            }
+        }, function(error) {
+            showToast("No se pudo obtener la ubicaci�n. Permisos denegados.", "error");
+        });
+    } else {
+        showToast("Geolocalizaci�n no soportada en este navegador.", "error");
+    }
+}

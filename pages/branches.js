@@ -295,3 +295,60 @@ function logout() {
     ApiClient.clearToken();
     window.location.href = 'login.html';
 }
+
+
+let branchMap;
+let branchMarker;
+
+function initBranchMap() {
+    if (branchMap) return; // already init
+    branchMap = L.map('branch-map').setView([14.6349, -90.5069], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(branchMap);
+    
+    branchMarker = L.marker([14.6349, -90.5069], { draggable: true }).addTo(branchMap);
+    
+    branchMarker.on('dragend', function (e) {
+        const coords = e.target.getLatLng();
+        document.getElementById('branchLatitude').value = coords.lat.toFixed(6);
+        document.getElementById('branchLongitude').value = coords.lng.toFixed(6);
+    });
+
+    branchMap.on('click', function (e) {
+        branchMarker.setLatLng(e.latlng);
+        document.getElementById('branchLatitude').value = e.latlng.lat.toFixed(6);
+        document.getElementById('branchLongitude').value = e.latlng.lng.toFixed(6);
+    });
+}
+
+document.getElementById('branchModal').addEventListener('shown.bs.modal', function () {
+    initBranchMap();
+    setTimeout(() => {
+        branchMap.invalidateSize();
+        const lat = document.getElementById('branchLatitude').value;
+        const lng = document.getElementById('branchLongitude').value;
+        if (lat && lng) {
+            branchMap.setView([lat, lng], 16);
+            branchMarker.setLatLng([lat, lng]);
+        }
+    }, 100);
+});
+
+window.useMyLocation = function(type) {
+    if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            if (type === 'branch' && branchMap) {
+                branchMap.setView([lat, lng], 16);
+                branchMarker.setLatLng([lat, lng]);
+                document.getElementById('branchLatitude').value = lat;
+                document.getElementById('branchLongitude').value = lng;
+                showToast("Ubicaci�n obtenida.", "success");
+            }
+        }, function(error) {
+            showToast("No se pudo obtener la ubicaci�n. Permisos denegados.", "error");
+        });
+    } else {
+        showToast("Geolocalizaci�n no soportada en este navegador.", "error");
+    }
+}

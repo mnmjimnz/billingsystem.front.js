@@ -15,7 +15,7 @@
     <style>
         body { visibility: hidden; }
         #map-container { height: 600px; width: 100%; border-radius: 12px; }
-        #order-map { height: 300px; width: 100%; border-radius: 8px; margin-bottom: 1rem; }
+        #order-map { height: 450px; width: 100%; border-radius: 8px; margin-bottom: 1rem; }
         .nav-tabs .nav-link { font-weight: 600; }
     </style>
 </head>
@@ -118,8 +118,8 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-4">
-                    <div class="row">
-                        <div class="col-md-7 border-end pe-4">
+                    <div>
+                        <div class="mb-4">
                             <form id="orderForm" onsubmit="event.preventDefault();">
                                 <div class="row g-3 mb-3">
                                     <div class="col-md-6">
@@ -167,24 +167,20 @@
                                 </table>
                             </form>
                         </div>
-                        <div class="col-md-5 ps-4">
-                            <h6 class="fw-bold text-secondary mb-3">Ubicaci�n de Entrega (Mapa)</h6>
-                            <p class="small text-muted mb-2">Haz clic en el mapa o arrastra el marcador para seleccionar las coordenadas exactas de entrega.</p>
-                            <div id="order-map"></div>
-                            <div class="row g-2">
-                                <div class="col-6">
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control form-control-sm" id="orderLat" readonly>
-                                        <label>Latitud</label>
-                                    </div>
+                        <hr class="my-4">
+                        <div class="mb-2">
+                            <div class="d-flex justify-content-between align-items-end mb-3">
+                                <div>
+                                    <h6 class="fw-bold text-secondary mb-1"><i class="bi bi-geo-alt"></i> Ubicaci�n de Entrega (Mapa)</h6>
+                                    <p class="small text-muted mb-0">Haz clic en el mapa o arrastra el marcador para la entrega.</p>
                                 </div>
-                                <div class="col-6">
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control form-control-sm" id="orderLng" readonly>
-                                        <label>Longitud</label>
-                                    </div>
-                                </div>
+                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="useMyLocation('order')">
+                                    <i class="bi bi-crosshair"></i> Usar Mi Ubicaci�n
+                                </button>
                             </div>
+                            <div id="order-map"></div>
+                            <input type="hidden" id="orderLat">
+                            <input type="hidden" id="orderLng">
                         </div>
                     </div>
                 </div>
