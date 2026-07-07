@@ -93,6 +93,8 @@ function editBranch(branch) {
     document.getElementById('branchId').value = branch.id;
     document.getElementById('branchName').value = branch.name;
     document.getElementById('branchAddress').value = branch.address || '';
+    document.getElementById('branchLatitude').value = branch.latitude || '';
+    document.getElementById('branchLongitude').value = branch.longitude || '';
     document.getElementById('branchPhone').value = branch.phone || '';
     document.getElementById('fundsContainer').style.display = 'none'; // Hide when editing
     document.getElementById('branchModalLabel').innerText = 'Editar Sucursal';

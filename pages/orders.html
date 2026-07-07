@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedidos y Rutas - Sistema de Facturaci�n</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../assets/css/devextreme-theme.css?v=20260627004119">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+    <script>
+        const theme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-bs-theme', theme);
+    </script>
+    <style>
+        body { visibility: hidden; }
+        #map-container { height: 600px; width: 100%; border-radius: 12px; }
+        #order-map { height: 300px; width: 100%; border-radius: 8px; margin-bottom: 1rem; }
+        .nav-tabs .nav-link { font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="d-flex w-100 justify-content-between align-items-center pe-3">
+                <a href="#" class="sidebar-brand mb-0">
+                    <i class="bi bi-hexagon-fill"></i> <span id="brand-name">Nexus POS</span>
+                </a>
+                <button class="btn p-1 text-danger border-0" onclick="logout()" title="Cerrar Sesi�n">
+                    <i class="bi bi-power fs-4"></i>
+                </button>
+            </div>
+            </div>
+            <nav class="sidebar-nav"></nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="topbar">
+                <div class="d-flex align-items-center gap-3">
+                    <button class="btn btn-light d-lg-none" id="sidebarToggle"><i class="bi bi-list"></i></button>
+                </div>
+                <div class="d-flex align-items-center gap-4">
+                      <div class="form-check form-switch m-0">
+                        <input class="form-check-input" type="checkbox" role="switch" id="theme-toggle">
+                        <label class="form-check-label" for="theme-toggle"><i class="bi bi-moon-stars"></i></label>
+                    </div>
+                </div>
+            </header>
+
+            <div class="page-content p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="mb-0 fw-bold text-dark">Pedidos y Entregas</h2>
+                    <button class="btn btn-primary shadow-sm rounded-pill px-4 fw-semibold" onclick="openOrderModal()">
+                        <i class="bi bi-box-seam me-2"></i> Nuevo Pedido
+                    </button>
+                </div>
+
+                <ul class="nav nav-tabs mb-4" id="ordersTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="list-tab" data-bs-toggle="tab" data-bs-target="#list" type="button" role="tab">Lista de Pedidos</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="map-tab" data-bs-toggle="tab" data-bs-target="#map-view" type="button" role="tab">Rutas de Entrega</button>
+                    </li>
+                </ul>
+
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="list" role="tabpanel">
+                        <div class="card shadow-sm border-0 rounded-4">
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover align-middle mb-0">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th class="ps-4">No. Pedido</th>
+                                                <th>Fecha</th>
+                                                <th>Cliente</th>
+                                                <th>Direcci�n</th>
+                                                <th>Total</th>
+                                                <th>Estado</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="ordersList">
+                                            <tr><td colspan="7" class="text-center py-4">Cargando...</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-pane fade" id="map-view" role="tabpanel">
+                        <div class="card shadow-sm border-0 rounded-4">
+                            <div class="card-header bg-white border-bottom pt-3 pb-2 px-4 d-flex justify-content-between align-items-center">
+                                <h5 class="fw-bold mb-0 text-secondary"><i class="bi bi-map me-2"></i> Trazado de Ruta Inteligente</h5>
+                                <button class="btn btn-sm btn-outline-primary" onclick="calculateRoute()">Calcular Ruta (Cercanos primero)</button>
+                            </div>
+                            <div class="card-body p-2">
+                                <div id="map-container"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Order Modal -->
+    <div class="modal fade" id="orderModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4">
+                <div class="modal-header border-bottom-0 pb-0 px-4 pt-4">
+                    <h5 class="modal-title fw-bold">Registrar Nuevo Pedido</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="row">
+                        <div class="col-md-7 border-end pe-4">
+                            <form id="orderForm" onsubmit="event.preventDefault();">
+                                <div class="row g-3 mb-3">
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <select class="form-select" id="customerSelect" required></select>
+                                            <label>Cliente</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <select class="form-select" id="branchSelect" required></select>
+                                            <label>Sucursal (Origen)</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" id="deliveryAddress" required placeholder="Ej. Calle 123">
+                                    <label>Direcci�n de Entrega</label>
+                                </div>
+                                
+                                <h6 class="fw-bold text-secondary mt-4 mb-3">Selecci�n de Productos</h6>
+                                <div class="input-group mb-3">
+                                    <select class="form-select" id="productSelect"></select>
+                                    <input type="number" class="form-control" id="productQty" value="1" min="1" style="max-width: 100px;">
+                                    <button class="btn btn-outline-primary" type="button" onclick="addProduct()">Agregar</button>
+                                </div>
+                                
+                                <table class="table table-sm align-middle mt-3">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Producto</th>
+                                            <th>Cant.</th>
+                                            <th>Precio</th>
+                                            <th>Total</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="cartItems"></tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th colspan="3" class="text-end">Total Pedido:</th>
+                                            <th colspan="2" class="fs-5 text-primary" id="cartTotal">$0.00</th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </form>
+                        </div>
+                        <div class="col-md-5 ps-4">
+                            <h6 class="fw-bold text-secondary mb-3">Ubicaci�n de Entrega (Mapa)</h6>
+                            <p class="small text-muted mb-2">Haz clic en el mapa o arrastra el marcador para seleccionar las coordenadas exactas de entrega.</p>
+                            <div id="order-map"></div>
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control form-control-sm" id="orderLat" readonly>
+                                        <label>Latitud</label>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control form-control-sm" id="orderLng" readonly>
+                                        <label>Longitud</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-top-0 px-4 pb-4">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary px-4" onclick="saveOrder()" id="btnSaveOrder">Guardar Pedido</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Deliver Modal -->
+    <div class="modal fade" id="deliverModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4">
+                <div class="modal-header border-bottom-0 pb-0 px-4 pt-4">
+                    <h5 class="modal-title fw-bold">Confirmar Entrega</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <p class="mb-3">Al confirmar la entrega, se generar� la venta / factura autom�ticamente en el sistema y se dar� por finalizado el pedido.</p>
+                    <input type="hidden" id="deliverOrderId">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="deliverReceiver" required>
+                        <label>Nombre de quien recibe</label>
+                    </div>
+                </div>
+                <div class="modal-footer border-top-0 px-4 pb-4">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-success px-4" onclick="confirmDelivery()" id="btnDeliver">Confirmar y Facturar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+    <script src="../assets/js/theme.js?v=20260627004119"></script>
+    <script src="../assets/js/toast.js?v=20260627004119"></script>
+    <script src="../assets/js/apiClient.js?v=20260627004119"></script>
+    <script src="../assets/js/signalr-client.js?v=20260627004119"></script>
+    <script src="orders.js"></script>
+    <script src="../assets/js/ui-core.js?v=20260627004119"></script>
+    <script src="../assets/js/menu.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.body.style.visibility = "visible";
+        });
+    </script>
+</body>
+</html>
