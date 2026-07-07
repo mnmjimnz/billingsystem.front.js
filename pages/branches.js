@@ -107,13 +107,21 @@ async function saveBranch() {
     const name = document.getElementById('branchName').value;
     const address = document.getElementById('branchAddress').value;
     const phone = document.getElementById('branchPhone').value;
+    const lat = document.getElementById('branchLatitude').value;
+    const lng = document.getElementById('branchLongitude').value;
 
     if (!name) {
         showToast('El nombre de la sucursal es requerido.', 'error');
         return;
     }
 
-    const payload = { name, address, phone };
+    const payload = { 
+        name, 
+        address, 
+        phone,
+        latitude: lat ? parseFloat(lat) : null,
+        longitude: lng ? parseFloat(lng) : null
+    };
 
     try {
         const btn = document.getElementById('btnSaveBranch');

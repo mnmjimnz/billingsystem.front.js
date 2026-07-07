@@ -83,27 +83,31 @@ function renderOrdersTable() {
     }
 
     tbody.innerHTML = orders.map(o => {
+        let status = o.status || o.Status || '';
         let badge = 'bg-secondary';
-        if (o.status === 'PENDING') badge = 'bg-warning text-dark';
-        if (o.status === 'DELIVERED') badge = 'bg-success';
-        if (o.status === 'CANCELLED') badge = 'bg-danger';
+        if (status === 'PENDING') badge = 'bg-warning text-dark';
+        if (status === 'DELIVERED') badge = 'bg-success';
+        if (status === 'CANCELLED') badge = 'bg-danger';
 
-        let actions = `<button class="btn btn-sm btn-outline-info me-1" onclick="viewOrder(${o.id})" title="Ver detalles"><i class="bi bi-eye"></i></button>`;
-        if (o.status === 'PENDING') {
+        let actions = `<button class="btn btn-sm btn-outline-info me-1" onclick="viewOrder(${o.id || o.Id})" title="Ver detalles"><i class="bi bi-eye"></i></button>`;
+        if (status === 'PENDING') {
             actions += `
-                <button class="btn btn-sm btn-outline-success me-1" onclick="openDeliverModal(${o.id})" title="Marcar Entregado"><i class="bi bi-check-circle"></i></button>
-                <button class="btn btn-sm btn-outline-danger" onclick="cancelOrder(${o.id})" title="Cancelar Pedido"><i class="bi bi-x-circle"></i></button>
+                <button class="btn btn-sm btn-outline-success me-1" onclick="openDeliverModal(${o.id || o.Id})" title="Marcar Entregado"><i class="bi bi-check-circle"></i></button>
+                <button class="btn btn-sm btn-outline-danger" onclick="cancelOrder(${o.id || o.Id})" title="Cancelar Pedido"><i class="bi bi-x-circle"></i></button>
             `;
         }
 
+        const dateStr = o.createdAt || o.createdat || o.CreatedAt;
+        const total = o.total || o.Total || 0;
+        
         return `
         <tr>
-            <td class="fw-bold">${o.orderNumber || ''}</td>
-            <td>${new Date(o.createdAt).toLocaleString()}</td>
-            <td>${o.customerName || ''}</td>
-            <td>${o.deliveryAddress || ''}</td>
-            <td class="fw-bold text-primary">$${(o.total || 0).toFixed(2)}</td>
-            <td><span class="badge ${badge}">${o.status}</span></td>
+            <td class="fw-bold">${o.orderNumber || o.ordernumber || o.OrderNumber || ''}</td>
+            <td>${dateStr ? new Date(dateStr).toLocaleString() : ''}</td>
+            <td>${o.customerName || o.customername || o.CustomerName || ''}</td>
+            <td>${o.deliveryAddress || o.deliveryaddress || o.DeliveryAddress || ''}</td>
+            <td class="fw-bold text-primary">$${total.toFixed(2)}</td>
+            <td><span class="badge ${badge}">${status}</span></td>
             <td>${actions}</td>
         </tr>
     `}).join('');
