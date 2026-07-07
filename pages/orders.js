@@ -293,13 +293,31 @@ async function confirmDelivery() {
     }
 }
 
-async function cancelOrder(id) {
-    if (!confirm("¿Seguro que deseas cancelar este pedido? El stock será devuelto al inventario.")) return;
-    try {
-        await ApiClient.request(`/Orders/${id}/status`, 'PUT', { Status: 'CANCELLED' });
-        showToast("Pedido cancelado y stock devuelto.", "success");
-        loadOrders();
-    } catch (e) { showToast("Error al cancelar", "error"); }
+function cancelOrder(id) {
+    document.getElementById('confirm-icon-wrap').innerHTML = '<i class="bi bi-exclamation-triangle text-danger"></i>';
+    document.getElementById('confirm-title').innerText = 'Cancelar Pedido';
+    document.getElementById('confirm-message').innerText = '¿Seguro que deseas cancelar este pedido? El stock reservado será devuelto al inventario.';
+    
+    const btn = document.getElementById('btn-confirm-action');
+    btn.className = 'btn px-4 fw-semibold btn-danger';
+    
+    btn.onclick = async () => {
+        try {
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Cancelando...';
+            await ApiClient.request(`/Orders/${id}/status`, 'PUT', { Status: 'CANCELLED' });
+            showToast("Pedido cancelado y stock devuelto.", "success");
+            confirmStatusModalInstance.hide();
+            loadOrders(currentPage);
+        } catch(e) {
+            showToast(e.message, "error");
+        } finally {
+            btn.disabled = false;
+            btn.innerText = 'Confirmar Cancelación';
+        }
+    };
+    confirmStatusModalInstance.show();
+} catch (e) { showToast("Error al cancelar", "error"); }
 }
 
 // LOGICAL ROUTING
@@ -363,9 +381,51 @@ function calculateRoute() {
     showToast(`Ruta trazada óptimamente para ${waypoints.length - 1} entregas.`, "success");
 }
 
-function viewOrder(id) {
-    // For simplicity, just shows a toast or implement a viewer modal
-    showToast("Función ver detalles en desarrollo.", "info");
+async async function viewOrder(id) {
+    try {
+        const order = await ApiClient.request(`/Orders/${id}`);
+        document.getElementById('viewOrderId').innerText = '#' + order.id;
+        document.getElementById('viewOrderCustomer').innerText = order.customerName || 'N/A';
+        document.getElementById('viewOrderBranch').innerText = order.branchName || 'N/A';
+        document.getElementById('viewOrderAddress').innerText = order.deliveryAddress || 'N/A';
+        
+        let statusBadge = '';
+        switch(order.status) {
+            case 'PENDING': statusBadge = '<span class="badge bg-warning text-dark px-3 py-2">PENDIENTE</span>'; break;
+            case 'DELIVERED': statusBadge = '<span class="badge bg-success px-3 py-2">ENTREGADO</span>'; break;
+            case 'CANCELLED': statusBadge = '<span class="badge bg-danger px-3 py-2">CANCELADO</span>'; break;
+            default: statusBadge = `<span class="badge bg-secondary px-3 py-2">${order.status}</span>`; break;
+        }
+        document.getElementById('viewOrderStatus').innerHTML = statusBadge;
+        
+        const tbody = document.getElementById('viewOrderItems');
+        tbody.innerHTML = '';
+        let total = 0;
+        
+        if (order.details && order.details.length > 0) {
+            order.details.forEach(d => {
+                const subtotal = d.quantity * d.unitPrice;
+                total += subtotal;
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="fw-medium">${d.productName || 'Producto ' + d.productId}</td>
+                        <td>${d.quantity}</td>
+                        <td>${d.unitPrice.toFixed(2)}</td>
+                        <td class="fw-bold">${subtotal.toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+        } else {
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">No hay productos</td></tr>';
+        }
+        
+        document.getElementById('viewOrderTotal').innerText = '
+ + total.toFixed(2);
+        
+        viewOrderModalInstance.show();
+    } catch(e) {
+        showToast(e.message, "error");
+    }
 }
 
 
@@ -388,4 +448,47 @@ window.useMyLocation = function(type) {
     } else {
         showToast("Geolocalización no soportada en este navegador.", "error");
     }
+}
+ + total.toFixed(2);
+        
+        viewOrderModalInstance.show();
+    } catch(e) {
+        showToast(e.message, "error");
+    }
+}
+ + total.toFixed(2);
+        
+        viewOrderModalInstance.show();
+    } catch(e) {
+        showToast(e.message, "error");
+    }
+}
+
+
+window.useMyLocation = function(type) {
+    if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            if (type === 'order') {
+                modalMap.setView([lat, lng], 16);
+                modalMarker.setLatLng([lat, lng]);
+                document.getElementById('orderLat').value = lat;
+                document.getElementById('orderLng').value = lng;
+                showToast("Ubicación obtenida.", "success");
+                if (window.updateAddressFromCoords) window.updateAddressFromCoords(lat, lng, 'deliveryAddress');
+            }
+        }, function(error) {
+            showToast("No se pudo obtener la ubicación. Permisos denegados.", "error");
+        });
+    } else {
+        showToast("Geolocalización no soportada en este navegador.", "error");
+    }
+}
+
+
+function logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    window.location.href = '../index.html';
 }
