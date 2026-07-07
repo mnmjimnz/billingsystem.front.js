@@ -134,7 +134,9 @@ function initMaps() {
 
     // Fix map rendering issue in Bootstrap Modal
     document.getElementById('orderModal').addEventListener('shown.bs.modal', function () {
-        modalMap.invalidateSize();
+        setTimeout(() => {
+            modalMap.invalidateSize();
+        }, 100);
         // If branch has coordinates, center map there
         const branchSelect = document.getElementById('branchSelect');
         if (branchSelect.selectedIndex > 0) {
@@ -152,7 +154,9 @@ function initMaps() {
     
     // Also fix main map when tab is shown
     document.getElementById('map-tab').addEventListener('shown.bs.tab', function () {
-        mainMap.invalidateSize();
+        setTimeout(() => {
+            mainMap.invalidateSize();
+        }, 100);
     });
 }
 
