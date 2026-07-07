@@ -201,7 +201,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-4">
-                    <p class="mb-3">Al confirmar la entrega, se generar� la venta / factura autom�ticamente en el sistema y se dar� por finalizado el pedido.</p>
+                    <p class="mb-3">Al confirmar la entrega, se generará la venta / factura automáticamente en el sistema y se dará por finalizado el pedido.</p>
                     <input type="hidden" id="deliverOrderId">
                     <div class="form-floating mb-3">
                         <input type="text" class="form-control" id="deliverReceiver" required>
@@ -211,6 +211,81 @@
                 <div class="modal-footer border-top-0 px-4 pb-4">
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
                     <button type="button" class="btn btn-success px-4" onclick="confirmDelivery()" id="btnDeliver">Confirmar y Facturar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirm Status Modal -->
+    <div class="modal fade" id="confirmStatusModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 420px;">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-body p-4 text-center">
+                    <div id="confirm-icon-wrap" class="mb-3" style="font-size: 3rem;"></div>
+                    <h5 class="fw-bold mb-2" id="confirm-title"></h5>
+                    <p class="text-muted mb-4" id="confirm-message"></p>
+                    <div class="d-flex gap-3 justify-content-center">
+                        <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">Mantener Pedido</button>
+                        <button type="button" class="btn px-4 fw-semibold" id="btn-confirm-action">Confirmar Cancelación</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Order Modal -->
+    <div class="modal fade" id="viewOrderModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg rounded-4">
+                <div class="modal-header border-bottom-0 pb-0 px-4 pt-4">
+                    <h5 class="modal-title fw-bold">Detalles del Pedido <span id="viewOrderId" class="text-primary"></span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="row mb-4">
+                        <div class="col-sm-6">
+                            <p class="text-muted mb-1 small">Cliente</p>
+                            <h6 class="fw-bold" id="viewOrderCustomer"></h6>
+                        </div>
+                        <div class="col-sm-6">
+                            <p class="text-muted mb-1 small">Estado</p>
+                            <div id="viewOrderStatus"></div>
+                        </div>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-sm-6">
+                            <p class="text-muted mb-1 small">Sucursal Origen</p>
+                            <h6 class="fw-bold" id="viewOrderBranch"></h6>
+                        </div>
+                        <div class="col-sm-6">
+                            <p class="text-muted mb-1 small">Dirección de Entrega</p>
+                            <h6 class="fw-bold" id="viewOrderAddress"></h6>
+                        </div>
+                    </div>
+                    
+                    <h6 class="fw-bold text-secondary mb-3">Productos Solicitados</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Cant.</th>
+                                    <th>Precio</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="viewOrderItems"></tbody>
+                            <tfoot>
+                                <tr>
+                                    <th colspan="3" class="text-end">Total Pedido:</th>
+                                    <th class="fs-5 text-primary" id="viewOrderTotal"></th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer border-top-0 px-4 pb-4">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
                 </div>
             </div>
         </div>

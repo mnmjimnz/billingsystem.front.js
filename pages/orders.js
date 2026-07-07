@@ -14,6 +14,8 @@ let orders = [];
 let cart = [];
 let orderModalInstance;
 let deliverModalInstance;
+let confirmStatusModalInstance;
+let viewOrderModalInstance;
 
 let mainMap;
 let modalMap;
@@ -225,7 +227,7 @@ async function saveOrder() {
     const lng = document.getElementById('orderLng').value;
 
     if (!customerId || !branchId || !address || !lat || !lng) {
-        showToast("Complete cliente, sucursal, direcci�n y asegure el pin en el mapa.", "error");
+        showToast("Complete cliente, sucursal, direcci¿n y asegure el pin en el mapa.", "error");
         return;
     }
 
@@ -264,6 +266,8 @@ async function saveOrder() {
 
 function openDeliverModal(id) {
     if (!deliverModalInstance) deliverModalInstance = new bootstrap.Modal(document.getElementById('deliverModal'));
+    confirmStatusModalInstance = new bootstrap.Modal(document.getElementById('confirmStatusModal'));
+    viewOrderModalInstance = new bootstrap.Modal(document.getElementById('viewOrderModal'));
     document.getElementById('deliverOrderId').value = id;
     document.getElementById('deliverReceiver').value = '';
     deliverModalInstance.show();
@@ -290,7 +294,7 @@ async function confirmDelivery() {
 }
 
 async function cancelOrder(id) {
-    if (!confirm("�Seguro que deseas cancelar este pedido? El stock ser� devuelto al inventario.")) return;
+    if (!confirm("¿Seguro que deseas cancelar este pedido? El stock será devuelto al inventario.")) return;
     try {
         await ApiClient.request(`/Orders/${id}/status`, 'PUT', { Status: 'CANCELLED' });
         showToast("Pedido cancelado y stock devuelto.", "success");
@@ -356,12 +360,12 @@ function calculateRoute() {
         }
     }).addTo(mainMap);
 
-    showToast(`Ruta trazada �ptimamente para ${waypoints.length - 1} entregas.`, "success");
+    showToast(`Ruta trazada óptimamente para ${waypoints.length - 1} entregas.`, "success");
 }
 
 function viewOrder(id) {
     // For simplicity, just shows a toast or implement a viewer modal
-    showToast("Funci�n ver detalles en desarrollo.", "info");
+    showToast("Función ver detalles en desarrollo.", "info");
 }
 
 
@@ -379,7 +383,7 @@ window.useMyLocation = function(type) {
                 if (window.updateAddressFromCoords) window.updateAddressFromCoords(lat, lng, 'deliveryAddress');
             }
         }, function(error) {
-            showToast("No se pudo obtener la ubicaci�n. Permisos denegados.", "error");
+            showToast("No se pudo obtener la ubicación. Permisos denegados.", "error");
         });
     } else {
         showToast("Geolocalización no soportada en este navegador.", "error");
