@@ -91,12 +91,17 @@ function clearForm() {
 }
 
 function editBranch(branch) {
-    document.getElementById('branchId').value = branch.id;
-    document.getElementById('branchName').value = branch.name;
-    document.getElementById('branchAddress').value = branch.address || '';
-    document.getElementById('branchLatitude').value = branch.latitude || '';
-    document.getElementById('branchLongitude').value = branch.longitude || '';
-    document.getElementById('branchPhone').value = branch.phone || '';
+    document.getElementById('branchId').value = branch.id || branch.Id;
+    document.getElementById('branchName').value = branch.name || branch.Name;
+    document.getElementById('branchAddress').value = branch.address || branch.Address || '';
+    document.getElementById('branchPhone').value = branch.phone || branch.Phone || '';
+    
+    // Fallback logic in case properties are capitalized
+    const lat = branch.latitude || branch.Latitude || branch.latitude;
+    const lng = branch.longitude || branch.Longitude || branch.longitude;
+    document.getElementById('branchLatitude').value = lat || '';
+    document.getElementById('branchLongitude').value = lng || '';
+
     document.getElementById('fundsContainer').style.display = 'none'; // Hide when editing
     document.getElementById('branchModalLabel').innerText = 'Editar Sucursal';
     branchModalInstance.show();
@@ -336,9 +341,11 @@ document.getElementById('branchModal').addEventListener('shown.bs.modal', functi
     setTimeout(() => {
         if (branchMap) {
             branchMap.invalidateSize();
-            const lat = document.getElementById('branchLatitude').value;
-            const lng = document.getElementById('branchLongitude').value;
+            let lat = document.getElementById('branchLatitude').value;
+            let lng = document.getElementById('branchLongitude').value;
             if (lat && lng) {
+                lat = parseFloat(lat);
+                lng = parseFloat(lng);
                 branchMap.setView([lat, lng], 16);
                 branchMarker.setLatLng([lat, lng]);
             } else {

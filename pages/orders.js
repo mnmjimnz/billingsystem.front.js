@@ -327,22 +327,35 @@ function cancelOrder(id) {
 
 // LOGICAL ROUTING
 function calculateRoute() {
-    const pendingOrders = orders.filter(o => o.status === 'PENDING' && o.latitude && o.longitude);
+    const pendingOrders = orders.filter(o => {
+        const isPending = (o.status || o.Status) === 'PENDING';
+        const hasLat = o.latitude || o.Latitude || o.latitude;
+        const hasLng = o.longitude || o.Longitude || o.longitude;
+        return isPending && hasLat && hasLng;
+    });
     if (pendingOrders.length === 0) {
         showToast("No hay pedidos pendientes para rutear.", "info");
         return;
     }
 
     // Get origin branch from the first pending order (assuming all belong to the same branch for routing, or just pick the first)
-    const branchId = pendingOrders[0].branchId;
-    const branch = branches.find(b => b.id == branchId);
+    const branchId = pendingOrders[0].branchId || pendingOrders[0].branchid || pendingOrders[0].BranchId;
+    const branch = branches.find(b => b.id == branchId || b.Id == branchId);
     
-    if (!branch || !branch.latitude || !branch.longitude) {
+    if (!branch) {
+        showToast("No se encontró la sucursal de origen.", "error");
+        return;
+    }
+    
+    const branchLat = branch.latitude || branch.Latitude || branch.latitude;
+    const branchLng = branch.longitude || branch.Longitude || branch.longitude;
+
+    if (!branchLat || !branchLng) {
         showToast("La sucursal origen no tiene coordenadas definidas.", "error");
         return;
     }
 
-    const origin = L.latLng(branch.latitude, branch.longitude);
+    const origin = L.latLng(branchLat, branchLng);
     
     // Sort orders by distance from current point (TSP Greedy approach)
     let waypoints = [origin];
@@ -356,7 +369,9 @@ function calculateRoute() {
         let closestIdx = -1;
 
         unvisited.forEach((order, idx) => {
-            const d = getDistance(currentPoint.lat, currentPoint.lng, order.latitude, order.longitude);
+            const orderLat = order.latitude || order.Latitude || order.latitude;
+            const orderLng = order.longitude || order.Longitude || order.longitude;
+            const d = getDistance(currentPoint.lat, currentPoint.lng, orderLat, orderLng);
             if (d < minD) {
                 minD = d;
                 closest = order;
@@ -364,7 +379,9 @@ function calculateRoute() {
             }
         });
 
-        const p = L.latLng(closest.latitude, closest.longitude);
+        const closestLat = closest.latitude || closest.Latitude || closest.latitude;
+        const closestLng = closest.longitude || closest.Longitude || closest.longitude;
+        const p = L.latLng(closestLat, closestLng);
         waypoints.push(p);
         currentPoint = p;
         unvisited.splice(closestIdx, 1);
