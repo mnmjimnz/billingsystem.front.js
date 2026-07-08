@@ -35,6 +35,21 @@
         .nav-tabs .nav-link:hover { color: #03a9f4; border-bottom: 2px solid #03a9f4; }
         .nav-tabs .nav-link.active { color: #03a9f4; border-bottom: 2px solid #03a9f4; background: transparent; font-weight: bold; }
         .nav-tabs { border-bottom: 1px solid #dee2e6; margin-bottom: 20px; }
+
+        /* Dark Mode Overrides for Reports */
+        [data-bs-theme="dark"] .report-page { background: var(--bs-body-bg); border-color: var(--bs-border-color); box-shadow: none; }
+        [data-bs-theme="dark"] .report-header-title { color: var(--bs-body-color); }
+        [data-bs-theme="dark"] .report-meta-box { background-color: var(--bs-tertiary-bg); border-color: var(--bs-border-color); }
+        [data-bs-theme="dark"] .report-meta-box p { color: var(--bs-body-color); }
+        [data-bs-theme="dark"] .report-meta-value { color: var(--bs-body-color); }
+        [data-bs-theme="dark"] .formal-table th { background-color: #1e293b; border-bottom-color: var(--bs-border-color); }
+        [data-bs-theme="dark"] .formal-table td { border-bottom-color: var(--bs-border-color); color: var(--bs-body-color); }
+        [data-bs-theme="dark"] .formal-table tbody tr:nth-child(even) { background-color: rgba(255, 255, 255, 0.02); }
+        [data-bs-theme="dark"] .formal-table tbody tr:hover { background-color: rgba(255, 255, 255, 0.05); }
+        [data-bs-theme="dark"] .formal-table .group-header td { background-color: rgba(255, 255, 255, 0.05); color: var(--bs-body-color); border-bottom-color: var(--bs-border-color); }
+        [data-bs-theme="dark"] .formal-table .report-total-row td { background-color: var(--bs-body-bg) !important; color: var(--bs-body-color); border-top-color: #45828e !important; border-bottom-color: #45828e !important; }
+        [data-bs-theme="dark"] .nav-tabs .nav-link { color: var(--bs-body-color); }
+        [data-bs-theme="dark"] .nav-tabs { border-bottom-color: var(--bs-border-color); }
     </style>
 </head>
 <body>
