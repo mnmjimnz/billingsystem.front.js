@@ -74,6 +74,8 @@ function clearForm() {
     document.getElementById('productForm').reset();
     document.getElementById('productIsTaxExempt').checked = false;
     document.getElementById('modalTitle').innerText = 'Nuevo Producto';
+    document.getElementById('productImageFile').value = '';
+    document.getElementById('imagePreview').style.display = 'none';
 }
 
 function editProduct(product) {
@@ -85,6 +87,15 @@ function editProduct(product) {
     document.getElementById('productCategory').value = product.categoryId;
     document.getElementById('productIsTaxExempt').checked = product.isTaxExempt || false;
     document.getElementById('modalTitle').innerText = 'Editar Producto';
+    document.getElementById('productImageFile').value = '';
+    const preview = document.getElementById('imagePreview');
+    if (product.imageUrl) {
+        preview.src = 'https://billingsystem-net10pg.onrender.com' + product.imageUrl;
+        preview.style.display = 'inline-block';
+    } else {
+        preview.src = '';
+        preview.style.display = 'none';
+    }
     productModalInstance.show();
 }
 
@@ -102,10 +113,25 @@ async function saveProduct() {
     };
 
     try {
+        let savedId = id;
         if (id) {
             await ApiClient.request(`/Products/${id}`, 'PUT', product);
         } else {
-            await ApiClient.request('/Products', 'POST', product);
+            const result = await ApiClient.request('/Products', 'POST', product);
+            savedId = result.id;
+        }
+
+        // Check if there is an image to upload
+        const fileInput = document.getElementById('productImageFile');
+        if (fileInput.files.length > 0 && savedId) {
+            const formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+            const token = localStorage.getItem('token');
+            await fetch(`https://billingsystem-net10pg.onrender.com/api/Products/${savedId}/image`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` },
+                body: formData
+            });
         }
         productModalInstance.hide();
         await loadProducts();
@@ -220,56 +246,4 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 1000);
 });
 
-function openUploadModal(product) {
-    document.getElementById('uploadImageProductId').value = product.id;
-    const preview = document.getElementById('imagePreview');
-    if (product.imageUrl) {
-        preview.src = "https://billingsystem-net10pg.onrender.com" + product.imageUrl;
-        preview.style.display = 'inline-block';
-    } else {
-        preview.src = '';
-        preview.style.display = 'none';
-    }
-    document.getElementById('productImageFile').value = '';
-    
-    if(!uploadModalInstance) {
-        uploadModalInstance = new bootstrap.Modal(document.getElementById('uploadImageModal'));
-    }
-    uploadModalInstance.show();
-}
 
-async function uploadProductImage() {
-    const productId = document.getElementById('uploadImageProductId').value;
-    const fileInput = document.getElementById('productImageFile');
-    
-    if (fileInput.files.length === 0) {
-        showToast("Por favor selecciona una imagen.", "error");
-        return;
-    }
-
-    const formData = new FormData();
-    formData.append("file", fileInput.files[0]);
-
-    try {
-        const token = localStorage.getItem('token');
-        const response = await fetch(`https://billingsystem-net10pg.onrender.com/api/Products/${productId}/image`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            },
-            body: formData
-        });
-
-        if (response.ok) {
-            showToast("Imagen subida correctamente", "success");
-            uploadModalInstance.hide();
-            await loadProducts(currentPage);
-        } else {
-            const err = await response.text();
-            showToast("Error subiendo imagen: " + err, "error");
-        }
-    } catch (e) {
-        console.error(e);
-        showToast("Error de conexión al subir la imagen", "error");
-    }
-}
