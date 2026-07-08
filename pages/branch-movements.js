@@ -49,7 +49,8 @@ async function loadMovements(page = 1) {
         // In a real app we would have a paginated endpoint per branch, for now just load all for the branch
         // The backend `GetByBranchIdAsync` doesn't support pagination yet, so we just request them and handle locally or update backend.
         // Wait, earlier I created GetByBranch in BranchMovementsController that returns all. Let's use it.
-        const items = await ApiClient.request(`/BranchMovements/branch/${branchId}`);
+        const result = await ApiClient.request(`/BranchMovements/branch/${branchId}/paged?page=${page}&pageSize=10`);
+        const items = result.items || [];
         
         let filtered = items;
         if (currentSearch) {
@@ -59,6 +60,7 @@ async function loadMovements(page = 1) {
 
         movementsList = filtered;
         renderMovements();
+        renderPagination('pagination-container', result, 'loadMovements');
     } catch (e) {
         console.error(e);
     }

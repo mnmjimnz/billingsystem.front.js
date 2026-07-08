@@ -1,8 +1,7 @@
 
 document.addEventListener('DOMContentLoaded', async () => {
     if (!ApiClient.getToken()) { window.location.href = '../index.html'; return; }
-    initSidebar();
-    await loadInitialData();
+        await loadInitialData();
     await loadOrders();
     initMaps();
 });
@@ -34,17 +33,7 @@ function getDistance(lat1, lon1, lat2, lon2) {
     return R * c;
 }
 
-function initSidebar() {
-    try {
-        document.getElementById('sidebarToggle').addEventListener('click', () => {
-            document.querySelector('.sidebar').classList.toggle('show');
-        });
-        const path = window.location.pathname;
-        const links = document.querySelectorAll('.sidebar .nav-link');
-        links.forEach(link => {
-            if (path.includes(link.getAttribute('href'))) link.classList.add('active');
-        });
-    } catch (e) { }
+ catch (e) { }
 }
 
 async function loadInitialData() {
@@ -67,11 +56,12 @@ async function loadInitialData() {
     } catch (e) { console.error("Error loading data", e); }
 }
 
-async function loadOrders() {
+async function loadOrders(page = 1) {
     try {
-        const response = await ApiClient.request('/Orders?pageSize=100');
+        const response = await ApiClient.request(`/Orders?page=${page}&pageSize=10`);
         orders = response.items || [];
         renderOrdersTable();
+        renderPagination('pagination-container', response, 'loadOrders');
     } catch (e) { console.error("Error loading orders", e); }
 }
 

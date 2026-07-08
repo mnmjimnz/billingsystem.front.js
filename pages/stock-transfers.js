@@ -5,8 +5,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
-    initSidebar();
-    await loadBranches();
+        await loadBranches();
     await loadProducts();
     await loadTransfers();
 });
@@ -15,23 +14,7 @@ let branches = [];
 let products = [];
 let transferModalInstance;
 
-function initSidebar() {
-    try {
-        
-        document.getElementById('sidebarToggle').addEventListener('click', () => {
-            document.querySelector('.sidebar').classList.toggle('show');
-        });
-        
-        const path = window.location.pathname;
-        const links = document.querySelectorAll('.sidebar .nav-link');
-        links.forEach(link => {
-            if (path.includes(link.getAttribute('href'))) {
-                link.classList.add('active');
-            }
-        });
-        
-        initUserProfile();
-    } catch (e) {
+ catch (e) {
         console.error("Error loading layout components", e);
     }
 }
@@ -61,9 +44,11 @@ async function loadProducts() {
     }
 }
 
-async function loadTransfers() {
+async function loadTransfers(page = 1) {
     try {
-        const transfers = await ApiClient.request('/StockTransfers') || [];
+        const result = await ApiClient.request(`/StockTransfers/paged?page=${page}&pageSize=10`);
+        const transfers = result.items || [];
+        renderPagination('pagination-container', result, 'loadTransfers');
         const tbody = document.getElementById('transfersList');
         
         if (transfers.length === 0) {
