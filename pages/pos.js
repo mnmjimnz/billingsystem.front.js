@@ -416,7 +416,8 @@ function togglePaymentFields() {
 }
 
 function calculateChange() {
-    const tendered = parseFloat(document.getElementById('checkout-tendered').value) || 0;
+    let val = document.getElementById('checkout-tendered').value.replace(',', '.');
+    const tendered = parseFloat(val) || 0;
     const change = tendered - currentSaleTotal;
     document.getElementById('checkout-change').value = Math.max(0, change).toFixed(2);
 }
@@ -430,8 +431,9 @@ async function confirmSale() {
         return;
     }
 
-    const tendered = parseFloat(document.getElementById('checkout-tendered').value) || 0;
-    if (paymentType === 'CASH' && tendered < currentSaleTotal) {
+    let valTendered = document.getElementById('checkout-tendered').value.replace(',', '.');
+    const tendered = parseFloat(valTendered) || 0;
+    if (paymentType === 'CASH' && Math.round(tendered * 100) < Math.round(currentSaleTotal * 100)) {
         showToast('El monto recibido no puede ser menor al total de la venta.', 'error');
         return;
     }
