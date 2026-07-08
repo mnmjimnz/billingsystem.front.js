@@ -90,6 +90,7 @@ function clearForm() {
     document.getElementById('branchLongitude').value = '';
     document.getElementById('fundsContainer').style.display = 'block';
     document.getElementById('branchModalLabel').innerText = 'Nueva Sucursal';
+    window.useMyLocation('branch');
 }
 
 function editBranch(branch) {
@@ -103,6 +104,14 @@ function editBranch(branch) {
     const lng = branch.longitude || branch.Longitude || branch.longitude;
     document.getElementById('branchLatitude').value = lat || '';
     document.getElementById('branchLongitude').value = lng || '';
+    if(lat != null && lng != null){
+        branchMap.setView([lat, lng], 16);
+        branchMarker.setLatLng([lat, lng]);
+    }else{
+        branchMap.setView([14.6349, -90.5069], 13);
+        branchMarker.setLatLng([14.6349, -90.5069]);
+    }
+    
 
     document.getElementById('fundsContainer').style.display = 'none'; // Hide when editing
     document.getElementById('branchModalLabel').innerText = 'Editar Sucursal';
@@ -380,7 +389,7 @@ window.useMyLocation = function(type) {
                 if (window.updateAddressFromCoords) window.updateAddressFromCoords(lat, lng, 'branchAddress');
             }
         }, function(error) {
-            showToast("No se pudo obtener la ubicaci�n. Permisos denegados.", "error");
+            showToast("No se pudo obtener la ubicación. Permisos denegados.", "error");
         });
     } else {
         showToast("Geolocalización no soportada en este navegador.", "error");
