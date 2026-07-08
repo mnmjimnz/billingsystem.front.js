@@ -14,10 +14,6 @@ let branches = [];
 let products = [];
 let transferModalInstance;
 
- catch (e) {
-        console.error("Error loading layout components", e);
-    }
-}
 
 async function loadBranches() {
     try {
