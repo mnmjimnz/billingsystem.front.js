@@ -86,6 +86,8 @@ function clearForm() {
     document.getElementById('branchId').value = '';
     document.getElementById('branchForm').reset();
     document.getElementById('branchFunds').value = '0.00';
+    document.getElementById('branchLatitude').value = '';
+    document.getElementById('branchLongitude').value = '';
     document.getElementById('fundsContainer').style.display = 'block';
     document.getElementById('branchModalLabel').innerText = 'Nueva Sucursal';
 }
@@ -343,11 +345,13 @@ document.getElementById('branchModal').addEventListener('shown.bs.modal', functi
             branchMap.invalidateSize();
             let lat = document.getElementById('branchLatitude').value;
             let lng = document.getElementById('branchLongitude').value;
-            if (lat && lng) {
+            if (lat && lng && lat !== 'null' && lng !== 'null') {
                 lat = parseFloat(lat);
                 lng = parseFloat(lng);
-                branchMap.setView([lat, lng], 16);
-                branchMarker.setLatLng([lat, lng]);
+                if (!isNaN(lat) && !isNaN(lng)) {
+                    branchMap.setView([lat, lng], 16);
+                    branchMarker.setLatLng([lat, lng]);
+                }
             } else {
                 // Automatically request location for new records
                 branchMap.setView([14.6349, -90.5069], 13);
@@ -356,6 +360,10 @@ document.getElementById('branchModal').addEventListener('shown.bs.modal', functi
             }
         }
     }, 300);
+});
+
+document.getElementById('branchModal').addEventListener('hidden.bs.modal', function () {
+    clearForm();
 });
 
 window.useMyLocation = function(type) {
