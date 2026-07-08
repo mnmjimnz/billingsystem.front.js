@@ -126,7 +126,7 @@ async function saveProduct() {
         if (fileInput.files.length > 0 && savedId) {
             const formData = new FormData();
             formData.append("file", fileInput.files[0]);
-            const token = localStorage.getItem('token');
+            const token = ApiClient.getToken();
             await fetch(`https://billingsystem-net10pg.onrender.com/api/Products/${savedId}/image`, {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${token}` },
