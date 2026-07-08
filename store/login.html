@@ -1,0 +1,81 @@
+﻿<!DOCTYPE html>
+<html lang="es" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Nexus Store</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body { display: flex; align-items: center; justify-content: center; height: 100vh; background-color: #121416; }
+        .login-card { max-width: 400px; width: 100%; padding: 2rem; border-radius: 12px; }
+    </style>
+</head>
+<body>
+
+    <div class="card login-card shadow">
+        <h3 class="text-center fw-bold text-primary mb-4">Nexus Store</h3>
+        <form id="loginForm" onsubmit="event.preventDefault(); login();">
+            <div class="mb-3">
+                <label class="form-label">Usuario</label>
+                <input type="text" class="form-control bg-dark text-light border-secondary" id="username" required>
+            </div>
+            <div class="mb-4">
+                <label class="form-label">Contraseña</label>
+                <input type="password" class="form-control bg-dark text-light border-secondary" id="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 mb-3" id="loginBtn">Iniciar Sesión</button>
+            <div class="text-center">
+                <span class="text-muted">¿No tienes cuenta?</span> <a href="register.html" class="text-primary text-decoration-none">Regístrate</a>
+            </div>
+            <div class="text-center mt-3">
+                <a href="index.html" class="text-muted text-decoration-none small">← Volver a la tienda</a>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        async function login() {
+            const btn = document.getElementById('loginBtn');
+            btn.disabled = true;
+            btn.innerText = 'Ingresando...';
+
+            const data = {
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value
+            };
+
+            try {
+                // Ensure to point to your live backend in production!
+                const res = await fetch('https://billingsystem-net10pg.onrender.com/api/StoreAuth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (res.ok) {
+                    const result = await res.json();
+                    localStorage.setItem('storeToken', result.token);
+                    localStorage.setItem('storeCustomer', JSON.stringify(result.customer));
+                    
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const redirect = urlParams.get('redirect');
+                    window.location.href = redirect ? redirect : 'index.html';
+                } else {
+                    const err = await res.json();
+                    Swal.fire('Error', err.message || 'Credenciales incorrectas', 'error');
+                    btn.disabled = false;
+                    btn.innerText = 'Iniciar Sesión';
+                }
+            } catch (e) {
+                console.error(e);
+                Swal.fire('Error', 'No se pudo conectar con el servidor', 'error');
+                btn.disabled = false;
+                btn.innerText = 'Iniciar Sesión';
+            }
+        }
+    </script>
+</body>
+</html>
