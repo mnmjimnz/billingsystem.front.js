@@ -323,10 +323,11 @@ function cancelOrder(id) {
 // LOGICAL ROUTING
 function calculateRoute() {
     const pendingOrders = orders.filter(o => {
-        const isPending = (o.status || o.Status) === 'PENDING';
+        const status = o.status || o.Status;
+        const isValidStatus = status !== 'DELIVERED' && status !== 'CANCELLED';
         const hasLat = o.latitude || o.Latitude || o.latitude;
         const hasLng = o.longitude || o.Longitude || o.longitude;
-        return isPending && hasLat && hasLng;
+        return isValidStatus && hasLat && hasLng;
     });
     if (pendingOrders.length === 0) {
         showToast("No hay pedidos pendientes para rutear.", "info");
