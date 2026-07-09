@@ -71,6 +71,7 @@ async function loadProducts(page = 1) {
         const response = await fetch(`${API_URL}/Store/products?page=${page}&pageSize=12&categoryId=${currentCategory}&search=${encodeURIComponent(search)}`);
         if (response.ok) {
             const data = await response.json();
+            products = data.items;
             renderProducts(data.items);
             renderPagination(data.totalCount, data.page, data.pageSize);
         }
@@ -92,7 +93,7 @@ function renderProducts(items) {
     items.forEach(p => {
         html += `
             <div class="col-sm-6 col-md-6 col-lg-4 mb-3">
-                <div class="product-card h-100 d-flex flex-column">
+                <div class="product-card h-100 d-flex flex-column" style="cursor:pointer;" onclick="showProductModal(${p.id})">
                     <div class="product-img-wrapper">
                         <img src="${p.imageUrl ? 'https://billingsystem-net10pg.onrender.com' + p.imageUrl : 'https://via.placeholder.com/300x300?text=Sin+Imagen'}" class="product-img" alt="${p.name}">
                     </div>
