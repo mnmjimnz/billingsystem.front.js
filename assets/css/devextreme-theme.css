@@ -197,7 +197,7 @@ body {
 [data-bs-theme="dark"] .table-hover tbody tr:hover { background: rgba(255,255,255,0.04); }
 
 /* Sidebar */
-.app-container { display: flex; min-height: 100vh; }
+.app-container { display: flex; height: 100vh; overflow: hidden; }
 .sidebar {
     width: 250px;
     background: var(--dx-card-bg);
