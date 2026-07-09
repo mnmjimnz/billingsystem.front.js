@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://billingsystem-net10pg.onrender.com/api'; // Ajustar según puerto de .NET
+const API_BASE_URL = 'http://localhost:5014/api'; // Ajustar según puerto de .NET
 //const API_BASE_URL = 'https://localhost:7145/api'; // Ajustar según puerto de .NET
 
 const ApiClient = {

@@ -1,4 +1,4 @@
-const API_URL = 'https://billingsystem-net10pg.onrender.com/api'; // Replace with local if testing locally, or dynamic
+const API_URL = 'http://localhost:5014/api'; // Replace with local if testing locally, or dynamic
 
 let products = [];
 let categories = [];
@@ -21,24 +21,48 @@ async function fetchStoreSettings() {
         if (response.ok) {
             storeSettings = await response.json();
             
-            // Apply theme
-            if (storeSettings.storeTheme) {
+            // Fetch Theme Settings
+            if (storeSettings.activeThemeId) {
+                try {
+                    const themeRes = await fetch(`${API_URL}/Themes/settings/${storeSettings.activeThemeId}`);
+                    if (themeRes.ok) {
+                        const themeSettings = await themeRes.json();
+                        applyThemeSettings(themeSettings);
+                    }
+                } catch(e) { console.error('Error fetching theme settings', e); }
+            } else if (storeSettings.storeTheme) {
+                // Fallback for old setting
                 document.documentElement.setAttribute('data-store-theme', storeSettings.storeTheme);
             }
 
             // Apply slider
             if (storeSettings.showStoreSlider) {
-                document.getElementById('storeSlider').classList.remove('d-none');
-                if (storeSettings.sliderImage1) document.getElementById('slideImg1').src = storeSettings.sliderImage1;
-                if (storeSettings.sliderImage2) document.getElementById('slideImg2').src = storeSettings.sliderImage2;
-                if (storeSettings.sliderImage3) document.getElementById('slideImg3').src = storeSettings.sliderImage3;
+                const sliderEl = document.getElementById('storeSlider');
+                if (sliderEl) {
+                    sliderEl.classList.remove('d-none');
+                    if (storeSettings.sliderImage1) document.getElementById('slideImg1').src = storeSettings.sliderImage1;
+                    if (storeSettings.sliderImage2) document.getElementById('slideImg2').src = storeSettings.sliderImage2;
+                    if (storeSettings.sliderImage3) document.getElementById('slideImg3').src = storeSettings.sliderImage3;
+                }
             } else {
-                document.getElementById('storeSlider').classList.add('d-none');
+                const sliderEl = document.getElementById('storeSlider');
+                if (sliderEl) sliderEl.classList.add('d-none');
             }
         }
     } catch (error) {
         console.error('Error fetching settings:', error);
     }
+}
+
+function applyThemeSettings(settings) {
+    const root = document.documentElement;
+    if (settings.primaryColor) root.style.setProperty('--theme-primary', settings.primaryColor);
+    if (settings.secondaryColor) root.style.setProperty('--theme-secondary', settings.secondaryColor);
+    if (settings.fontFamily) root.style.setProperty('--theme-font', settings.fontFamily);
+    if (settings.borderRadius) root.style.setProperty('--theme-radius', settings.borderRadius);
+    
+    // Store specific variables globally so themes can use them
+    window.themeConfig = settings;
 }
 
 function checkAuth() {
@@ -125,7 +149,7 @@ function renderProducts(items) {
             <div class="col-sm-6 col-md-6 col-lg-4 mb-3">
                 <div class="product-card h-100 d-flex flex-column" style="cursor:pointer;" onclick="showProductModal(${p.id})">
                     <div class="product-img-wrapper">
-                        <img src="${p.imageUrl ? 'https://billingsystem-net10pg.onrender.com' + p.imageUrl : 'https://via.placeholder.com/300x300?text=Sin+Imagen'}" class="product-img" alt="${p.name}">
+                        <img src="${p.imageUrl ? 'http://localhost:5014' + p.imageUrl : 'https://via.placeholder.com/300x300?text=Sin+Imagen'}" class="product-img" alt="${p.name}">
                     </div>
                     <div class="p-4 d-flex flex-column flex-grow-1">
                         <h3 class="product-title text-truncate" title="${p.name}">${p.name}</h3>
@@ -303,7 +327,7 @@ function proceedToCheckout() {
 
 async function loadStoreName() {
     try {
-        const res = await fetch('https://billingsystem-net10pg.onrender.com/api/Settings');
+        const res = await fetch('http://localhost:5014/api/Settings');
         if (res.ok) {
             const settings = await res.json();
             if (settings && settings.companyName) {
@@ -325,7 +349,7 @@ function showProductModal(id) {
     document.getElementById('modalProductTitle').innerText = p.name;
     document.getElementById('modalProductDesc').innerText = p.description || 'Sin descripción';
     document.getElementById('modalProductPrice').innerText = '$' + p.price.toFixed(2);
-    document.getElementById('modalProductImg').src = p.imageUrl ? 'https://billingsystem-net10pg.onrender.com' + p.imageUrl : 'https://via.placeholder.com/400x400?text=Sin+Imagen';
+    document.getElementById('modalProductImg').src = p.imageUrl ? 'http://localhost:5014' + p.imageUrl : 'https://via.placeholder.com/400x400?text=Sin+Imagen';
     
     // Set up add to cart button inside modal
     const btn = document.getElementById('modalAddToCartBtn');

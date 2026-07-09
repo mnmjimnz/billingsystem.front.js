@@ -3,9 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Apariencia de Tienda - Sistema de Facturación Premium</title>
+    <title>Motor de Temas - Sistema de Facturación Premium</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="../assets/css/devextreme-theme.css">
+    <style>
+        .theme-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        .theme-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+        }
+        .theme-card.active {
+            border-color: var(--bs-primary);
+        }
+        .theme-preview {
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 1px solid #eee;
+        }
+        .active-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 10;
+        }
+    </style>
 </head>
 <body>
     <div class="app-container">
@@ -41,7 +67,6 @@
                           </button>
                           <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="width: 300px; max-height: 400px; overflow-y: auto;" id="notif-list">
                               <li><h6 class="dropdown-header">Notificaciones Pendientes</h6></li>
-                              <!-- Loaded via JS -->
                           </ul>
                       </div>
                       <div class="form-check form-switch m-0">
@@ -52,70 +77,99 @@
             </header>
 
             <div class="page-content">
-                <h2 class="mb-4 fw-bold text-dark">Apariencia de la Tienda</h2>
+                <h2 class="mb-4 fw-bold text-dark">Motor de Temas (Theme Engine)</h2>
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h4 class="fw-bold mb-0 text-secondary" style="font-size: 1rem;">Personaliza la apariencia y parámetros de la tienda en línea</h4>
-                    <button class="btn btn-primary shadow-sm px-4" id="btnSaveSettings" onclick="saveStoreSettings()">
-                        GUARDAR
+                    <h4 class="fw-bold mb-0 text-secondary" style="font-size: 1rem;">Administra la apariencia total de tu tienda en línea</h4>
+                    <button class="btn btn-outline-primary shadow-sm px-4" id="btnCustomize" onclick="openCustomizeModal()" disabled>
+                        <i class="bi bi-sliders me-2"></i> PERSONALIZAR TEMA ACTIVO
                     </button>
                 </div>
 
-                <div class="card border-0 mb-4 shadow-sm">
-                    <div class="card-header bg-white border-0 pt-4 pb-2">
-                        <h5 class="fw-bold m-0" style="color: var(--dx-text);"><i class="bi bi-palette text-primary me-2"></i>Diseño y Paginación</h5>
-                    </div>
-                    <div class="card-body p-4">
-                        <div class="row g-3 mb-3">
-                            <div class="col-md-6">
-                                <div class="form-floating">
-                                    <select class="form-select" id="storeTheme">
-                                        <option value="minimalist">Minimalist (Por Defecto)</option>
-                                        <option value="elegant">Elegant (Oscuro, Dorado, Serif)</option>
-                                        <option value="vibrant">Vibrant (Colorido, Juvenil)</option>
-                                    </select>
-                                    <label>Tema de la Tienda</label>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-floating">
-                                    <input type="number" class="form-control" id="storeProductsPerPage" min="4" max="100" value="12">
-                                    <label>Productos por Página</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <!-- Theme Grid -->
+                <div class="row g-4" id="themes-grid">
+                    <!-- Loaded via JS -->
                 </div>
 
-                <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-header bg-white border-0 pt-4 pb-2 d-flex justify-content-between align-items-center">
-                        <h5 class="fw-bold m-0" style="color: var(--dx-text);"><i class="bi bi-images text-warning me-2"></i>Slider Promocional (Inicio)</h5>
-                        <div class="form-check form-switch m-0">
-                            <input class="form-check-input" type="checkbox" role="switch" id="showStoreSlider" style="transform: scale(1.3);">
-                        </div>
-                    </div>
-                    <div class="card-body p-4">
-                        <div class="alert alert-info border-0 mb-4 d-flex align-items-center">
-                            <i class="bi bi-info-circle fs-4 me-3"></i>
-                            <div>Pega aquí las URLs de las imágenes que deseas mostrar en el carrusel de la página de inicio. Te recomendamos usar imágenes horizontales de alta resolución.</div>
-                        </div>
-                        <div class="form-floating mb-3">
-                            <input type="url" class="form-control" id="sliderImage1" placeholder="URL Imagen 1">
-                            <label>URL Imagen 1</label>
-                        </div>
-                        <div class="form-floating mb-3">
-                            <input type="url" class="form-control" id="sliderImage2" placeholder="URL Imagen 2">
-                            <label>URL Imagen 2</label>
-                        </div>
-                        <div class="form-floating">
-                            <input type="url" class="form-control" id="sliderImage3" placeholder="URL Imagen 3">
-                            <label>URL Imagen 3</label>
-                        </div>
-                    </div>
-                </div>
             </div>
         </main>
     </div>
 
+    <!-- Modal Configuración del Tema -->
+    <div class="modal fade" id="themeSettingsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-palette text-primary me-2"></i>Personalizar Tema</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="themeSettingsForm">
+                        <div class="row g-3 mb-4">
+                            <h6 class="fw-bold text-secondary border-bottom pb-2">Colores y Tipografía</h6>
+                            <div class="col-md-6">
+                                <label class="form-label">Color Principal</label>
+                                <input type="color" class="form-control form-control-color w-100" id="settingPrimaryColor">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Color Secundario</label>
+                                <input type="color" class="form-control form-control-color w-100" id="settingSecondaryColor">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Fuente Principal (CSS FontFamily)</label>
+                                <input type="text" class="form-control" id="settingFontFamily" placeholder="e.g. Inter, sans-serif">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Radio de Bordes (Border-Radius)</label>
+                                <input type="text" class="form-control" id="settingBorderRadius" placeholder="e.g. 8px">
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <h6 class="fw-bold text-secondary border-bottom pb-2">Estilos y Layout</h6>
+                            <div class="col-md-4">
+                                <label class="form-label">Estilo de Botón</label>
+                                <select class="form-select" id="settingButtonStyle">
+                                    <option value="solid">Sólido</option>
+                                    <option value="outline">Contorno</option>
+                                    <option value="rounded">Redondeado Sólido</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Estilo de Tarjeta</label>
+                                <select class="form-select" id="settingProductCardStyle">
+                                    <option value="clean">Limpio (Sin bordes)</option>
+                                    <option value="bordered">Con Bordes</option>
+                                    <option value="shadow">Con Sombra</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Productos por Fila</label>
+                                <input type="number" class="form-control" id="settingProductsPerRow" min="1" max="6">
+                            </div>
+                        </div>
+
+                        <div class="row g-3">
+                            <h6 class="fw-bold text-secondary border-bottom pb-2">Multimedia</h6>
+                            <div class="col-md-6">
+                                <label class="form-label">URL del Logo de la Tienda</label>
+                                <input type="url" class="form-control" id="settingLogoUrl" placeholder="https://...">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">URL del Banner Principal (Hero)</label>
+                                <input type="url" class="form-control" id="settingMainBannerUrl" placeholder="https://...">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary px-4" onclick="saveThemeSettings()" id="btnSaveThemeSettings">Guardar Cambios</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
     <script src="../assets/js/theme.js"></script>
     <script src="../assets/js/toast.js"></script>

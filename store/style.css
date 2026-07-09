@@ -1,10 +1,15 @@
 :root {
+    --theme-primary: #0d6efd;
+    --theme-secondary: #6c757d;
+    --theme-font: 'Inter', sans-serif;
+    --theme-radius: 16px;
+
     --store-bg: #f8f9fa;
     --store-card: #ffffff;
     --store-text: #212529;
     --store-muted: #6c757d;
     --store-border: #e9ecef;
-    --store-accent: #212529; /* Sober action color (almost black) */
+    --store-accent: var(--theme-primary); 
     --store-accent-hover: #343a40;
     --store-shadow: 0 8px 30px rgba(0,0,0,0.04);
     --store-shadow-hover: 0 12px 40px rgba(0,0,0,0.08);
@@ -16,17 +21,25 @@
     --store-text: #e9ecef;
     --store-muted: #adb5bd;
     --store-border: #2b2b2b;
-    --store-accent: #f8f9fa; /* Off-white for dark mode buttons */
+    --store-accent: var(--theme-primary);
     --store-accent-hover: #e9ecef;
     --store-shadow: 0 8px 30px rgba(0,0,0,0.2);
     --store-shadow-hover: 0 12px 40px rgba(0,0,0,0.4);
 }
 
 body {
-    font-family: 'Inter', sans-serif;
+    font-family: var(--theme-font) !important;
     background-color: var(--store-bg);
     color: var(--store-text);
     transition: background-color 0.3s, color 0.3s;
+}
+
+.product-card, .cart-card {
+    border-radius: var(--theme-radius) !important;
+}
+
+.btn {
+    border-radius: var(--theme-radius) !important;
 }
 
 /* Glassmorphism Navbar */
