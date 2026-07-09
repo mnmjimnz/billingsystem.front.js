@@ -56,10 +56,37 @@ async function fetchStoreSettings() {
 
 function applyThemeSettings(settings) {
     const root = document.documentElement;
-    if (settings.primaryColor) root.style.setProperty('--theme-primary', settings.primaryColor);
-    if (settings.secondaryColor) root.style.setProperty('--theme-secondary', settings.secondaryColor);
-    if (settings.fontFamily) root.style.setProperty('--theme-font', settings.fontFamily);
-    if (settings.borderRadius) root.style.setProperty('--theme-radius', settings.borderRadius);
+    if (settings.primaryColor) {
+        root.style.setProperty('--theme-primary', settings.primaryColor);
+        root.style.setProperty('--bs-primary', settings.primaryColor);
+        // Add RGB variant for Bootstrap (approximated, requires HEX to RGB, simplified here)
+        const hexToRgb = hex => {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : null;
+        };
+        const rgb = hexToRgb(settings.primaryColor);
+        if (rgb) root.style.setProperty('--bs-primary-rgb', rgb);
+    }
+    
+    if (settings.secondaryColor) {
+        root.style.setProperty('--theme-secondary', settings.secondaryColor);
+        root.style.setProperty('--bs-secondary', settings.secondaryColor);
+    }
+    
+    if (settings.fontFamily) {
+        root.style.setProperty('--theme-font', settings.fontFamily);
+        root.style.setProperty('--bs-body-font-family', settings.fontFamily);
+    }
+    
+    if (settings.borderRadius) {
+        root.style.setProperty('--theme-radius', settings.borderRadius);
+        root.style.setProperty('--bs-border-radius', settings.borderRadius);
+        root.style.setProperty('--bs-border-radius-lg', settings.borderRadius);
+        root.style.setProperty('--bs-border-radius-sm', settings.borderRadius);
+        
+        // Custom store variables
+        root.style.setProperty('--store-radius', settings.borderRadius);
+    }
     
     // Store specific variables globally so themes can use them
     window.themeConfig = settings;
