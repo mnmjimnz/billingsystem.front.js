@@ -207,3 +207,42 @@ body {
 .toast-container {
     z-index: 1060;
 }
+
+/* Floating Cart Button */
+.floating-cart-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 1040;
+    border-radius: 50px;
+    padding: 12px 24px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    background-color: var(--store-accent);
+    color: var(--store-bg);
+    font-weight: 600;
+    transition: transform 0.3s;
+}
+.floating-cart-btn:hover {
+    transform: translateY(-3px);
+    color: var(--store-bg);
+}
+.floating-cart-btn .badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    font-size: 0.8rem;
+}
+
+/* Modal Content in Dark Theme */
+[data-bs-theme="dark"] .modal-content {
+    background-color: var(--store-card);
+    color: var(--store-text);
+    border-color: var(--store-border);
+}
+[data-bs-theme="dark"] .modal-header {
+    border-color: var(--store-border);
+}
+[data-bs-theme="dark"] .modal-footer {
+    border-color: var(--store-border);
+}
+
