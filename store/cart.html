@@ -26,7 +26,8 @@
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
                 <li class="nav-item me-3" id="userMenu" style="display: none;">
                     <span class="me-2">Hola, <b id="customerName"></b></span>
-                    <a href="#" class="text-danger text-decoration-none" onclick="logout()"><i class="bi bi-box-arrow-right"></i> Salir</a>
+                    <a href="#" class="text-decoration-none me-3" onclick="showMyOrdersModal()"><i class="bi bi-box-seam"></i> Mis Pedidos</a>
+                        <a href="#" class="text-danger text-decoration-none" onclick="logout()"><i class="bi bi-box-arrow-right"></i> Salir</a>
                 </li>
                 
                     <li class="nav-item me-3 d-flex align-items-center">
@@ -143,7 +144,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="app.js?v=1783557772655"></script>
+    <script src="app.js?v=1783558443973"></script>
     <script>
 
         async function loadStoreName() {
@@ -271,5 +272,21 @@
             }
         }
     </script>
+
+    <!-- My Orders Modal -->
+    <div class="modal fade" id="myOrdersModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title"><i class="bi bi-box-seam"></i> Mis Pedidos</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="myOrdersContent">
+                    <div class="text-center text-muted py-4">Cargando pedidos...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>

@@ -37,6 +37,7 @@
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
                     <li class="nav-item me-3" id="userMenu" style="display: none;">
                         <span class="me-2">Hola, <b id="customerName"></b></span>
+                        <a href="#" class="text-decoration-none me-3" onclick="showMyOrdersModal()"><i class="bi bi-box-seam"></i> Mis Pedidos</a>
                         <a href="#" class="text-danger text-decoration-none" onclick="logout()"><i class="bi bi-box-arrow-right"></i> Salir</a>
                     </li>
                     
@@ -121,7 +122,7 @@
     <script>
         const API_BASE_URL = 'https://billingsystem-net10pg.onrender.com/api';
     </script>
-    <script src="app.js?v=1783556682587"></script>
+    <script src="app.js?v=1783558443971"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             initStore();
@@ -129,5 +130,21 @@
             loadProducts();
         });
     </script>
+
+    <!-- My Orders Modal -->
+    <div class="modal fade" id="myOrdersModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title"><i class="bi bi-box-seam"></i> Mis Pedidos</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="myOrdersContent">
+                    <div class="text-center text-muted py-4">Cargando pedidos...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>

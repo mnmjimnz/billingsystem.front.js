@@ -334,3 +334,90 @@ function updateThemeIcon(theme) {
         }
     }
 }
+
+
+window.showMyOrdersModal = async function() {
+    const token = localStorage.getItem('storeToken');
+    if (!token) {
+        Swal.fire('Atención', 'Debes iniciar sesión para ver tus pedidos', 'warning');
+        return;
+    }
+
+    const modalEl = document.getElementById('myOrdersModal');
+    if(!modalEl) return;
+    const modal = new bootstrap.Modal(modalEl);
+    modal.show();
+
+    const content = document.getElementById('myOrdersContent');
+    content.innerHTML = '<div class="text-center text-muted py-4"><div class="spinner-border text-primary" role="status"></div><br>Cargando...</div>';
+
+    try {
+        const res = await fetch(`${API_URL}/Store/orders`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (res.ok) {
+            const orders = await res.json();
+            if (orders.length === 0) {
+                content.innerHTML = '<div class="text-center text-muted py-4">No has realizado ningún pedido aún.</div>';
+                return;
+            }
+
+            let html = '<div class="accordion" id="ordersAccordion">';
+            orders.forEach((o, index) => {
+                const date = new Date(o.createdAt).toLocaleString();
+                let statusBadge = '';
+                switch(o.status) {
+                    case 'PENDING': statusBadge = '<span class="badge bg-warning text-dark">Pendiente</span>'; break;
+                    case 'CONFIRMED': statusBadge = '<span class="badge bg-info text-dark">Confirmado</span>'; break;
+                    case 'SHIPPED': statusBadge = '<span class="badge bg-primary">Enviado</span>'; break;
+                    case 'DELIVERED': statusBadge = '<span class="badge bg-success">Entregado</span>'; break;
+                    case 'CANCELLED': statusBadge = '<span class="badge bg-danger">Cancelado</span>'; break;
+                    default: statusBadge = `<span class="badge bg-secondary">${o.status}</span>`; break;
+                }
+
+                let itemsHtml = '<ul class="list-group mb-3">';
+                o.details.forEach(d => {
+                    itemsHtml += `<li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>${d.productName || 'Producto ID: ' + d.productId} <span class="text-muted">x${d.quantity}</span></div>
+                        <span>$${d.total.toFixed(2)}</span>
+                    </li>`;
+                });
+                itemsHtml += '</ul>';
+
+                html += `
+                    <div class="accordion-item mb-2 border">
+                        <h2 class="accordion-header" id="heading${o.id}">
+                            <button class="accordion-button ${index === 0 ? '' : 'collapsed'}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${o.id}">
+                                <div class="d-flex justify-content-between w-100 pe-3">
+                                    <strong>${o.orderNumber || 'Pedido #'+o.id}</strong>
+                                    <span>${date}</span>
+                                    ${statusBadge}
+                                </div>
+                            </button>
+                        </h2>
+                        <div id="collapse${o.id}" class="accordion-collapse collapse ${index === 0 ? 'show' : ''}" data-bs-parent="#ordersAccordion">
+                            <div class="accordion-body">
+                                ${itemsHtml}
+                                <div class="d-flex justify-content-between mt-2">
+                                    <span>Forma de pago: <strong>${o.paymentMethod || 'EFECTIVO'}</strong></span>
+                                    <h5 class="mb-0">Total: <strong>$${o.total.toFixed(2)}</strong></h5>
+                                </div>
+                                <div class="mt-2 text-muted small">
+                                    <strong>Dirección:</strong> ${o.deliveryAddress || 'N/A'}<br>
+                                    ${o.notes ? `<strong>Notas:</strong> ${o.notes}` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            content.innerHTML = html;
+        } else {
+            content.innerHTML = '<div class="text-center text-danger py-4">Error al cargar los pedidos.</div>';
+        }
+    } catch (e) {
+        content.innerHTML = '<div class="text-center text-danger py-4">Error de conexión.</div>';
+    }
+};
