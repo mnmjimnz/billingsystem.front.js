@@ -1,4 +1,4 @@
-﻿const API_URL = 'https://billingsystem-net10pg.onrender.com/api'; // Replace with local if testing locally, or dynamic
+const API_URL = 'https://billingsystem-net10pg.onrender.com/api'; // Replace with local if testing locally, or dynamic
 
 let products = [];
 let categories = [];
@@ -7,6 +7,7 @@ let currentCategory = 0;
 let currentPage = 1;
 
 function initStore() {
+    applyTheme();
     loadStoreName();
     updateCartCount();
     checkAuth();
