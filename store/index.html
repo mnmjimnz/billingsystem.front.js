@@ -35,10 +35,15 @@
                 </form>
 
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
-                    <li class="nav-item me-3" id="userMenu" style="display: none;">
-                        <span class="me-2">Hola, <b id="customerName"></b></span>
-                        <a href="#" class="text-decoration-none me-3" onclick="showMyOrdersModal()"><i class="bi bi-box-seam"></i> Mis Pedidos</a>
-                        <a href="#" class="text-danger text-decoration-none" onclick="logout()"><i class="bi bi-box-arrow-right"></i> Salir</a>
+                    <li class="nav-item dropdown me-3" id="userMenu" style="display: none;">
+                        <a class="nav-link dropdown-toggle p-0" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Hola, <b id="customerName"></b>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2">
+                            <li><a class="dropdown-item py-2" href="#" onclick="showMyOrdersModal()"><i class="bi bi-box-seam me-2 text-primary"></i> Mis Pedidos</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger py-2" href="#" onclick="logout()"><i class="bi bi-box-arrow-right me-2"></i> Salir</a></li>
+                        </ul>
                     </li>
                     
                     <li class="nav-item me-3 d-flex align-items-center">
@@ -122,7 +127,7 @@
     <script>
         const API_BASE_URL = 'https://billingsystem-net10pg.onrender.com/api';
     </script>
-    <script src="app.js?v=1783558443971"></script>
+    <script src="app.js?v=1783559113723"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             initStore();
