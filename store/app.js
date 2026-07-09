@@ -5,12 +5,40 @@ let categories = [];
 let cart = JSON.parse(localStorage.getItem('storeCart')) || [];
 let currentCategory = 0;
 let currentPage = 1;
+let storeSettings = null;
 
-function initStore() {
+async function initStore() {
+    await fetchStoreSettings();
     applyTheme();
     loadStoreName();
     updateCartCount();
     checkAuth();
+}
+
+async function fetchStoreSettings() {
+    try {
+        const response = await fetch(`${API_URL}/Settings`);
+        if (response.ok) {
+            storeSettings = await response.json();
+            
+            // Apply theme
+            if (storeSettings.storeTheme) {
+                document.documentElement.setAttribute('data-store-theme', storeSettings.storeTheme);
+            }
+
+            // Apply slider
+            if (storeSettings.showStoreSlider) {
+                document.getElementById('storeSlider').classList.remove('d-none');
+                if (storeSettings.sliderImage1) document.getElementById('slideImg1').src = storeSettings.sliderImage1;
+                if (storeSettings.sliderImage2) document.getElementById('slideImg2').src = storeSettings.sliderImage2;
+                if (storeSettings.sliderImage3) document.getElementById('slideImg3').src = storeSettings.sliderImage3;
+            } else {
+                document.getElementById('storeSlider').classList.add('d-none');
+            }
+        }
+    } catch (error) {
+        console.error('Error fetching settings:', error);
+    }
 }
 
 function checkAuth() {
@@ -67,9 +95,10 @@ function filterByCategory(id) {
 async function loadProducts(page = 1) {
     currentPage = page;
     const search = document.getElementById('searchInput')?.value || '';
+    const pageSize = storeSettings?.storeProductsPerPage || 12;
     
     try {
-        const response = await fetch(`${API_URL}/Store/products?page=${page}&pageSize=12&categoryId=${currentCategory}&search=${encodeURIComponent(search)}`);
+        const response = await fetch(`${API_URL}/Store/products?page=${page}&pageSize=${pageSize}&categoryId=${currentCategory}&search=${encodeURIComponent(search)}`);
         if (response.ok) {
             const data = await response.json();
             products = data.items;

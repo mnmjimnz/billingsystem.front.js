@@ -21,7 +21,8 @@ const MENU_ITEMS = [
     { url: 'roles.html', icon: 'bi-shield-lock', text: 'Roles y Permisos', permission: 'MANAGE_ROLES' },
     { url: 'branches.html', icon: 'bi-buildings', text: 'Sucursales', permission: 'MANAGE_BRANCHES' },
     { url: 'branch-movements.html', icon: 'bi-arrow-left-right', text: 'Movimientos', permission: 'MANAGE_MOVEMENTS' },
-    { url: 'settings.html', icon: 'bi-gear', text: 'Configuración', permission: 'MANAGE_SETTINGS' }
+    { url: 'settings.html', icon: 'bi-gear', text: 'Configuración', permission: 'MANAGE_SETTINGS' },
+    { url: 'store-settings.html', icon: 'bi-shop-window', text: 'Apariencia de Tienda', permission: 'MANAGE_SETTINGS' }
 ];
 
 function generateMenu() {

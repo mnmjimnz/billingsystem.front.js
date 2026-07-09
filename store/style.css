@@ -246,3 +246,61 @@ body {
     border-color: var(--store-border);
 }
 
+
+
+/* --- THEMES --- */
+/* ELEGANT THEME */
+[data-store-theme="elegant"] {
+    --store-bg: #1c1c1c;
+    --store-card: #252525;
+    --store-text: #e0dacc;
+    --store-muted: #9e957e;
+    --store-border: #3b352b;
+    --store-accent: #d4af37; /* Gold */
+    --store-accent-hover: #f1c40f;
+    --bs-primary: #d4af37;
+    --bs-primary-rgb: 212,175,55;
+}
+[data-store-theme="elegant"] body {
+    font-family: "Georgia", serif;
+}
+[data-store-theme="elegant"] .product-card,
+[data-store-theme="elegant"] .card,
+[data-store-theme="elegant"] .btn,
+[data-store-theme="elegant"] .form-control {
+    border-radius: 0 !important;
+}
+
+/* VIBRANT THEME */
+[data-store-theme="vibrant"] {
+    --store-bg: #f3f0ff;
+    --store-card: #ffffff;
+    --store-text: #2d1b4e;
+    --store-muted: #6b5c87;
+    --store-border: #e2d9f3;
+    --store-accent: #7c3aed; /* Vibrant Purple */
+    --store-accent-hover: #6d28d9;
+    --bs-primary: #7c3aed;
+    --bs-primary-rgb: 124,58,237;
+    --store-shadow: 0 10px 40px rgba(124, 58, 237, 0.15);
+}
+[data-store-theme="vibrant"] body {
+    font-family: "Nunito", "Inter", sans-serif;
+}
+[data-store-theme="vibrant"] .product-card,
+[data-store-theme="vibrant"] .card {
+    border-radius: 20px !important;
+    border: none;
+}
+[data-store-theme="vibrant"] .btn {
+    border-radius: 25px !important;
+    font-weight: 700;
+}
+[data-store-theme="vibrant"] .form-control {
+    border-radius: 15px !important;
+    background-color: #fcfbfe;
+}
+[data-store-theme="vibrant"] .navbar-minimal {
+    background: rgba(255,255,255, 0.9);
+}
+
