@@ -391,7 +391,16 @@ function calculateRoute() {
         addWaypoints: false,
         lineOptions: { styles: [{ color: '#0d6efd', weight: 6 }] },
         createMarker: function(i, wp, nWps) {
-            if (i === 0) return L.marker(wp.latLng).bindPopup("<b>SUCURSAL ORIGEN</b>");
+            if (i === 0) {
+                const storeIcon = L.divIcon({
+                    html: '<div style="background-color: #0dcaf0; color: white; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 3px solid white; box-shadow: 0 4px 6px rgba(0,0,0,0.3); font-size: 18px;"><i class="bi bi-shop"></i></div>',
+                    className: '',
+                    iconSize: [36, 36],
+                    iconAnchor: [18, 18],
+                    popupAnchor: [0, -18]
+                });
+                return L.marker(wp.latLng, { icon: storeIcon }).bindPopup("<b>SUCURSAL ORIGEN</b>");
+            }
             return L.marker(wp.latLng).bindPopup(`<b>Pedido ${i}</b>`);
         }
     }).addTo(mainMap);
