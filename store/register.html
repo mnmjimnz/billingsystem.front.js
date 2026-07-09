@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es" >
 <head>
     <meta charset="UTF-8">
@@ -127,7 +127,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
             try {
-                const res = await fetch('https://billingsystem-net10pg.onrender.com/api/Settings');
+                const res = await fetch('https://billingsystem-net10pg.onrender.com/api/Settings', { cache: 'no-store' });
                 if (res.ok) {
                     const settings = await res.json();
                     if (settings && settings.companyName) {

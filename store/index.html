@@ -22,13 +22,13 @@
         // Router: Fetch settings and redirect to active theme
         async function routeToActiveTheme() {
             try {
-                const settingsRes = await fetch('https://billingsystem-net10pg.onrender.com/api/Settings');
+                const settingsRes = await fetch('https://billingsystem-net10pg.onrender.com/api/Settings', { cache: 'no-store' });
                 if (!settingsRes.ok) throw new Error('Settings API failed');
                 const settings = await settingsRes.json();
                 
                 const activeThemeId = settings.activeThemeId;
                 
-                const themesRes = await fetch('https://billingsystem-net10pg.onrender.com/api/Themes');
+                const themesRes = await fetch('https://billingsystem-net10pg.onrender.com/api/Themes', { cache: 'no-store' });
                 if (!themesRes.ok) throw new Error('Themes API failed');
                 const themes = await themesRes.json();
                 

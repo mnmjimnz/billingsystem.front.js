@@ -17,14 +17,14 @@ async function initStore() {
 
 async function fetchStoreSettings() {
     try {
-        const response = await fetch(`${API_URL}/Settings`);
+        const response = await fetch(`${API_URL}/Settings`, { cache: 'no-store' });
         if (response.ok) {
             storeSettings = await response.json();
             
             // Fetch Theme Settings
             if (storeSettings.activeThemeId) {
                 try {
-                    const themeRes = await fetch(`${API_URL}/Themes/settings/${storeSettings.activeThemeId}`);
+                    const themeRes = await fetch(`${API_URL}/Themes/settings/${storeSettings.activeThemeId}`, { cache: 'no-store' });
                     if (themeRes.ok) {
                         const themeSettings = await themeRes.json();
                         applyThemeSettings(themeSettings);
@@ -327,7 +327,7 @@ function proceedToCheckout() {
 
 async function loadStoreName() {
     try {
-        const res = await fetch('https://billingsystem-net10pg.onrender.com/api/Settings');
+        const res = await fetch('https://billingsystem-net10pg.onrender.com/api/Settings', { cache: 'no-store' });
         if (res.ok) {
             const settings = await res.json();
             if (settings && settings.companyName) {

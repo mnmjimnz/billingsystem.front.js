@@ -19,6 +19,7 @@ const ApiClient = {
         const config = {
             method,
             headers,
+            cache: 'no-store'
         };
 
         if (body) {
