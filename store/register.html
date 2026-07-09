@@ -123,5 +123,23 @@
             }
         }
     </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const res = await fetch('https://billingsystem-net10pg.onrender.com/api/Settings');
+                if (res.ok) {
+                    const settings = await res.json();
+                    if (settings && settings.companyName) {
+                        const els = document.querySelectorAll('#storeNameBrand');
+                        els.forEach(el => el.innerText = settings.companyName);
+                        document.title = settings.companyName + ' - Autenticación';
+                    }
+                }
+            } catch (e) {
+                console.log("No se pudo cargar el nombre de la tienda");
+            }
+        });
+    </script>
 </body>
 </html>
