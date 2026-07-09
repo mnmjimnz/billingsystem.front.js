@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // Fetch latest from API asynchronously
-    if (window.ApiClient) {
+    if (typeof ApiClient !== 'undefined') {
         ApiClient.request('/Settings', 'GET')
             .then(settings => {
                 if (settings && settings.companyName) {

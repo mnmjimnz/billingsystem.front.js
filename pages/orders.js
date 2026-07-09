@@ -378,6 +378,7 @@ function calculateRoute() {
         const closestLat = closest.latitude || closest.Latitude || closest.latitude;
         const closestLng = closest.longitude || closest.Longitude || closest.longitude;
         const p = L.latLng(closestLat, closestLng);
+        p.orderName = 'Pedido No. ' + (closest.id || closest.Id);
         waypoints.push(p);
         currentPoint = p;
         unvisited.splice(closestIdx, 1);
@@ -401,7 +402,8 @@ function calculateRoute() {
                 });
                 return L.marker(wp.latLng, { icon: storeIcon }).bindPopup("<b>SUCURSAL ORIGEN</b>");
             }
-            return L.marker(wp.latLng).bindPopup(`<b>Pedido ${i}</b>`);
+            const label = wp.latLng.orderName || `Pedido ${i}`;
+            return L.marker(wp.latLng).bindPopup(`<b>${label}</b>`);
         }
     }).addTo(mainMap);
 
