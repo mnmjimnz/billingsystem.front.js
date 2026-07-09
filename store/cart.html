@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -109,6 +109,19 @@
                             <textarea class="form-control" id="deliveryAddress" rows="2" required></textarea>
                         </div>
                         <div class="mb-3">
+                            <label class="form-label">Forma de Pago</label>
+                            <div class="btn-group w-100" role="group" id="paymentMethodGroup">
+                                <input type="radio" class="btn-check" name="paymentMethod" id="payEfectivo" value="EFECTIVO" autocomplete="off" checked>
+                                <label class="btn btn-outline-secondary" for="payEfectivo">Efectivo</label>
+                              
+                                <input type="radio" class="btn-check" name="paymentMethod" id="payTarjeta" value="TARJETA" autocomplete="off">
+                                <label class="btn btn-outline-secondary" for="payTarjeta">Tarjeta</label>
+                              
+                                <input type="radio" class="btn-check" name="paymentMethod" id="payTransferencia" value="TRANSFERENCIA" autocomplete="off">
+                                <label class="btn btn-outline-secondary" for="payTransferencia">Transferencia</label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
                             <label class="form-label">Notas Adicionales</label>
                             <input type="text" class="form-control" id="deliveryNotes">
                         </div>
@@ -130,7 +143,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="app.js?v=1783557143254"></script>
+    <script src="app.js?v=1783557772655"></script>
     <script>
 
         async function loadStoreName() {
@@ -205,13 +218,15 @@
 
         async function submitOrder() {
             const token = localStorage.getItem('storeToken');
+            const paymentMethodEl = document.querySelector('input[name="paymentMethod"]:checked');
             const data = {
                 items: cart.map(i => ({ productId: i.id, quantity: i.qty, price: i.price })),
                 deliveryAddress: document.getElementById('deliveryAddress').value,
                 latitude: parseFloat(document.getElementById('latitude').value),
                 longitude: parseFloat(document.getElementById('longitude').value),
                 receiverName: document.getElementById('receiverName').value,
-                notes: document.getElementById('deliveryNotes').value
+                notes: document.getElementById('deliveryNotes').value,
+                paymentMethod: paymentMethodEl ? paymentMethodEl.value : 'EFECTIVO'
             };
 
             document.getElementById('confirmOrderBtn').disabled = true;
