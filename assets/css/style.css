@@ -285,10 +285,14 @@ body {
         left: 0;
         top: 0;
         bottom: 0;
+        height: 100dvh; /* Use dynamic viewport height for mobile */
         transform: translateX(-100%);
         z-index: 1050; /* Ensure it stays above everything */
     }
     .sidebar.show {
         transform: translateX(0);
+    }
+    .sidebar-nav {
+        padding-bottom: 5rem; /* Ensure last item is scrollable above OS nav bars */
     }
 }
