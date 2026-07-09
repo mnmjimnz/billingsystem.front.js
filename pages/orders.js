@@ -399,9 +399,9 @@ async function viewOrder(id) {
         const details = res.details || order.details || [];
 
         document.getElementById('viewOrderId').innerText = '#' + (order.id || order.orderNumber || '');
-        document.getElementById('viewOrderCustomer').innerText = order.customerName || 'N/A';
-        document.getElementById('viewOrderBranch').innerText = order.branchName || 'N/A';
-        document.getElementById('viewOrderAddress').innerText = order.deliveryAddress || 'N/A';
+        document.getElementById('viewOrderCustomer').innerText = order.customerName || order.customername || order.CustomerName || 'N/A';
+        document.getElementById('viewOrderBranch').innerText = order.branchName || order.branchname || order.BranchName || 'N/A';
+        document.getElementById('viewOrderAddress').innerText = order.deliveryAddress || order.deliveryaddress || order.DeliveryAddress || 'N/A';
         
         let statusBadge = '';
         switch(order.status) {
@@ -424,7 +424,7 @@ async function viewOrder(id) {
                 total += subtotal;
                 tbody.innerHTML += `
                     <tr>
-                        <td class="fw-medium">${d.productName || 'Producto ' + d.productId}</td>
+                        <td class="fw-medium">${d.productName || d.productname || d.ProductName || 'Producto ' + (d.productId || d.productid || '')}</td>
                         <td>${qty}</td>
                         <td>$${price.toFixed(2)}</td>
                         <td class="fw-bold">$${subtotal.toFixed(2)}</td>
@@ -469,4 +469,32 @@ function logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     window.location.href = '../index.html';
+}
+
+
+function shipOrder(id) {
+    if (!confirmStatusModalInstance) confirmStatusModalInstance = new bootstrap.Modal(document.getElementById('confirmStatusModal'));
+    document.getElementById('confirm-icon-wrap').innerHTML = '<i class="bi bi-truck text-primary"></i>';
+    document.getElementById('confirm-title').innerText = 'Marcar como Enviado';
+    document.getElementById('confirm-message').innerText = '¿Estás seguro de que deseas marcar este pedido como enviado?';
+    
+    const btn = document.getElementById('btn-confirm-action');
+    btn.className = 'btn px-4 fw-semibold btn-primary';
+    btn.innerText = 'Confirmar Envío';
+    
+    btn.onclick = async () => {
+        try {
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Procesando...';
+            await ApiClient.request(`/Orders/${id}/status`, 'PUT', { Status: 'SHIPPED' });
+            if (typeof showToast === 'function') showToast("El pedido ha sido marcado como enviado.", "success");
+            confirmStatusModalInstance.hide();
+            loadOrders();
+        } catch(e) {
+            if (typeof showToast === 'function') showToast(e.message, "error");
+        } finally {
+            btn.disabled = false;
+        }
+    };
+    confirmStatusModalInstance.show();
 }

@@ -379,7 +379,7 @@ window.showMyOrdersModal = async function() {
                 let itemsHtml = '<ul class="list-group mb-3">';
                 o.details.forEach(d => {
                     itemsHtml += `<li class="list-group-item d-flex justify-content-between align-items-center">
-                        <div>${d.productName || 'Producto ID: ' + d.productId} <span class="text-muted">x${d.quantity}</span></div>
+                        <div>${d.productName || d.productname || d.ProductName || 'Producto ID: ' + (d.productId || d.productid || '')} <span class="text-muted">x${d.quantity}</span></div>
                         <span>$${d.total.toFixed(2)}</span>
                     </li>`;
                 });
