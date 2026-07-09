@@ -1,10 +1,15 @@
-document.addEventListener('DOMContentLoaded', () => {
-    loadThemes();
-});
-
 let allThemes = [];
 let activeThemeId = null;
 let themeSettingsModal = null;
+let confirmActivationModal = null;
+let themeIdToActivate = null;
+let customizingThemeId = null;
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadThemes();
+    
+    document.getElementById('btnConfirmActivation')?.addEventListener('click', confirmAndActivateTheme);
+});
 
 async function loadThemes() {
     try {
@@ -48,11 +53,19 @@ function renderThemeGrid() {
                         <span class="badge bg-light text-dark border">v${theme.version}</span>
                     </div>
                     <p class="card-text text-muted small mb-3">${theme.description}</p>
-                    <div class="d-flex gap-2">
-                        ${isActive 
-                            ? `<button class="btn btn-outline-secondary w-100" disabled>Tema Actual</button>` 
-                            : `<button class="btn btn-primary w-100 shadow-sm" onclick="activateTheme(${theme.id})">Activar Tema</button>`
-                        }
+                    
+                    <div class="row g-2">
+                        <div class="col-12">
+                            <button class="btn btn-outline-primary w-100 shadow-sm" onclick="openCustomizeModal(${theme.id})">
+                                <i class="bi bi-sliders me-1"></i> Personalizar
+                            </button>
+                        </div>
+                        <div class="col-12">
+                            ${isActive 
+                                ? `<button class="btn btn-outline-secondary w-100" disabled>Tema Actual</button>` 
+                                : `<button class="btn btn-primary w-100 shadow-sm" onclick="activateTheme(${theme.id})">Activar Tema</button>`
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
@@ -61,26 +74,45 @@ function renderThemeGrid() {
     });
 }
 
-async function activateTheme(themeId) {
-    if (!confirm('¿Estás seguro de que deseas activar este tema? Esto cambiará instantáneamente la apariencia de la tienda para todos los clientes.')) {
-        return;
+function activateTheme(themeId) {
+    themeIdToActivate = themeId;
+    if (!confirmActivationModal) {
+        confirmActivationModal = new bootstrap.Modal(document.getElementById('confirmActivationModal'));
     }
+    confirmActivationModal.show();
+}
+
+async function confirmAndActivateTheme() {
+    if (!themeIdToActivate) return;
     
+    const btn = document.getElementById('btnConfirmActivation');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Activando...';
+    btn.disabled = true;
+
     try {
-        await ApiClient.request(`/Themes/activate/${themeId}`, 'POST');
+        await ApiClient.request(`/Themes/activate/${themeIdToActivate}`, 'POST');
         showToast('Éxito', 'El tema se activó correctamente', 'success');
+        if (confirmActivationModal) {
+            confirmActivationModal.hide();
+        }
         await loadThemes();
     } catch (error) {
         console.error('Error activando tema:', error);
         showToast('Error', 'No se pudo activar el tema', 'danger');
+    } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+        themeIdToActivate = null;
     }
 }
 
-async function openCustomizeModal() {
-    if (!activeThemeId) return;
+async function openCustomizeModal(themeId = null) {
+    customizingThemeId = themeId || activeThemeId;
+    if (!customizingThemeId) return;
     
     try {
-        const settings = await ApiClient.request(`/Themes/settings/${activeThemeId}`, 'GET');
+        const settings = await ApiClient.request(`/Themes/settings/${customizingThemeId}`, 'GET');
         
         document.getElementById('settingPrimaryColor').value = settings.primaryColor || '#000000';
         document.getElementById('settingSecondaryColor').value = settings.secondaryColor || '#ffffff';
@@ -104,7 +136,7 @@ async function openCustomizeModal() {
 }
 
 async function saveThemeSettings() {
-    if (!activeThemeId) return;
+    if (!customizingThemeId) return;
     
     const btn = document.getElementById('btnSaveThemeSettings');
     const originalText = btn.innerHTML;
@@ -113,7 +145,7 @@ async function saveThemeSettings() {
 
     try {
         const updatedSettings = {
-            themeId: activeThemeId,
+            themeId: customizingThemeId,
             primaryColor: document.getElementById('settingPrimaryColor').value,
             secondaryColor: document.getElementById('settingSecondaryColor').value,
             fontFamily: document.getElementById('settingFontFamily').value,
@@ -125,7 +157,7 @@ async function saveThemeSettings() {
             productCardStyle: document.getElementById('settingProductCardStyle').value
         };
 
-        await ApiClient.request(`/Themes/settings/${activeThemeId}`, 'PUT', updatedSettings);
+        await ApiClient.request(`/Themes/settings/${customizingThemeId}`, 'PUT', updatedSettings);
         
         showToast('Éxito', 'Configuración de diseño guardada correctamente', 'success');
         if (themeSettingsModal) {
