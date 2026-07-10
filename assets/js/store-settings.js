@@ -171,3 +171,8 @@ async function saveThemeSettings() {
         btn.disabled = false;
     }
 }
+
+function logout() {
+    ApiClient.clearToken();
+    window.location.href = 'login.html';
+}
