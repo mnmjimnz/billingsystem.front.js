@@ -436,6 +436,15 @@ window.showMyOrdersModal = async function() {
             headers: { 'Authorization': `Bearer ${token}` }
         });
 
+        if (res.status === 401) {
+            localStorage.removeItem('storeToken');
+            localStorage.removeItem('storeCustomer');
+            Swal.fire('Sesión Expirada', 'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.', 'warning').then(() => {
+                window.location.href = 'login.html';
+            });
+            return;
+        }
+
         if (res.ok) {
             const orders = await res.json();
             if (orders.length === 0) {
