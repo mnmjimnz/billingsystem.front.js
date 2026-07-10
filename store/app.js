@@ -24,6 +24,22 @@ async function fetchStoreSettings() {
             // Fetch Theme Settings
             if (storeSettings.activeThemeId) {
                 try {
+                    // Check and enforce correct theme routing
+                    const allThemesRes = await fetch(`${API_URL}/Themes`, { cache: 'no-store' });
+                    if (allThemesRes.ok) {
+                        const allThemes = await allThemesRes.json();
+                        const activeTheme = allThemes.find(t => t.id === storeSettings.activeThemeId) || allThemes[0];
+                        const code = activeTheme ? activeTheme.code : 'modern';
+                        const currentPath = window.location.pathname;
+                        
+                        // Enforce the correct theme directory
+                        if (currentPath.includes('/themes/') && !currentPath.includes(`/themes/${code}/`)) {
+                            const newPath = currentPath.replace(/\/themes\/[^\/]+\//, `/themes/${code}/`);
+                            window.location.replace(newPath + window.location.search);
+                            return; // Stop execution
+                        }
+                    }
+
                     const themeRes = await fetch(`${API_URL}/Themes/settings/${storeSettings.activeThemeId}`, { cache: 'no-store' });
                     if (themeRes.ok) {
                         const themeSettings = await themeRes.json();
