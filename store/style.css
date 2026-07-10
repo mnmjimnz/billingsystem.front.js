@@ -27,6 +27,12 @@
     --store-shadow-hover: 0 12px 40px rgba(0,0,0,0.4);
 }
 
+html, body {
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100vw;
+}
+
 body {
     font-family: var(--theme-font) !important;
     background-color: var(--store-bg);
