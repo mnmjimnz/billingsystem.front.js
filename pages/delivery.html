@@ -247,6 +247,21 @@
       </div>
     </div>
 
+    <!-- View Route Map Modal -->
+    <div class="modal fade" id="viewMapModal">
+      <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Ruta Trazada</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="document.getElementById('viewMapModal').classList.remove('show')"></button>
+          </div>
+          <div class="modal-body p-0">
+            <div id="viewOnlyMapContainer" style="height: 600px; width: 100%;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
     <script src="../assets/js/theme.js"></script>

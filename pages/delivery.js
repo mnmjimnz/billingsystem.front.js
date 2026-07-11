@@ -133,6 +133,7 @@ async function loadRoutes() {
             <td>${v}</td>
             <td><span class="badge bg-primary">${r.status}</span></td>
             <td class="text-end pe-4">
+                <button class="btn btn-sm btn-light me-1 text-info" onclick="viewRouteMap(${r.id})" title="Ver Mapa de la Ruta"><i class="bi bi-map"></i></button>
                 <button class="btn btn-sm btn-light me-1" onclick="manageStops(${r.id})" title="Gestionar Paradas"><i class="bi bi-geo-alt"></i></button>
                 <button class="btn btn-sm btn-light" onclick="editRoute(${r.id})" title="Editar Ruta"><i class="bi bi-pencil"></i></button>
             </td>
@@ -342,6 +343,94 @@ window.addStopFromMap = function(orderId) {
     });
     map.closePopup();
     renderStops();
+};
+
+let viewMap = null;
+let viewMarkers = [];
+let viewPolyline = null;
+
+window.viewRouteMap = async function(routeId) {
+    const r = routes.find(x => x.id === routeId);
+    if(!r) return;
+    
+    document.getElementById('viewMapModal').classList.add('show');
+    
+    // We need all orders to get their coordinates (even if they are completed)
+    let allOrders = [];
+    try {
+        const res = await ApiClient.request('/Orders?pageSize=100');
+        allOrders = res.items || [];
+    } catch(e) {
+        console.error(e);
+    }
+    
+    setTimeout(async () => {
+        if (!viewMap) {
+            viewMap = L.map('viewOnlyMapContainer').setView(mapCenter, 12);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
+            }).addTo(viewMap);
+            
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    mapCenter[0] = position.coords.latitude;
+                    mapCenter[1] = position.coords.longitude;
+                    L.marker(mapCenter, {
+                        icon: L.icon({
+                            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+                            iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34]
+                        })
+                    }).addTo(viewMap).bindPopup('<b>Tu Ubicación Inicial</b>');
+                });
+            }
+        }
+        viewMap.invalidateSize();
+        
+        // Clear old routes
+        viewMarkers.forEach(m => viewMap.removeLayer(m));
+        viewMarkers = [];
+        if (viewPolyline) viewMap.removeLayer(viewPolyline);
+        
+        const latlngsForRoute = [];
+        const stops = r.stops || [];
+        
+        stops.forEach((s, index) => {
+            const order = allOrders.find(o => o.id === s.orderId);
+            if (order && order.latitude && order.longitude) {
+                latlngsForRoute.push([order.latitude, order.longitude]);
+                const marker = L.marker([order.latitude, order.longitude], {
+                    icon: L.icon({
+                        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+                        iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34]
+                    })
+                }).addTo(viewMap);
+                marker.bindPopup(`<b>Parada ${index + 1}</b><br>Pedido #${order.id}<br>${order.customerName || ''}<br>Estado: ${s.status}`);
+                viewMarkers.push(marker);
+            }
+        });
+        
+        if (latlngsForRoute.length > 1) {
+            try {
+                const coordsStr = latlngsForRoute.map(ll => `${ll[1]},${ll[0]}`).join(';');
+                const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${coordsStr}?overview=full&geometries=geojson`;
+                const response = await fetch(osrmUrl);
+                const data = await response.json();
+                
+                if (data.routes && data.routes.length > 0) {
+                    const routeCoords = data.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
+                    viewPolyline = L.polyline(routeCoords, {color: 'blue', weight: 4, opacity: 0.7}).addTo(viewMap);
+                    viewMap.fitBounds(viewPolyline.getBounds(), { padding: [50, 50] });
+                }
+            } catch(e) {
+                viewPolyline = L.polyline(latlngsForRoute, {color: 'blue', weight: 4, opacity: 0.7}).addTo(viewMap);
+                viewMap.fitBounds(viewPolyline.getBounds(), { padding: [50, 50] });
+            }
+        } else if (latlngsForRoute.length === 1) {
+            viewMap.setView(latlngsForRoute[0], 14);
+        } else {
+            viewMap.setView(mapCenter, 12);
+        }
+    }, 250);
 };
 
 function addStopToRoute() {
