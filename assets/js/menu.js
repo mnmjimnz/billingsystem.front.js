@@ -23,7 +23,8 @@ const MENU_ITEMS = [
     { url: 'branch-movements.html', icon: 'bi-arrow-left-right', text: 'Movimientos', permission: 'MANAGE_MOVEMENTS' },
     { url: 'settings.html', icon: 'bi-gear', text: 'Configuración', permission: 'MANAGE_SETTINGS' },
     { url: 'store-settings.html', icon: 'bi-shop-window', text: 'Apariencia de Tienda', permission: 'MANAGE_SETTINGS' },
-    { url: 'marketing.html', icon: 'bi-ticket-perforated', text: 'Cupones y Marketing', permission: 'MANAGE_SETTINGS' }
+    { url: 'marketing.html', icon: 'bi-ticket-perforated', text: 'Cupones y Marketing', permission: 'MANAGE_SETTINGS' },
+    { url: 'delivery.html', icon: 'bi-truck', text: 'Logística y Rutas', permission: 'MANAGE_SETTINGS' }
 ];
 
 function generateMenu() {
