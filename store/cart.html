@@ -265,12 +265,31 @@
                         window.location.href = 'index.html';
                     });
                 } else {
-                    const err = await response.json();
-                    Swal.fire('Error', err.message || 'Error al procesar el pedido', 'error');
+                    let errorMessage = 'Error al procesar el pedido';
+                    const text = await response.text();
+                    try {
+                        if (text) {
+                            const err = JSON.parse(text);
+                            errorMessage = err.message || errorMessage;
+                        } else if (response.status === 401) {
+                            errorMessage = 'Tu sesión ha expirado o es inválida. Por favor, inicia sesión nuevamente.';
+                        }
+                    } catch (e) {
+                        if (text) {
+                            console.error('Server error response:', text);
+                            errorMessage = 'Error del servidor, revisa la consola.';
+                        }
+                    }
+                    
+                    Swal.fire('Error', errorMessage, 'error').then(() => {
+                        if (response.status === 401) {
+                            window.location.href = 'login.html';
+                        }
+                    });
                     document.getElementById('confirmOrderBtn').disabled = false;
                 }
             } catch (error) {
-                console.error(error);
+                console.error('Network or fetch error:', error);
                 Swal.fire('Error', 'Error de red al procesar el pedido', 'error');
                 document.getElementById('confirmOrderBtn').disabled = false;
             }

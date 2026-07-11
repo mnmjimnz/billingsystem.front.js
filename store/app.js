@@ -221,6 +221,10 @@ function renderPagination(totalCount, page, pageSize) {
         container.innerHTML = '';
         return;
     }
+    
+    // Prevent overflow on mobile by wrapping
+    container.classList.add('flex-wrap');
+    container.classList.add('justify-content-center');
 
     let html = '';
     
@@ -228,10 +232,35 @@ function renderPagination(totalCount, page, pageSize) {
                 <a class="page-link bg-dark text-light border-secondary" href="#" onclick="event.preventDefault(); loadProducts(${page - 1})">Anterior</a>
              </li>`;
              
-    for (let i = 1; i <= totalPages; i++) {
+    let startPage = Math.max(1, page - 2);
+    let endPage = Math.min(totalPages, page + 2);
+    
+    // Adjust window if we're near the beginning or end
+    if (page <= 3) {
+        endPage = Math.min(totalPages, 5);
+    }
+    if (page >= totalPages - 2) {
+        startPage = Math.max(1, totalPages - 4);
+    }
+    
+    if (startPage > 1) {
+        html += `<li class="page-item"><a class="page-link bg-dark text-light border-secondary" href="#" onclick="event.preventDefault(); loadProducts(1)">1</a></li>`;
+        if (startPage > 2) {
+            html += `<li class="page-item disabled"><span class="page-link bg-dark text-light border-secondary">...</span></li>`;
+        }
+    }
+             
+    for (let i = startPage; i <= endPage; i++) {
         html += `<li class="page-item ${i === page ? 'active' : ''}">
                     <a class="page-link ${i === page ? 'bg-primary border-primary' : 'bg-dark text-light border-secondary'}" href="#" onclick="event.preventDefault(); loadProducts(${i})">${i}</a>
                  </li>`;
+    }
+
+    if (endPage < totalPages) {
+        if (endPage < totalPages - 1) {
+            html += `<li class="page-item disabled"><span class="page-link bg-dark text-light border-secondary">...</span></li>`;
+        }
+        html += `<li class="page-item"><a class="page-link bg-dark text-light border-secondary" href="#" onclick="event.preventDefault(); loadProducts(${totalPages})">${totalPages}</a></li>`;
     }
 
     html += `<li class="page-item ${page === totalPages ? 'disabled' : ''}">
