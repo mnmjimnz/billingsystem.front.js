@@ -1,9 +1,9 @@
-﻿document.addEventListener('DOMContentLoaded', () => {
+const modal = new bootstrap.Modal(document.getElementById('couponModal'));
+let coupons = [];
+
+document.addEventListener('DOMContentLoaded', () => {
     loadCoupons();
 });
-
-let coupons = [];
-const modal = new bootstrap.Modal(document.getElementById('couponModal'));
 
 async function loadCoupons() {
     try {
@@ -19,26 +19,26 @@ function renderCoupons() {
     tbody.innerHTML = '';
     
     coupons.forEach(c => {
-        let discountTxt = c.discountPercentage ? ${c.discountPercentage}% : $;
+        let discountTxt = c.discountPercentage ? `${c.discountPercentage}%` : `$${c.discountAmount}`;
         let validTxt = (c.validFrom ? new Date(c.validFrom).toLocaleDateString() : 'Siempre') + ' - ' + (c.validUntil ? new Date(c.validUntil).toLocaleDateString() : 'Siempre');
-        let useTxt = c.maxUses ? ${c.currentUses} /  : ${c.currentUses} (Sin límite);
+        let useTxt = c.maxUses ? `${c.currentUses} / ${c.maxUses}` : `${c.currentUses} (Sin límite)`;
         let statusBadge = c.isActive 
-            ? <span class="badge bg-success-subtle text-success">Activo</span> 
-            : <span class="badge bg-danger-subtle text-danger">Inactivo</span>;
+            ? `<span class="badge bg-success-subtle text-success">Activo</span>` 
+            : `<span class="badge bg-danger-subtle text-danger">Inactivo</span>`;
 
-        tbody.innerHTML += 
+        tbody.innerHTML += `
             <tr>
-                <td class="ps-4 fw-bold text-primary"></td>
-                <td></td>
-                <td><small class="text-muted"></small></td>
-                <td></td>
-                <td></td>
+                <td class="ps-4 fw-bold text-primary">${c.code}</td>
+                <td>${discountTxt}</td>
+                <td><small class="text-muted">${validTxt}</small></td>
+                <td>${useTxt}</td>
+                <td>${statusBadge}</td>
                 <td class="text-end pe-4">
-                    <button class="btn btn-sm btn-light me-2" onclick="editCoupon()" title="Editar"><i class="bi bi-pencil"></i></button>
-                    <button class="btn btn-sm btn-light text-danger" onclick="deleteCoupon()" title="Eliminar"><i class="bi bi-trash"></i></button>
+                    <button class="btn btn-sm btn-light me-2" onclick="editCoupon(${c.id})" title="Editar"><i class="bi bi-pencil"></i></button>
+                    <button class="btn btn-sm btn-light text-danger" onclick="deleteCoupon(${c.id})" title="Eliminar"><i class="bi bi-trash"></i></button>
                 </td>
             </tr>
-        ;
+        `;
     });
 }
 
@@ -98,7 +98,7 @@ async function saveCoupon() {
     try {
         if (id) {
             payload.id = parseInt(id);
-            await apiClient.put(/api/Coupons/, payload);
+            await apiClient.put(`/api/Coupons/${id}`, payload);
             showToast('Cupón actualizado exitosamente');
         } else {
             await apiClient.post('/api/Coupons', payload);
@@ -114,7 +114,7 @@ async function saveCoupon() {
 async function deleteCoupon(id) {
     if (!confirm('¿Estás seguro de eliminar este cupón?')) return;
     try {
-        await apiClient.delete(/api/Coupons/);
+        await apiClient.delete(`/api/Coupons/${id}`);
         showToast('Cupón eliminado');
         loadCoupons();
     } catch (error) {

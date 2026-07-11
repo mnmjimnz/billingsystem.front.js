@@ -1,4 +1,4 @@
-﻿document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
     loadDrivers();
     loadVehicles();
     loadRoutes();
@@ -12,19 +12,19 @@ let routes = [];
 async function loadDrivers() {
     drivers = await apiClient.get('/api/Delivery/drivers');
     const tbody = document.getElementById('driversTable');
-    tbody.innerHTML = drivers.map(d => 
+    tbody.innerHTML = drivers.map(d => `
         <tr>
-            <td class="ps-4"></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td class="text-end pe-4"><button class="btn btn-sm btn-light" onclick="editDriver()"><i class="bi bi-pencil"></i></button></td>
+            <td class="ps-4">${d.id}</td>
+            <td>${d.name}</td>
+            <td>${d.licenseNumber}</td>
+            <td>${d.isActive ? '<span class="badge bg-success">Activo</span>' : '<span class="badge bg-danger">Inactivo</span>'}</td>
+            <td class="text-end pe-4"><button class="btn btn-sm btn-light" onclick="editDriver(${d.id})"><i class="bi bi-pencil"></i></button></td>
         </tr>
-    ).join('');
+    `).join('');
     
     // update select
     const sel = document.getElementById('routeDriver');
-    sel.innerHTML = '<option value="">Seleccione Conductor</option>' + drivers.map(d => <option value=""></option>).join('');
+    if (sel) sel.innerHTML = '<option value="">Seleccione Conductor</option>' + drivers.map(d => `<option value="${d.id}">${d.name}</option>`).join('');
 }
 
 function clearDriverForm() {
@@ -66,18 +66,18 @@ async function saveDriver() {
 async function loadVehicles() {
     vehicles = await apiClient.get('/api/Delivery/vehicles');
     const tbody = document.getElementById('vehiclesTable');
-    tbody.innerHTML = vehicles.map(v => 
+    tbody.innerHTML = vehicles.map(v => `
         <tr>
-            <td class="ps-4"></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td class="text-end pe-4"><button class="btn btn-sm btn-light" onclick="editVehicle()"><i class="bi bi-pencil"></i></button></td>
+            <td class="ps-4">${v.plateNumber}</td>
+            <td>${v.model}</td>
+            <td>${v.capacity || 0}</td>
+            <td>${v.isActive ? '<span class="badge bg-success">Activo</span>' : '<span class="badge bg-danger">Inactivo</span>'}</td>
+            <td class="text-end pe-4"><button class="btn btn-sm btn-light" onclick="editVehicle(${v.id})"><i class="bi bi-pencil"></i></button></td>
         </tr>
-    ).join('');
+    `).join('');
     
     const sel = document.getElementById('routeVehicle');
-    sel.innerHTML = '<option value="">Seleccione Vehículo</option>' + vehicles.map(v => <option value=""> - </option>).join('');
+    if (sel) sel.innerHTML = '<option value="">Seleccione Vehículo</option>' + vehicles.map(v => `<option value="${v.id}">${v.plateNumber} - ${v.model}</option>`).join('');
 }
 
 function clearVehicleForm() {
@@ -122,16 +122,16 @@ async function loadRoutes() {
     tbody.innerHTML = routes.map(r => {
         const d = drivers.find(x => x.id === r.driverId)?.name || 'N/A';
         const v = vehicles.find(x => x.id === r.vehicleId)?.plateNumber || 'N/A';
-        return 
+        return `
         <tr>
-            <td class="ps-4"></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td><span class="badge bg-primary"></span></td>
-            <td class="text-end pe-4"><button class="btn btn-sm btn-light" onclick="editRoute()"><i class="bi bi-pencil"></i></button></td>
+            <td class="ps-4">${r.id}</td>
+            <td>${new Date(r.date).toLocaleDateString()}</td>
+            <td>${d}</td>
+            <td>${v}</td>
+            <td><span class="badge bg-primary">${r.status}</span></td>
+            <td class="text-end pe-4"><button class="btn btn-sm btn-light" onclick="editRoute(${r.id})"><i class="bi bi-pencil"></i></button></td>
         </tr>
-    }).join('');
+    `}).join('');
 }
 
 function clearRouteForm() {
@@ -158,7 +158,7 @@ async function saveRoute() {
         driverId: parseInt(document.getElementById('routeDriver').value),
         vehicleId: parseInt(document.getElementById('routeVehicle').value),
         status: 'PENDING',
-        stops: [] // Initially empty
+        stops: []
     };
     if(id) {
         data.id = parseInt(id);
