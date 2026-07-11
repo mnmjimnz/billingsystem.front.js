@@ -212,6 +212,21 @@ async function manageStops(routeId) {
             L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
                 attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
             }).addTo(map);
+            
+            // Obtenemos ubicación del dispositivo
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    mapCenter[0] = position.coords.latitude;
+                    mapCenter[1] = position.coords.longitude;
+                    map.setView(mapCenter, 13);
+                    L.marker(mapCenter, {
+                        icon: L.icon({
+                            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+                            iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34]
+                        })
+                    }).addTo(map).bindPopup('<b>Tu Ubicación</b>').openPopup();
+                });
+            }
         }
         map.invalidateSize();
         renderStops();
@@ -238,7 +253,7 @@ function renderStops() {
     updateMap();
 }
 
-function updateMap() {
+async function updateMap() {
     if (!map) return;
     
     // Clear existing markers and polyline
@@ -246,7 +261,7 @@ function updateMap() {
     markers = [];
     if (polyline) map.removeLayer(polyline);
     
-    const latlngs = [];
+    const latlngsForRoute = [];
     
     // Draw all pending orders not in the route
     availableOrders.forEach(o => {
@@ -273,7 +288,7 @@ function updateMap() {
         // Stop might be in availableOrders (if recent), or we might need to fetch it (for MVP, we assume we have it or just plot what we know)
         const order = availableOrders.find(o => o.id === s.orderId);
         if (order && order.latitude && order.longitude) {
-            latlngs.push([order.latitude, order.longitude]);
+            latlngsForRoute.push([order.latitude, order.longitude]);
             const marker = L.marker([order.latitude, order.longitude], {
                 icon: L.icon({
                     iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
@@ -285,9 +300,36 @@ function updateMap() {
         }
     });
     
-    if (latlngs.length > 0) {
-        polyline = L.polyline(latlngs, {color: 'blue', weight: 4, opacity: 0.7}).addTo(map);
-        map.fitBounds(polyline.getBounds(), { padding: [50, 50] });
+    if (latlngsForRoute.length > 1) {
+        try {
+            // Include user location as starting point if available
+            const allPoints = [];
+            if (mapCenter && latlngsForRoute.length > 0) {
+                // allPoints.push(mapCenter); // Optional: add warehouse location if you want route from it
+            }
+            
+            // Build OSRM query string (lng,lat;lng,lat)
+            const coordsStr = latlngsForRoute.map(ll => `${ll[1]},${ll[0]}`).join(';');
+            const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${coordsStr}?overview=full&geometries=geojson`;
+            
+            const response = await fetch(osrmUrl);
+            const data = await response.json();
+            
+            if (data.routes && data.routes.length > 0) {
+                // Convert coordinates from GeoJSON [lng, lat] to Leaflet [lat, lng]
+                const routeCoords = data.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
+                polyline = L.polyline(routeCoords, {color: 'blue', weight: 4, opacity: 0.7}).addTo(map);
+                map.fitBounds(polyline.getBounds(), { padding: [50, 50] });
+            } else {
+                throw new Error("No route found");
+            }
+        } catch(e) {
+            console.error("OSRM Routing error, falling back to straight lines:", e);
+            polyline = L.polyline(latlngsForRoute, {color: 'blue', weight: 4, opacity: 0.7}).addTo(map);
+            map.fitBounds(polyline.getBounds(), { padding: [50, 50] });
+        }
+    } else if (latlngsForRoute.length === 1) {
+        map.setView(latlngsForRoute[0], 14);
     }
 }
 
