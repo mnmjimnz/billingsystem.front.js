@@ -249,14 +249,14 @@
 
     <!-- View Route Map Modal -->
     <div class="modal fade" id="viewMapModal">
-      <div class="modal-dialog modal-xl">
+      <div class="modal-dialog modal-fullscreen">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title">Ruta Trazada</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="document.getElementById('viewMapModal').classList.remove('show')"></button>
           </div>
           <div class="modal-body p-0">
-            <div id="viewOnlyMapContainer" style="height: 600px; width: 100%;"></div>
+            <div id="viewOnlyMapContainer" style="height: 100%; min-height: 80vh; width: 100%;"></div>
           </div>
         </div>
       </div>
