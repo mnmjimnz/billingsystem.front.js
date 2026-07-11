@@ -41,7 +41,7 @@ function editDriver(id) {
     document.getElementById('driverName').value = d.name;
     document.getElementById('driverLicense').value = d.licenseNumber;
     document.getElementById('driverPhone').value = d.phone;
-    new bootstrap.Modal(document.getElementById('driverModal')).show();
+    document.getElementById('driverModal').classList.add('show');
 }
 
 async function saveDriver() {
@@ -58,7 +58,7 @@ async function saveDriver() {
     } else {
         await apiClient.post('/api/Delivery/drivers', data);
     }
-    bootstrap.Modal.getInstance(document.getElementById('driverModal')).hide();
+    document.getElementById('driverModal').classList.remove('show');
     loadDrivers();
 }
 
@@ -94,7 +94,7 @@ function editVehicle(id) {
     document.getElementById('vehiclePlate').value = v.plateNumber;
     document.getElementById('vehicleModel').value = v.model;
     document.getElementById('vehicleCapacity').value = v.capacity;
-    new bootstrap.Modal(document.getElementById('vehicleModal')).show();
+    document.getElementById('vehicleModal').classList.add('show');
 }
 
 async function saveVehicle() {
@@ -111,7 +111,7 @@ async function saveVehicle() {
     } else {
         await apiClient.post('/api/Delivery/vehicles', data);
     }
-    bootstrap.Modal.getInstance(document.getElementById('vehicleModal')).hide();
+    document.getElementById('vehicleModal').classList.remove('show');
     loadVehicles();
 }
 
@@ -148,7 +148,7 @@ function editRoute(id) {
     document.getElementById('routeDate').value = r.date.split('T')[0];
     document.getElementById('routeDriver').value = r.driverId;
     document.getElementById('routeVehicle').value = r.vehicleId;
-    new bootstrap.Modal(document.getElementById('routeModal')).show();
+    document.getElementById('routeModal').classList.add('show');
 }
 
 async function saveRoute() {
@@ -166,6 +166,6 @@ async function saveRoute() {
     } else {
         await apiClient.post('/api/Delivery/routes', data);
     }
-    bootstrap.Modal.getInstance(document.getElementById('routeModal')).hide();
+    document.getElementById('routeModal').classList.remove('show');
     loadRoutes();
 }

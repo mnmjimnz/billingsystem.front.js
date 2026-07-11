@@ -1,4 +1,4 @@
-const modal = new bootstrap.Modal(document.getElementById('couponModal'));
+const modal = document.getElementById('couponModal');
 let coupons = [];
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -62,7 +62,7 @@ function editCoupon(id) {
     document.getElementById('isActive').checked = c.isActive;
 
     document.getElementById('modalTitle').textContent = 'Editar Cupón';
-    modal.show();
+    modal.classList.add('show');
 }
 
 async function saveCoupon() {
@@ -104,7 +104,7 @@ async function saveCoupon() {
             await apiClient.post('/api/Coupons', payload);
             showToast('Cupón creado exitosamente');
         }
-        modal.hide();
+        modal.classList.remove('show');
         loadCoupons();
     } catch (error) {
         showToast('Error al guardar el cupón', 'error');
