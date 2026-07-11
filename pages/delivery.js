@@ -31,6 +31,7 @@ function clearDriverForm() {
     document.getElementById('driverName').value = '';
     document.getElementById('driverLicense').value = '';
     document.getElementById('driverPhone').value = '';
+    document.getElementById('driverStatus').value = 'true';
 }
 
 function editDriver(id) {
@@ -40,6 +41,7 @@ function editDriver(id) {
     document.getElementById('driverName').value = d.name;
     document.getElementById('driverLicense').value = d.licenseNumber;
     document.getElementById('driverPhone').value = d.phone;
+    document.getElementById('driverStatus').value = d.isActive ? 'true' : 'false';
     document.getElementById('driverModal').classList.add('show');
 }
 
@@ -49,7 +51,7 @@ async function saveDriver() {
         name: document.getElementById('driverName').value,
         licenseNumber: document.getElementById('driverLicense').value,
         phone: document.getElementById('driverPhone').value,
-        isActive: true
+        isActive: document.getElementById('driverStatus').value === 'true'
     };
     if(id) {
         data.id = parseInt(id);
@@ -84,6 +86,7 @@ function clearVehicleForm() {
     document.getElementById('vehiclePlate').value = '';
     document.getElementById('vehicleModel').value = '';
     document.getElementById('vehicleCapacity').value = '';
+    document.getElementById('vehicleStatus').value = 'true';
 }
 
 function editVehicle(id) {
@@ -93,6 +96,7 @@ function editVehicle(id) {
     document.getElementById('vehiclePlate').value = v.plateNumber;
     document.getElementById('vehicleModel').value = v.model;
     document.getElementById('vehicleCapacity').value = v.capacity;
+    document.getElementById('vehicleStatus').value = v.isActive ? 'true' : 'false';
     document.getElementById('vehicleModal').classList.add('show');
 }
 
@@ -102,7 +106,7 @@ async function saveVehicle() {
         plateNumber: document.getElementById('vehiclePlate').value,
         model: document.getElementById('vehicleModel').value,
         capacity: document.getElementById('vehicleCapacity').value ? parseFloat(document.getElementById('vehicleCapacity').value) : null,
-        isActive: true
+        isActive: document.getElementById('vehicleStatus').value === 'true'
     };
     if(id) {
         data.id = parseInt(id);
@@ -138,6 +142,7 @@ function clearRouteForm() {
     document.getElementById('routeDate').value = new Date().toISOString().split('T')[0];
     document.getElementById('routeDriver').value = '';
     document.getElementById('routeVehicle').value = '';
+    document.getElementById('routeStatus').value = 'PENDING';
 }
 
 function editRoute(id) {
@@ -147,6 +152,7 @@ function editRoute(id) {
     document.getElementById('routeDate').value = r.date.split('T')[0];
     document.getElementById('routeDriver').value = r.driverId;
     document.getElementById('routeVehicle').value = r.vehicleId;
+    document.getElementById('routeStatus').value = r.status;
     document.getElementById('routeModal').classList.add('show');
 }
 
@@ -156,7 +162,7 @@ async function saveRoute() {
         date: document.getElementById('routeDate').value + 'T00:00:00Z',
         driverId: parseInt(document.getElementById('routeDriver').value),
         vehicleId: parseInt(document.getElementById('routeVehicle').value),
-        status: 'PENDING',
+        status: document.getElementById('routeStatus').value,
         stops: []
     };
     if(id) {

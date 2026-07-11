@@ -147,6 +147,10 @@
             <input type="text" class="form-control mb-3" id="driverName" placeholder="Nombre">
             <input type="text" class="form-control mb-3" id="driverLicense" placeholder="Licencia">
             <input type="text" class="form-control mb-3" id="driverPhone" placeholder="Teléfono">
+            <select class="form-select mb-3" id="driverStatus">
+                <option value="true">Activo</option>
+                <option value="false">Inactivo</option>
+            </select>
           </div>
           <div class="modal-footer">
             <button class="btn btn-primary" onclick="saveDriver()">Guardar</button>
@@ -165,6 +169,10 @@
             <input type="text" class="form-control mb-3" id="vehiclePlate" placeholder="Placa">
             <input type="text" class="form-control mb-3" id="vehicleModel" placeholder="Modelo">
             <input type="number" class="form-control mb-3" id="vehicleCapacity" placeholder="Capacidad (kg)">
+            <select class="form-select mb-3" id="vehicleStatus">
+                <option value="true">Activo</option>
+                <option value="false">Inactivo</option>
+            </select>
           </div>
           <div class="modal-footer">
             <button class="btn btn-primary" onclick="saveVehicle()">Guardar</button>
@@ -183,6 +191,12 @@
             <input type="date" class="form-control mb-3" id="routeDate">
             <select class="form-select mb-3" id="routeDriver"></select>
             <select class="form-select mb-3" id="routeVehicle"></select>
+            <select class="form-select mb-3" id="routeStatus">
+                <option value="PENDING">Pendiente</option>
+                <option value="IN_TRANSIT">En Tránsito</option>
+                <option value="COMPLETED">Completada</option>
+                <option value="CANCELLED">Cancelada</option>
+            </select>
           </div>
           <div class="modal-footer">
             <button class="btn btn-primary" onclick="saveRoute()">Guardar</button>
