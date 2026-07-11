@@ -181,18 +181,15 @@ async function saveRoute() {
 // Manage Stops
 let currentRouteStops = [];
 let availableOrders = [];
+let map = null;
+let markers = [];
+let polyline = null;
+const mapCenter = [19.432608, -99.133209]; // Default CDMX
 
 async function loadAvailableOrders() {
     try {
-        // We load all orders and filter out those that are not PAID or already delivered
-        // For simplicity, we just fetch orders (assuming page size is enough for this MVP)
         const res = await ApiClient.request('/Orders?pageSize=100');
-        // Filter orders that are not COMPLETED/CANCELLED
         availableOrders = (res.items || []).filter(o => o.status !== 'COMPLETED' && o.status !== 'CANCELLED');
-        
-        const sel = document.getElementById('availableOrders');
-        sel.innerHTML = '<option value="">Seleccione un Pedido...</option>' + 
-            availableOrders.map(o => `<option value="${o.id}">Pedido #${o.id} - ${o.customerName || 'Cliente'} ($${o.total})</option>`).join('');
     } catch(e) {
         console.error(e);
     }
@@ -206,28 +203,104 @@ async function manageStops(routeId) {
     currentRouteStops = JSON.parse(JSON.stringify(r.stops || []));
     
     await loadAvailableOrders();
-    renderStops();
     document.getElementById('stopsModal').classList.add('show');
+    
+    // Initialize map after modal is shown to ensure correct dimensions
+    setTimeout(() => {
+        if (!map) {
+            map = L.map('routeMapContainer').setView(mapCenter, 12);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
+            }).addTo(map);
+        }
+        map.invalidateSize();
+        renderStops();
+    }, 250);
 }
 
 function renderStops() {
     const tbody = document.getElementById('stopsTableBody');
     if(currentRouteStops.length === 0) {
         tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">No hay paradas asignadas a esta ruta.</td></tr>';
-        return;
+    } else {
+        tbody.innerHTML = currentRouteStops.map((s, index) => `
+            <tr>
+                <td>Pedido #${s.orderId}</td>
+                <td>${index + 1}</td>
+                <td><span class="badge bg-secondary">${s.status}</span></td>
+                <td class="text-end">
+                    <button class="btn btn-sm btn-light text-danger" onclick="removeStop(${index})"><i class="bi bi-trash"></i></button>
+                </td>
+            </tr>
+        `).join('');
     }
     
-    tbody.innerHTML = currentRouteStops.map((s, index) => `
-        <tr>
-            <td>Pedido #${s.orderId}</td>
-            <td>${index + 1}</td>
-            <td><span class="badge bg-secondary">${s.status}</span></td>
-            <td class="text-end">
-                <button class="btn btn-sm btn-light text-danger" onclick="removeStop(${index})"><i class="bi bi-trash"></i></button>
-            </td>
-        </tr>
-    `).join('');
+    updateMap();
 }
+
+function updateMap() {
+    if (!map) return;
+    
+    // Clear existing markers and polyline
+    markers.forEach(m => map.removeLayer(m));
+    markers = [];
+    if (polyline) map.removeLayer(polyline);
+    
+    const latlngs = [];
+    
+    // Draw all pending orders not in the route
+    availableOrders.forEach(o => {
+        const isInRoute = currentRouteStops.some(s => s.orderId === o.id);
+        if(!isInRoute && o.latitude && o.longitude) {
+            const marker = L.marker([o.latitude, o.longitude], {
+                icon: L.icon({
+                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-grey.png',
+                    iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34]
+                })
+            }).addTo(map);
+            marker.bindPopup(`
+                <b>Pedido #${o.id}</b><br>
+                Cliente: ${o.customerName}<br>
+                Total: $${o.total}<br>
+                <button class="btn btn-sm btn-primary mt-2" onclick="addStopFromMap(${o.id})">Añadir a Ruta</button>
+            `);
+            markers.push(marker);
+        }
+    });
+    
+    // Draw route stops in order
+    currentRouteStops.forEach((s, index) => {
+        // Stop might be in availableOrders (if recent), or we might need to fetch it (for MVP, we assume we have it or just plot what we know)
+        const order = availableOrders.find(o => o.id === s.orderId);
+        if (order && order.latitude && order.longitude) {
+            latlngs.push([order.latitude, order.longitude]);
+            const marker = L.marker([order.latitude, order.longitude], {
+                icon: L.icon({
+                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+                    iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34]
+                })
+            }).addTo(map);
+            marker.bindPopup(`<b>Parada ${index + 1}</b><br>Pedido #${order.id}<br>${order.customerName}`);
+            markers.push(marker);
+        }
+    });
+    
+    if (latlngs.length > 0) {
+        polyline = L.polyline(latlngs, {color: 'blue', weight: 4, opacity: 0.7}).addTo(map);
+        map.fitBounds(polyline.getBounds(), { padding: [50, 50] });
+    }
+}
+
+window.addStopFromMap = function(orderId) {
+    if(currentRouteStops.find(s => s.orderId === orderId)) return;
+    currentRouteStops.push({
+        orderId: orderId,
+        stopOrder: currentRouteStops.length + 1,
+        status: 'PENDING'
+    });
+    map.closePopup();
+    renderStops();
+};
 
 function addStopToRoute() {
     const sel = document.getElementById('availableOrders');
@@ -252,7 +325,6 @@ function addStopToRoute() {
 
 function removeStop(index) {
     currentRouteStops.splice(index, 1);
-    // Re-calculate stop orders
     currentRouteStops.forEach((s, i) => s.stopOrder = i + 1);
     renderStops();
 }
