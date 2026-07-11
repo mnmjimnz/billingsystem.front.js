@@ -1,10 +1,11 @@
 document.addEventListener('DOMContentLoaded', async () => {
-    await Promise.all([loadDrivers(), loadVehicles()]);
+    await Promise.all([loadDrivers(), loadVehicles(), loadBranches()]);
     await loadRoutes();
 });
 
 let drivers = [];
 let vehicles = [];
+let branches = [];
 let routes = [];
 
 // Drivers
@@ -118,6 +119,15 @@ async function saveVehicle() {
     loadVehicles();
 }
 
+// Branches
+async function loadBranches() {
+    branches = await ApiClient.request('/Branches');
+    const select = document.getElementById('routeBranch');
+    if (select) {
+        select.innerHTML = '<option value="">Seleccione Sucursal</option>' + branches.map(b => `<option value="${b.id}">${b.name}</option>`).join('');
+    }
+}
+
 // Routes
 async function loadRoutes() {
     routes = await ApiClient.request('/Delivery/routes');
@@ -144,6 +154,7 @@ async function loadRoutes() {
 function clearRouteForm() {
     document.getElementById('routeId').value = '';
     document.getElementById('routeDate').value = new Date().toISOString().split('T')[0];
+    document.getElementById('routeBranch').value = '';
     document.getElementById('routeDriver').value = '';
     document.getElementById('routeVehicle').value = '';
     document.getElementById('routeStatus').value = 'PENDING';
@@ -154,6 +165,7 @@ function editRoute(id) {
     if(!r) return;
     document.getElementById('routeId').value = r.id;
     document.getElementById('routeDate').value = r.date.split('T')[0];
+    document.getElementById('routeBranch').value = r.branchId || '';
     document.getElementById('routeDriver').value = r.driverId;
     document.getElementById('routeVehicle').value = r.vehicleId;
     document.getElementById('routeStatus').value = r.status;
@@ -164,6 +176,7 @@ async function saveRoute() {
     const id = document.getElementById('routeId').value;
     const data = {
         date: document.getElementById('routeDate').value + 'T00:00:00Z',
+        branchId: parseInt(document.getElementById('routeBranch').value) || 1,
         driverId: parseInt(document.getElementById('routeDriver').value),
         vehicleId: parseInt(document.getElementById('routeVehicle').value),
         status: document.getElementById('routeStatus').value,
@@ -200,6 +213,13 @@ async function manageStops(routeId) {
     const r = routes.find(x => x.id === routeId);
     if(!r) return;
     
+    // Set map center to branch location if available
+    const branch = branches.find(b => b.id === r.branchId);
+    if (branch && branch.latitude && branch.longitude) {
+        mapCenter[0] = branch.latitude;
+        mapCenter[1] = branch.longitude;
+    }
+    
     document.getElementById('stopsRouteId').value = r.id;
     currentRouteStops = JSON.parse(JSON.stringify(r.stops || []));
     
@@ -214,20 +234,15 @@ async function manageStops(routeId) {
                 attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
             }).addTo(map);
             
-            // Obtenemos ubicación del dispositivo
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(position => {
-                    mapCenter[0] = position.coords.latitude;
-                    mapCenter[1] = position.coords.longitude;
-                    map.setView(mapCenter, 13);
-                    L.marker(mapCenter, {
-                        icon: L.icon({
-                            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-                            iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34]
-                        })
-                    }).addTo(map).bindPopup('<b>Tu Ubicación</b>').openPopup();
-                });
-            }
+            // Add branch marker (Origen)
+            L.marker(mapCenter, {
+                icon: L.icon({
+                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+                    iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34]
+                })
+            }).addTo(map).bindPopup('<b>' + (branch ? branch.name : 'Tu Ubicación') + ' (Origen)</b>').openPopup();
+        } else {
+            map.setView(mapCenter, 12);
         }
         map.invalidateSize();
         renderStops();
@@ -303,10 +318,9 @@ async function updateMap() {
     
     if (latlngsForRoute.length > 1) {
         try {
-            // Include user location as starting point if available
-            const allPoints = [];
+            // Include warehouse location as starting point if available
             if (mapCenter && latlngsForRoute.length > 0) {
-                // allPoints.push(mapCenter); // Optional: add warehouse location if you want route from it
+                latlngsForRoute.unshift(mapCenter); // Add branch at start
             }
             
             // Build OSRM query string (lng,lat;lng,lat)
@@ -364,25 +378,27 @@ window.viewRouteMap = async function(routeId) {
         console.error(e);
     }
     
+    const branch = branches.find(b => b.id === r.branchId);
+    let viewCenter = [...mapCenter];
+    if (branch && branch.latitude && branch.longitude) {
+        viewCenter = [branch.latitude, branch.longitude];
+    }
+    
     setTimeout(async () => {
         if (!viewMap) {
-            viewMap = L.map('viewOnlyMapContainer').setView(mapCenter, 12);
+            viewMap = L.map('viewOnlyMapContainer').setView(viewCenter, 12);
             L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
                 attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
             }).addTo(viewMap);
             
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(position => {
-                    mapCenter[0] = position.coords.latitude;
-                    mapCenter[1] = position.coords.longitude;
-                    L.marker(mapCenter, {
-                        icon: L.icon({
-                            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-                            iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34]
-                        })
-                    }).addTo(viewMap).bindPopup('<b>Tu Ubicación Inicial</b>');
-                });
-            }
+            L.marker(viewCenter, {
+                icon: L.icon({
+                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+                    iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34]
+                })
+            }).addTo(viewMap).bindPopup('<b>' + (branch ? branch.name : 'Origen') + '</b>');
+        } else {
+            viewMap.setView(viewCenter, 12);
         }
         viewMap.invalidateSize();
         
@@ -409,8 +425,11 @@ window.viewRouteMap = async function(routeId) {
             }
         });
         
-        if (latlngsForRoute.length > 1) {
+        if (latlngsForRoute.length > 0) {
             try {
+                if (viewCenter) {
+                    latlngsForRoute.unshift(viewCenter);
+                }
                 const coordsStr = latlngsForRoute.map(ll => `${ll[1]},${ll[0]}`).join(';');
                 const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${coordsStr}?overview=full&geometries=geojson`;
                 const response = await fetch(osrmUrl);
