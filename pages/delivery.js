@@ -180,7 +180,7 @@ async function saveRoute() {
         driverId: parseInt(document.getElementById('routeDriver').value),
         vehicleId: parseInt(document.getElementById('routeVehicle').value),
         status: document.getElementById('routeStatus').value,
-        stops: []
+        stops: id ? (routes.find(r => r.id === parseInt(id))?.stops || []) : []
     };
     if(id) {
         data.id = parseInt(id);
