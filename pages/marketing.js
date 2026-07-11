@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function loadCoupons() {
     try {
-        coupons = await apiClient.get('/api/Coupons');
+        coupons = await ApiClient.request('/Coupons');
         renderCoupons();
     } catch (error) {
         showToast('Error al cargar cupones', 'error');
@@ -98,10 +98,10 @@ async function saveCoupon() {
     try {
         if (id) {
             payload.id = parseInt(id);
-            await apiClient.put(`/api/Coupons/${id}`, payload);
+            await ApiClient.request(`/Coupons/${id}`, 'PUT', payload);
             showToast('Cupón actualizado exitosamente');
         } else {
-            await apiClient.post('/api/Coupons', payload);
+            await ApiClient.request('/Coupons', 'POST', payload);
             showToast('Cupón creado exitosamente');
         }
         modal.classList.remove('show');
@@ -114,7 +114,7 @@ async function saveCoupon() {
 async function deleteCoupon(id) {
     if (!confirm('¿Estás seguro de eliminar este cupón?')) return;
     try {
-        await apiClient.delete(`/api/Coupons/${id}`);
+        await ApiClient.request(`/Coupons/${id}`, 'DELETE');
         showToast('Cupón eliminado');
         loadCoupons();
     } catch (error) {

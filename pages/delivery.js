@@ -10,7 +10,7 @@ let routes = [];
 
 // Drivers
 async function loadDrivers() {
-    drivers = await apiClient.get('/api/Delivery/drivers');
+    drivers = await ApiClient.request('/Delivery/drivers');
     const tbody = document.getElementById('driversTable');
     tbody.innerHTML = drivers.map(d => `
         <tr>
@@ -54,9 +54,9 @@ async function saveDriver() {
     };
     if(id) {
         data.id = parseInt(id);
-        await apiClient.put('/api/Delivery/drivers/' + id, data);
+        await ApiClient.request('/Delivery/drivers/' + id, 'PUT', data);
     } else {
-        await apiClient.post('/api/Delivery/drivers', data);
+        await ApiClient.request('/Delivery/drivers', 'POST', data);
     }
     document.getElementById('driverModal').classList.remove('show');
     loadDrivers();
@@ -64,7 +64,7 @@ async function saveDriver() {
 
 // Vehicles
 async function loadVehicles() {
-    vehicles = await apiClient.get('/api/Delivery/vehicles');
+    vehicles = await ApiClient.request('/Delivery/vehicles');
     const tbody = document.getElementById('vehiclesTable');
     tbody.innerHTML = vehicles.map(v => `
         <tr>
@@ -107,9 +107,9 @@ async function saveVehicle() {
     };
     if(id) {
         data.id = parseInt(id);
-        await apiClient.put('/api/Delivery/vehicles/' + id, data);
+        await ApiClient.request('/Delivery/vehicles/' + id, 'PUT', data);
     } else {
-        await apiClient.post('/api/Delivery/vehicles', data);
+        await ApiClient.request('/Delivery/vehicles', 'POST', data);
     }
     document.getElementById('vehicleModal').classList.remove('show');
     loadVehicles();
@@ -117,7 +117,7 @@ async function saveVehicle() {
 
 // Routes
 async function loadRoutes() {
-    routes = await apiClient.get('/api/Delivery/routes');
+    routes = await ApiClient.request('/Delivery/routes');
     const tbody = document.getElementById('routesTable');
     tbody.innerHTML = routes.map(r => {
         const d = drivers.find(x => x.id === r.driverId)?.name || 'N/A';
@@ -162,9 +162,9 @@ async function saveRoute() {
     };
     if(id) {
         data.id = parseInt(id);
-        await apiClient.put('/api/Delivery/routes/' + id, data);
+        await ApiClient.request('/Delivery/routes/' + id, 'PUT', data);
     } else {
-        await apiClient.post('/api/Delivery/routes', data);
+        await ApiClient.request('/Delivery/routes', 'POST', data);
     }
     document.getElementById('routeModal').classList.remove('show');
     loadRoutes();
