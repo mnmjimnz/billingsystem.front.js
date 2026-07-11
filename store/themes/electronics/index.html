@@ -331,7 +331,7 @@
                     <div class="col-sm-6 col-lg-4 col-xl-3">
                         <div class="elec-product-card" style="cursor:pointer;" onclick="showProductModal(${p.id})">
                             <div class="elec-img-wrapper">
-                                <img src="${p.imageUrl ? 'https://billingsystem-net10pg.onrender.com' + p.imageUrl : 'https://via.placeholder.com/300?text=Sin+Imagen'}" class="elec-product-img" alt="${p.name}">
+                                <img src="${p.imageUrl ? (p.imageUrl.startsWith('http') ? p.imageUrl : 'https://billingsystem-net10pg.onrender.com' + p.imageUrl) : 'https://via.placeholder.com/300?text=Sin+Imagen'}" class="elec-product-img" alt="${p.name}">
                             </div>
                             <div class="elec-product-title" title="${p.name}">${p.name}</div>
                             <div class="elec-product-price">$${p.price.toFixed(2)}</div>

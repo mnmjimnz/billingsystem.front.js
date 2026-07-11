@@ -325,7 +325,7 @@
                     <div class="col-12 col-md-6 col-xl-4">
                         <div class="fashion-product-card" onclick="showProductModal(${p.id})">
                             <div class="fashion-img-wrapper">
-                                <img src="${p.imageUrl ? 'https://billingsystem-net10pg.onrender.com' + p.imageUrl : 'https://via.placeholder.com/600?text=SIN+IMAGEN'}" class="fashion-product-img" alt="${p.name}">
+                                <img src="${p.imageUrl ? (p.imageUrl.startsWith('http') ? p.imageUrl : 'https://billingsystem-net10pg.onrender.com' + p.imageUrl) : 'https://via.placeholder.com/600?text=SIN+IMAGEN'}" class="fashion-product-img" alt="${p.name}">
                             </div>
                             <div class="d-flex justify-content-between align-items-start">
                                 <div>
