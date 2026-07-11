@@ -186,7 +186,7 @@
     <div class="modal fade" id="routeModal">
       <div class="modal-dialog">
         <div class="modal-content">
-          <div class="modal-header"><h5 class="modal-title">Ruta</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+          <div class="modal-header"><h5 class="modal-title">Ruta</h5><button type="button" class="btn-close" data-bs-dismiss="modal" onclick="document.getElementById('routeModal').classList.remove('show')"><i class="bi bi-x-lg"></i></button></div>
           <div class="modal-body">
             <input type="hidden" id="routeId">
             <input type="date" class="form-control mb-3" id="routeDate">
@@ -210,7 +210,7 @@
     <div class="modal fade" id="stopsModal">
       <div class="modal-dialog modal-xl">
         <div class="modal-content">
-          <div class="modal-header"><h5 class="modal-title">Gestionar Entregas de la Ruta</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+          <div class="modal-header"><h5 class="modal-title">Gestionar Entregas de la Ruta</h5><button type="button" class="btn-close" data-bs-dismiss="modal" onclick="document.getElementById('stopsModal').classList.remove('show')"><i class="bi bi-x-lg"></i></button></div>
           <div class="modal-body p-0">
             <input type="hidden" id="stopsRouteId">
             <div class="row g-0 h-100">
@@ -253,10 +253,15 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title">Ruta Trazada</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="document.getElementById('viewMapModal').classList.remove('show')"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="document.getElementById('viewMapModal').classList.remove('show')"><i class="bi bi-x-lg"></i></button>
           </div>
-          <div class="modal-body p-0">
+          <div class="modal-body p-0 position-relative">
             <div id="viewOnlyMapContainer" style="height: 100%; min-height: 80vh; width: 100%;"></div>
+            
+            <!-- Floating close button for better UX -->
+            <button class="btn btn-danger position-absolute shadow" style="bottom: 20px; right: 20px; z-index: 1000;" onclick="document.getElementById('viewMapModal').classList.remove('show')">
+              <i class="bi bi-x-circle me-1"></i> Cerrar Mapa
+            </button>
           </div>
         </div>
       </div>
