@@ -1,0 +1,155 @@
+﻿<!DOCTYPE html>
+<html lang="es" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marketing y Cupones - Sistema de Facturación Premium</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../assets/css/devextreme-theme.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="d-flex w-100 justify-content-between align-items-center pe-3">
+                <a href="#" class="sidebar-brand mb-0">
+                    <i class="bi bi-hexagon-fill"></i> <span id="brand-name">Nexus POS</span>
+                </a>
+                <button class="btn p-1 text-danger border-0" onclick="logout()" title="Cerrar Sesión">
+                    <i class="bi bi-power fs-4"></i>
+                </button>
+            </div>
+            </div>
+            <nav class="sidebar-nav"></nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="topbar">
+                <div class="d-flex align-items-center gap-3">
+                    <button class="btn btn-light d-lg-none" id="sidebarToggle"><i class="bi bi-list"></i></button>
+                </div>
+                <div class="d-flex align-items-center gap-4">
+                    <div class="dropdown me-3">
+                          <button class="btn border-0 bg-transparent text-body p-2" type="button" data-bs-toggle="dropdown" onclick="loadNotifications()">
+                              <div class="position-relative d-inline-block">
+                                  <i class="bi bi-bell fs-5"></i>
+                                  <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notif-badge" style="display:none; font-size: 0.6em; transform: translate(-30%, -30%) !important;"></span>
+                              </div>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="width: 300px; max-height: 400px; overflow-y: auto;" id="notif-list">
+                              <li><h6 class="dropdown-header">Notificaciones Pendientes</h6></li>
+                          </ul>
+                      </div>
+                      <div class="form-check form-switch m-0">
+                        <input class="form-check-input" type="checkbox" role="switch" id="theme-toggle">
+                        <label class="form-check-label" for="theme-toggle"><i class="bi bi-moon-stars"></i></label>
+                    </div>
+                </div>
+            </header>
+
+            <div class="page-content">
+                <h2 class="mb-4 fw-bold text-dark">Marketing y Promociones</h2>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="fw-bold mb-0 text-secondary">Cupones de Descuento</h4>
+                    <button class="btn btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#couponModal" onclick="clearForm()">
+                        <i class="bi bi-plus-lg me-1"></i> Nuevo Cupón
+                    </button>
+                </div>
+
+                <div class="card border-0">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="ps-4">Código</th>
+                                        <th>Descuento</th>
+                                        <th>Validez</th>
+                                        <th>Uso</th>
+                                        <th>Estado</th>
+                                        <th class="text-end pe-4">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="coupons-table-body">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="couponModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0">
+          <div class="modal-header border-0 pb-0">
+            <h5 class="modal-title fw-bold" id="modalTitle">Nuevo Cupón</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body p-4">
+            <form id="couponForm">
+                <input type="hidden" id="couponId">
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control text-uppercase" id="couponCode" placeholder="Código" required>
+                    <label>Código de Cupón (ej. VERANO20)</label>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-6">
+                        <div class="form-floating">
+                            <input type="number" class="form-control" id="discountPercentage" placeholder="%" min="0" max="100">
+                            <label>Descuento (%)</label>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-floating">
+                            <input type="number" class="form-control" id="discountAmount" placeholder="$" min="0">
+                            <label>Descuento (Monto Fijo)</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-6">
+                        <div class="form-floating">
+                            <input type="date" class="form-control" id="validFrom">
+                            <label>Válido Desde (opcional)</label>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-floating">
+                            <input type="date" class="form-control" id="validUntil">
+                            <label>Válido Hasta (opcional)</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="number" class="form-control" id="maxUses" placeholder="Límite" min="1">
+                    <label>Límite de Usos (opcional)</label>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="isActive" checked>
+                    <label class="form-check-label" for="isActive">Cupón Activo</label>
+                </div>
+            </form>
+          </div>
+          <div class="modal-footer border-0 pt-0 pe-4 pb-4">
+            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-primary px-4" onclick="saveCoupon()">Guardar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+    <script src="../assets/js/theme.js"></script>
+    <script src="../assets/js/toast.js"></script>
+    <script src="../assets/js/apiClient.js"></script>
+    <script src="../assets/js/signalr-client.js"></script>
+    <script src="marketing.js"></script>
+    <script src="../assets/js/ui-core.js"></script>
+    <script src="../assets/js/menu.js"></script>
+</body>
+</html>

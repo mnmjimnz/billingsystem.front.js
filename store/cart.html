@@ -79,6 +79,14 @@
                 <div class="card cart-card border-0">
                     <div class="card-body">
                         <h4 class="card-title mb-4">Resumen</h4>
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control text-uppercase" id="couponInput" placeholder="Código de Cupón">
+                            <button class="btn btn-outline-primary" type="button" onclick="applyCoupon()">Aplicar</button>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2 d-none" id="discountRow">
+                            <span class="text-success" id="discountLabel">Descuento:</span>
+                            <span class="text-success" id="discountAmountValue">-$0.00</span>
+                        </div>
                         <div class="d-flex justify-content-between mb-3">
                             <span>Total a Pagar:</span>
                             <h4 class="mb-0 fw-bold" id="cartTotal">$0.00</h4>
@@ -221,6 +229,68 @@
             }
         }
 
+        window.appliedCoupon = null;
+
+        async function applyCoupon() {
+            const code = document.getElementById('couponInput').value.trim();
+            if (!code) return;
+
+            try {
+                const response = await fetch(`${API_URL}/Store/validate-coupon/${code}`);
+                if (response.ok) {
+                    const result = await response.json();
+                    window.appliedCoupon = result;
+                    Swal.fire({
+                        toast: true, position: 'top-end', showConfirmButton: false, timer: 3000,
+                        icon: 'success', title: 'Cupón aplicado'
+                    });
+                    recalculateTotal();
+                } else {
+                    const error = await response.json();
+                    Swal.fire({
+                        toast: true, position: 'top-end', showConfirmButton: false, timer: 3000,
+                        icon: 'error', title: error.message || 'Cupón inválido'
+                    });
+                    window.appliedCoupon = null;
+                    recalculateTotal();
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        // Override renderCart's total updates
+        function recalculateTotal() {
+            let total = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
+            let discount = 0;
+
+            if (window.appliedCoupon) {
+                if (window.appliedCoupon.discountPercentage) {
+                    discount = total * (window.appliedCoupon.discountPercentage / 100);
+                } else if (window.appliedCoupon.discountAmount) {
+                    discount = window.appliedCoupon.discountAmount;
+                }
+                
+                document.getElementById('discountRow').classList.remove('d-none');
+                document.getElementById('discountAmountValue').innerText = '-$' + discount.toFixed(2);
+                document.getElementById('discountLabel').innerText = `Descuento (${window.appliedCoupon.code}):`;
+            } else {
+                document.getElementById('discountRow').classList.add('d-none');
+            }
+
+            const finalTotal = Math.max(0, total - discount);
+            document.getElementById('cartTotal').innerText = '$' + finalTotal.toFixed(2);
+        }
+
+        // Intercept when app.js calls renderCart
+        const originalRenderCart = window.renderCart;
+        if (typeof originalRenderCart === 'function') {
+            window.renderCart = function() {
+                originalRenderCart();
+                recalculateTotal();
+            };
+        }
+
         async function submitOrder() {
             const token = localStorage.getItem('storeToken');
             const paymentMethodEl = document.querySelector('input[name="paymentMethod"]:checked');
@@ -231,7 +301,8 @@
                 longitude: parseFloat(document.getElementById('longitude').value),
                 receiverName: document.getElementById('receiverName').value,
                 notes: document.getElementById('deliveryNotes').value,
-                paymentMethod: paymentMethodEl ? paymentMethodEl.value : 'EFECTIVO'
+                paymentMethod: paymentMethodEl ? paymentMethodEl.value : 'EFECTIVO',
+                couponCode: window.appliedCoupon ? window.appliedCoupon.code : null
             };
 
             document.getElementById('confirmOrderBtn').disabled = true;
