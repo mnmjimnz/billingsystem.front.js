@@ -367,6 +367,7 @@ window.addStopFromMap = function(orderId) {
 let viewMap = null;
 let viewMarkers = [];
 let viewPolyline = null;
+let viewBranchMarker = null;
 
 window.viewRouteMap = async function(routeId) {
     const r = routes.find(x => x.id === routeId);
