@@ -189,7 +189,8 @@ async function saveRoute() {
         await ApiClient.request('/Delivery/routes', 'POST', data);
     }
     document.getElementById('routeModal').classList.remove('show');
-    loadRoutes();
+    clearRouteForm();
+    await loadRoutes();
 }
 
 // Manage Stops
