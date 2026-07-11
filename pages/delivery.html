@@ -205,6 +205,46 @@
       </div>
     </div>
 
+    <!-- Stops Modal -->
+    <div class="modal fade" id="stopsModal">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header"><h5 class="modal-title">Gestionar Entregas de la Ruta</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+          <div class="modal-body">
+            <input type="hidden" id="stopsRouteId">
+            <div class="d-flex mb-4">
+                <select class="form-select me-2" id="availableOrders">
+                    <option value="">Cargando órdenes...</option>
+                </select>
+                <button class="btn btn-primary text-nowrap" onclick="addStopToRoute()">
+                    <i class="bi bi-plus-lg"></i> Añadir Parada
+                </button>
+            </div>
+            
+            <h6 class="mb-3 text-secondary">Paradas actuales</h6>
+            <div class="table-responsive">
+                <table class="table table-sm table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Orden (ID)</th>
+                            <th># Parada</th>
+                            <th>Estado</th>
+                            <th class="text-end">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="stopsTableBody">
+                        <!-- Stops will be rendered here -->
+                    </tbody>
+                </table>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-primary" onclick="saveStops()">Guardar Paradas</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
     <script src="../assets/js/theme.js"></script>
     <script src="../assets/js/toast.js"></script>

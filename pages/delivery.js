@@ -132,7 +132,10 @@ async function loadRoutes() {
             <td>${d}</td>
             <td>${v}</td>
             <td><span class="badge bg-primary">${r.status}</span></td>
-            <td class="text-end pe-4"><button class="btn btn-sm btn-light" onclick="editRoute(${r.id})"><i class="bi bi-pencil"></i></button></td>
+            <td class="text-end pe-4">
+                <button class="btn btn-sm btn-light me-1" onclick="manageStops(${r.id})" title="Gestionar Paradas"><i class="bi bi-geo-alt"></i></button>
+                <button class="btn btn-sm btn-light" onclick="editRoute(${r.id})" title="Editar Ruta"><i class="bi bi-pencil"></i></button>
+            </td>
         </tr>
     `}).join('');
 }
@@ -174,3 +177,109 @@ async function saveRoute() {
     document.getElementById('routeModal').classList.remove('show');
     loadRoutes();
 }
+
+// Manage Stops
+let currentRouteStops = [];
+let availableOrders = [];
+
+async function loadAvailableOrders() {
+    try {
+        // We load all orders and filter out those that are not PAID or already delivered
+        // For simplicity, we just fetch orders (assuming page size is enough for this MVP)
+        const res = await ApiClient.request('/Orders?pageSize=100');
+        // Filter orders that are not COMPLETED/CANCELLED
+        availableOrders = (res.items || []).filter(o => o.status !== 'COMPLETED' && o.status !== 'CANCELLED');
+        
+        const sel = document.getElementById('availableOrders');
+        sel.innerHTML = '<option value="">Seleccione un Pedido...</option>' + 
+            availableOrders.map(o => `<option value="${o.id}">Pedido #${o.id} - ${o.customerName || 'Cliente'} ($${o.total})</option>`).join('');
+    } catch(e) {
+        console.error(e);
+    }
+}
+
+async function manageStops(routeId) {
+    const r = routes.find(x => x.id === routeId);
+    if(!r) return;
+    
+    document.getElementById('stopsRouteId').value = r.id;
+    currentRouteStops = JSON.parse(JSON.stringify(r.stops || []));
+    
+    await loadAvailableOrders();
+    renderStops();
+    document.getElementById('stopsModal').classList.add('show');
+}
+
+function renderStops() {
+    const tbody = document.getElementById('stopsTableBody');
+    if(currentRouteStops.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">No hay paradas asignadas a esta ruta.</td></tr>';
+        return;
+    }
+    
+    tbody.innerHTML = currentRouteStops.map((s, index) => `
+        <tr>
+            <td>Pedido #${s.orderId}</td>
+            <td>${index + 1}</td>
+            <td><span class="badge bg-secondary">${s.status}</span></td>
+            <td class="text-end">
+                <button class="btn btn-sm btn-light text-danger" onclick="removeStop(${index})"><i class="bi bi-trash"></i></button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function addStopToRoute() {
+    const sel = document.getElementById('availableOrders');
+    const orderId = parseInt(sel.value);
+    if(!orderId) return;
+    
+    // Check if already in stops
+    if(currentRouteStops.find(s => s.orderId === orderId)) {
+        showToast('Error', 'Este pedido ya está en la ruta', 'danger');
+        return;
+    }
+    
+    currentRouteStops.push({
+        orderId: orderId,
+        stopOrder: currentRouteStops.length + 1,
+        status: 'PENDING'
+    });
+    
+    sel.value = ''; // Reset selection
+    renderStops();
+}
+
+function removeStop(index) {
+    currentRouteStops.splice(index, 1);
+    // Re-calculate stop orders
+    currentRouteStops.forEach((s, i) => s.stopOrder = i + 1);
+    renderStops();
+}
+
+async function saveStops() {
+    const routeId = parseInt(document.getElementById('stopsRouteId').value);
+    const r = routes.find(x => x.id === routeId);
+    if(!r) return;
+    
+    // Create an updated route object with the new stops
+    const data = {
+        id: r.id,
+        date: r.date,
+        driverId: r.driverId,
+        vehicleId: r.vehicleId,
+        status: r.status,
+        stops: currentRouteStops
+    };
+    
+    try {
+        await ApiClient.request('/Delivery/routes/' + routeId, 'PUT', data);
+        document.getElementById('stopsModal').classList.remove('show');
+        showToast('Éxito', 'Paradas actualizadas correctamente', 'success');
+        loadRoutes();
+    } catch(e) {
+        console.error(e);
+        showToast('Error', 'No se pudieron guardar las paradas', 'danger');
+    }
+}
+
