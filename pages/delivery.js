@@ -199,6 +199,7 @@ let availableOrders = [];
 let map = null;
 let markers = [];
 let polyline = null;
+let branchMarker = null;
 const mapCenter = [19.432608, -99.133209]; // Default CDMX
 
 async function loadAvailableOrders() {
@@ -234,17 +235,20 @@ async function manageStops(routeId) {
             L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
                 attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
             }).addTo(map);
-            
-            // Add branch marker (Origen)
-            L.marker(mapCenter, {
-                icon: L.icon({
-                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-                    iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34]
-                })
-            }).addTo(map).bindPopup('<b>' + (branch ? branch.name : 'Tu Ubicación') + ' (Origen)</b>').openPopup();
         } else {
             map.setView(mapCenter, 12);
         }
+        
+        if (branchMarker) {
+            map.removeLayer(branchMarker);
+        }
+        branchMarker = L.marker(mapCenter, {
+            icon: L.icon({
+                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+                iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34]
+            })
+        }).addTo(map).bindPopup('<b>' + (branch ? branch.name : 'Tu Ubicación') + ' (Origen)</b>').openPopup();
+
         map.invalidateSize();
         renderStops();
     }, 250);
@@ -391,16 +395,20 @@ window.viewRouteMap = async function(routeId) {
             L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
                 attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
             }).addTo(viewMap);
-            
-            L.marker(viewCenter, {
-                icon: L.icon({
-                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-                    iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34]
-                })
-            }).addTo(viewMap).bindPopup('<b>' + (branch ? branch.name : 'Origen') + '</b>');
         } else {
             viewMap.setView(viewCenter, 12);
         }
+
+        if (viewBranchMarker) {
+            viewMap.removeLayer(viewBranchMarker);
+        }
+        viewBranchMarker = L.marker(viewCenter, {
+            icon: L.icon({
+                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+                iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34]
+            })
+        }).addTo(viewMap).bindPopup('<b>' + (branch ? branch.name : 'Origen') + '</b>');
+
         viewMap.invalidateSize();
         
         // Clear old routes
