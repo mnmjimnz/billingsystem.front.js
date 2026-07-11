@@ -1,7 +1,6 @@
-document.addEventListener('DOMContentLoaded', () => {
-    loadDrivers();
-    loadVehicles();
-    loadRoutes();
+document.addEventListener('DOMContentLoaded', async () => {
+    await Promise.all([loadDrivers(), loadVehicles()]);
+    await loadRoutes();
 });
 
 let drivers = [];
