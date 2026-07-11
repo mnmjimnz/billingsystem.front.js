@@ -271,11 +271,11 @@ function saveCart() {
 }
 
 function updateCartCount() {
-    const countEl = document.getElementById('cartCount');
-    if (countEl) {
-        const totalItems = cart.reduce((acc, item) => acc + item.qty, 0);
-        countEl.innerText = totalItems;
-    }
+    const totalItems = cart.reduce((acc, item) => acc + item.qty, 0);
+    const countEls = document.querySelectorAll('[id="cartCount"]');
+    countEls.forEach(el => {
+        el.innerText = totalItems;
+    });
 }
 
 // CART PAGE LOGIC
