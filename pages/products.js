@@ -40,7 +40,7 @@ async function loadProducts(page = 1) {
             tbody.innerHTML += `
                 <tr>
                     <td class="ps-4">#${p.id}</td>
-                    <td>${p.imageUrl ? `<img src="https://billingsystem-net10pg.onrender.com${p.imageUrl}" width="40" height="40" class="rounded object-fit-cover">` : `<div class="bg-light text-secondary rounded d-flex align-items-center justify-content-center" style="width:40px; height:40px; font-size:10px;">N/A</div>`}</td>
+                    <td>${p.imageUrl ? `<img src="${p.imageUrl.startsWith('http') ? p.imageUrl : 'https://billingsystem-net10pg.onrender.com' + p.imageUrl}" width="40" height="40" class="rounded object-fit-cover">` : `<div class="bg-light text-secondary rounded d-flex align-items-center justify-content-center" style="width:40px; height:40px; font-size:10px;">N/A</div>`}</td>
                     <td>${p.barcode}</td>
                     <td class="fw-medium">${p.name}${exemptBadge}</td>
                     <td>$${p.price.toFixed(2)}</td>
@@ -90,7 +90,7 @@ function editProduct(product) {
     document.getElementById('productImageFile').value = '';
     const preview = document.getElementById('imagePreview');
     if (product.imageUrl) {
-        preview.src = 'https://billingsystem-net10pg.onrender.com' + product.imageUrl;
+        preview.src = product.imageUrl.startsWith('http') ? product.imageUrl : 'https://billingsystem-net10pg.onrender.com' + product.imageUrl;
         preview.style.display = 'inline-block';
     } else {
         preview.src = '';

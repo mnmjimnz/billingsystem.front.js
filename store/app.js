@@ -192,7 +192,7 @@ function renderProducts(items) {
             <div class="col-sm-6 col-md-6 col-lg-4 mb-3">
                 <div class="product-card h-100 d-flex flex-column" style="cursor:pointer;" onclick="showProductModal(${p.id})">
                     <div class="product-img-wrapper">
-                        <img src="${p.imageUrl ? 'https://billingsystem-net10pg.onrender.com' + p.imageUrl : 'https://via.placeholder.com/300x300?text=Sin+Imagen'}" class="product-img" alt="${p.name}">
+                        <img src="${p.imageUrl ? (p.imageUrl.startsWith('http') ? p.imageUrl : 'https://billingsystem-net10pg.onrender.com' + p.imageUrl) : 'https://via.placeholder.com/300x300?text=Sin+Imagen'}" class="product-img" alt="${p.name}">
                     </div>
                     <div class="p-4 d-flex flex-column flex-grow-1">
                         <h3 class="product-title text-truncate" title="${p.name}">${p.name}</h3>
@@ -392,7 +392,7 @@ function showProductModal(id) {
     document.getElementById('modalProductTitle').innerText = p.name;
     document.getElementById('modalProductDesc').innerText = p.description || 'Sin descripción';
     document.getElementById('modalProductPrice').innerText = '$' + p.price.toFixed(2);
-    document.getElementById('modalProductImg').src = p.imageUrl ? 'https://billingsystem-net10pg.onrender.com' + p.imageUrl : 'https://via.placeholder.com/400x400?text=Sin+Imagen';
+    document.getElementById('modalProductImg').src = p.imageUrl ? (p.imageUrl.startsWith('http') ? p.imageUrl : 'https://billingsystem-net10pg.onrender.com' + p.imageUrl) : 'https://via.placeholder.com/400x400?text=Sin+Imagen';
     
     // Set up add to cart button inside modal
     const btn = document.getElementById('modalAddToCartBtn');
