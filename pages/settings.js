@@ -12,7 +12,7 @@ async function loadSettings() {
             document.getElementById('companyAddress').value = settings.address || '';
             document.getElementById('taxPercentage').value = settings.taxPercentage || 0;
             document.getElementById('socialSecurityPercentage').value = settings.socialSecurityPercentage || 0;
-            document.getElementById('incomeTaxPercentage').value = settings.incomeTaxPercentage || 0;
+            document.getElementById('afpPercentage').value = settings.afpPercentage || 0;
         }
     } catch (e) {
         console.error("Error loading settings", e);
@@ -27,7 +27,7 @@ async function saveSettings() {
     const address = document.getElementById('companyAddress').value;
     const taxPercentage = parseFloat(document.getElementById('taxPercentage').value);
     const socialSecurityPercentage = parseFloat(document.getElementById('socialSecurityPercentage').value) || 0;
-    const incomeTaxPercentage = parseFloat(document.getElementById('incomeTaxPercentage').value) || 0;
+    const afpPercentage = parseFloat(document.getElementById('afpPercentage').value) || 0;
 
     if (!companyName) {
         showToast('El nombre de la empresa es requerido', 'error');
@@ -46,7 +46,7 @@ async function saveSettings() {
         address,
         taxPercentage,
         socialSecurityPercentage,
-        incomeTaxPercentage
+        afpPercentage
     };
 
     try {

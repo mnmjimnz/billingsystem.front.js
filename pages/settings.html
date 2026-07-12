@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es" data-bs-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configuración - Sistema de Facturación Premium</title>
+    <title>ConfiguraciÃ³n - Sistema de FacturaciÃ³n Premium</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="../assets/css/devextreme-theme.css">
 </head>
@@ -16,7 +16,7 @@
                 <a href="#" class="sidebar-brand mb-0">
                     <i class="bi bi-hexagon-fill"></i> <span id="brand-name">Nexus POS</span>
                 </a>
-                <button class="btn p-1 text-danger border-0" onclick="logout()" title="Cerrar Sesi�n">
+                <button class="btn p-1 text-danger border-0" onclick="logout()" title="Cerrar Sesiï¿½n">
                     <i class="bi bi-power fs-4"></i>
                 </button>
             </div>
@@ -53,9 +53,9 @@
             </header>
 
             <div class="page-content">
-                <h2 class="mb-4 fw-bold text-dark">Configuración General</h2>
+                <h2 class="mb-4 fw-bold text-dark">ConfiguraciÃ³n General</h2>
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h4 class="fw-bold mb-0 text-secondary" style="font-size: 1rem;">Administra la información de tu empresa y los parámetros de facturación</h4>
+                    <h4 class="fw-bold mb-0 text-secondary" style="font-size: 1rem;">Administra la informaciÃ³n de tu empresa y los parÃ¡metros de facturaciÃ³n</h4>
                     <button class="btn btn-primary shadow-sm px-4" id="btnSaveSettings" onclick="saveSettings()">
                         GUARDAR
                     </button>
@@ -73,27 +73,27 @@
                         <div class="row g-3 mb-3">
                             <div class="col-md-6">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control" id="companyPhone" placeholder="Teléfono">
-                                    <label>Teléfono</label>
+                                    <input type="text" class="form-control" id="companyPhone" placeholder="TelÃ©fono">
+                                    <label>TelÃ©fono</label>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-floating">
                                     <input type="email" class="form-control" id="companyEmail" placeholder="Correo">
-                                    <label>Correo Electrónico</label>
+                                    <label>Correo ElectrÃ³nico</label>
                                 </div>
                             </div>
                         </div>
                         <div class="form-floating">
-                            <textarea class="form-control" id="companyAddress" placeholder="Dirección" style="height: 100px"></textarea>
-                            <label>Dirección</label>
+                            <textarea class="form-control" id="companyAddress" placeholder="DirecciÃ³n" style="height: 100px"></textarea>
+                            <label>DirecciÃ³n</label>
                         </div>
                     </div>
                 </div>
 
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-white border-0 pt-4 pb-2">
-                        <h5 class="fw-bold m-0" style="color: var(--dx-text);"><i class="bi bi-receipt-cutoff text-warning me-2"></i>Impuestos y Facturación</h5>
+                        <h5 class="fw-bold m-0" style="color: var(--dx-text);"><i class="bi bi-receipt-cutoff text-warning me-2"></i>Impuestos y FacturaciÃ³n</h5>
                     </div>
                     <div class="card-body p-4">
                         <div class="row align-items-center">
@@ -106,7 +106,7 @@
                             <div class="col-md-8">
                                 <div class="alert alert-warning mb-0 border-0 d-flex align-items-center" style="background: rgba(255, 152, 0, 0.05); color: var(--dx-text-secondary);">
                                     <i class="bi bi-info-circle fs-4 text-warning me-3"></i>
-                                    <div>Este porcentaje se aplica <strong>únicamente a productos no exentos</strong> al momento de realizar una venta. Los productos exentos mantienen su precio base.</div>
+                                    <div>Este porcentaje se aplica <strong>Ãºnicamente a productos no exentos</strong> al momento de realizar una venta. Los productos exentos mantienen su precio base.</div>
                                 </div>
                             </div>
                         </div>
@@ -114,26 +114,26 @@
                 </div>
                 <div class="card border-0 shadow-sm mt-4">
                     <div class="card-header bg-white border-0 pt-4 pb-2">
-                        <h5 class="fw-bold m-0" style="color: var(--dx-text);"><i class="bi bi-people-fill text-info me-2"></i>Recursos Humanos y Nómina</h5>
+                        <h5 class="fw-bold m-0" style="color: var(--dx-text);"><i class="bi bi-people-fill text-info me-2"></i>Recursos Humanos y NÃ³mina</h5>
                     </div>
                     <div class="card-body p-4">
                         <div class="row align-items-center">
                             <div class="col-md-3">
                                 <div class="form-floating">
                                     <input type="number" step="0.01" min="0" max="100" class="form-control" id="socialSecurityPercentage" placeholder="Seguro Social">
-                                    <label>Seguro Social (IGSS) %</label>
+                                    <label>Seguro Social (ISSS) %</label>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-floating">
-                                    <input type="number" step="0.01" min="0" max="100" class="form-control" id="incomeTaxPercentage" placeholder="ISR">
-                                    <label>Impuesto sobre Renta (ISR) %</label>
+                                    <input type="number" step="0.01" min="0" max="100" class="form-control" id="afpPercentage" placeholder="AFP">
+                                    <label>Cotización AFP (Pensión) %</label>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="alert alert-info mb-0 border-0 d-flex align-items-center" style="background: rgba(0, 188, 212, 0.05); color: var(--dx-text-secondary);">
                                     <i class="bi bi-info-circle fs-4 text-info me-3"></i>
-                                    <div>Estos porcentajes se deducirán del salario bruto al <strong>calcular la nómina de los empleados</strong>.</div>
+                                    <div>Estos porcentajes se deducirÃ¡n del salario bruto al <strong>calcular la nÃ³mina de los empleados</strong>.</div>
                                 </div>
                             </div>
                         </div>

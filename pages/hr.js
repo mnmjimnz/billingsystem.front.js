@@ -46,6 +46,7 @@ function openHrModal(user) {
     document.getElementById('hrJobTitle').value = user.jobTitle || '';
     document.getElementById('hrSalary').value = user.salary || '';
     document.getElementById('hrBaseBonus').value = user.baseBonus || '';
+    document.getElementById('hrIncomeTaxPercentage').value = user.incomeTaxPercentage || 0;
     if (user.hireDate) {
         document.getElementById('hrHireDate').value = user.hireDate.split('T')[0];
     } else {
@@ -62,6 +63,7 @@ async function saveHrDetails() {
         jobTitle: document.getElementById('hrJobTitle').value,
         salary: parseFloat(document.getElementById('hrSalary').value) || 0,
         baseBonus: parseFloat(document.getElementById('hrBaseBonus').value) || 0,
+        incomeTaxPercentage: parseFloat(document.getElementById('hrIncomeTaxPercentage').value) || 0,
         hireDate: document.getElementById('hrHireDate').value || null
     };
     
