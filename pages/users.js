@@ -6,17 +6,7 @@ let currentPage = 1;
 let currentSearch = '';
 let searchTimeout = null;
 
-function toggleTerminationFields() {
-    const isActive = document.getElementById('userIsActive').checked;
-    const termFields = document.getElementById('terminationFields');
-    if (isActive) {
-        termFields.style.display = 'none';
-        document.getElementById('userTerminationDate').value = '';
-        document.getElementById('userTerminationReason').value = '';
-    } else {
-        termFields.style.display = 'block';
-    }
-}
+
 
 document.addEventListener('DOMContentLoaded', async () => {
     userModalInstance = new bootstrap.Modal(document.getElementById('userModal'));
@@ -97,12 +87,7 @@ function openUserModal() {
     document.getElementById('userModalLabel').innerText = 'Nuevo Usuario';
     document.getElementById('passwordHelp').style.display = 'none';
     
-    document.getElementById('userSalary').value = '';
-    document.getElementById('userHireDate').value = '';
     document.getElementById('userIsActive').checked = true;
-    document.getElementById('userTerminationDate').value = '';
-    document.getElementById('userTerminationReason').value = '';
-    toggleTerminationFields();
     
     userModalInstance.show();
 }
@@ -118,12 +103,7 @@ function editUser(id) {
     document.getElementById('userBranch').value = user.branchId;
     document.getElementById('userPassword').value = '';
     
-    document.getElementById('userSalary').value = user.salary || '';
-    document.getElementById('userHireDate').value = user.hireDate ? user.hireDate.split('T')[0] : '';
     document.getElementById('userIsActive').checked = user.isActive !== false;
-    document.getElementById('userTerminationDate').value = user.terminationDate ? user.terminationDate.split('T')[0] : '';
-    document.getElementById('userTerminationReason').value = user.terminationReason || '';
-    toggleTerminationFields();
     
     document.getElementById('userModalLabel').innerText = 'Editar Usuario';
     document.getElementById('passwordHelp').style.display = 'block';
@@ -155,11 +135,7 @@ async function saveUser() {
         roleId: parseInt(roleId),
         branchId: parseInt(branchId),
         passwordHash: password || '',
-        salary: document.getElementById('userSalary').value ? parseFloat(document.getElementById('userSalary').value) : null,
-        hireDate: document.getElementById('userHireDate').value || null,
-        isActive: document.getElementById('userIsActive').checked,
-        terminationDate: document.getElementById('userTerminationDate').value || null,
-        terminationReason: document.getElementById('userTerminationReason').value || null
+        isActive: document.getElementById('userIsActive').checked
     };
 
     try {
