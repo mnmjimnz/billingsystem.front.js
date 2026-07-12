@@ -1,6 +1,7 @@
 let movementsList = [];
 let branchesList = [];
 let usersList = [];
+let accountsList = [];
 let movementModalInstance = null;
 let currentPage = 1;
 let currentSearch = '';
@@ -35,6 +36,8 @@ async function loadDependencies() {
         usersList.forEach(u => {
             empSelect.innerHTML += `<option value="${u.id}">${u.fullName}</option>`;
         });
+
+        accountsList = await ApiClient.request('/Accounting/accounts');
     } catch (e) {
         console.error("Error cargando dependencias", e);
     }
@@ -115,6 +118,22 @@ function updateCategories() {
     categories[type].forEach(cat => {
         catSelect.innerHTML += `<option value="${cat}">${cat}</option>`;
     });
+    
+    // Update accounts list
+    const accSelect = document.getElementById('movAccountId');
+    accSelect.innerHTML = '<option value="">-- No Registrar en Contabilidad --</option>';
+    
+    let filteredAccounts = [];
+    if (type === 'IN') {
+        filteredAccounts = accountsList.filter(a => a.type === 'Revenue' && a.allowsTransactions);
+    } else {
+        filteredAccounts = accountsList.filter(a => a.type === 'Expense' && a.allowsTransactions);
+    }
+    
+    filteredAccounts.forEach(a => {
+        accSelect.innerHTML += `<option value="${a.id}">${a.code} - ${a.name}</option>`;
+    });
+
     toggleEmployeeField();
 }
 
@@ -172,6 +191,8 @@ async function saveMovement() {
     const amount = parseFloat(document.getElementById('movAmount').value);
     const description = document.getElementById('movDescription').value;
     const employeeId = document.getElementById('movEmployee').value;
+    const accountId = document.getElementById('movAccountId').value;
+    const paymentMethod = document.getElementById('movPaymentMethod').value;
 
     if (!amount || amount <= 0) {
         showToast('El monto debe ser mayor a 0.', 'error');
@@ -189,7 +210,9 @@ async function saveMovement() {
         category: category,
         amount: amount,
         description: description,
-        employeeId: employeeId ? parseInt(employeeId) : null
+        employeeId: employeeId ? parseInt(employeeId) : null,
+        accountId: accountId ? parseInt(accountId) : null,
+        paymentMethod: paymentMethod
     };
 
     try {
