@@ -108,10 +108,10 @@ function renderOrdersTable() {
 
 function initMaps() {
     // Main Map (Routing)
-    // mainMap = L.map('map-container').setView([14.6349, -90.5069], 12); // Guatemala default
-    // L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    //     attribution: '&copy; OpenStreetMap contributors'
-    // }).addTo(mainMap);
+    mainMap = L.map('map-container').setView([14.6349, -90.5069], 12); // Guatemala default
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(mainMap);
 
     // Modal Map (Address Selection)
     modalMap = L.map('order-map').setView([14.6349, -90.5069], 13);
