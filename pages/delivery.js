@@ -205,7 +205,7 @@ const mapCenter = [19.432608, -99.133209]; // Default CDMX
 async function loadAvailableOrders() {
     try {
         const res = await ApiClient.request('/Orders?pageSize=100');
-        availableOrders = (res.items || []).filter(o => o.status !== 'COMPLETED' && o.status !== 'CANCELLED');
+        availableOrders = (res.items || []).filter(o => o.status === 'PENDING');
     } catch(e) {
         console.error(e);
     }

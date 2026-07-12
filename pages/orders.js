@@ -79,15 +79,13 @@ function renderOrdersTable() {
         if (status === 'CANCELLED') badge = 'bg-danger';
 
         let actions = `<button class="btn btn-sm btn-outline-info me-1" onclick="viewOrder(${o.id || o.Id})" title="Ver detalles"><i class="bi bi-eye"></i></button>`;
+        if (status === 'PENDING' || status === 'SHIPPED') {
+            actions += `
+                <button class="btn btn-sm btn-outline-success me-1" onclick="openDeliverModal(${o.id || o.Id})" title="Marcar Entregado"><i class="bi bi-check-circle"></i></button>
+            `;
+        }
         if (status === 'PENDING') {
             actions += `
-                <button class="btn btn-sm btn-outline-primary me-1" onclick="shipOrder(${o.id || o.Id})" title="Marcar Enviado"><i class="bi bi-truck"></i></button>
-                <button class="btn btn-sm btn-outline-success me-1" onclick="openDeliverModal(${o.id || o.Id})" title="Marcar Entregado"><i class="bi bi-check-circle"></i></button>
-                <button class="btn btn-sm btn-outline-danger" onclick="cancelOrder(${o.id || o.Id})" title="Cancelar Pedido"><i class="bi bi-x-circle"></i></button>
-            `;
-        } else if (status === 'SHIPPED') {
-            actions += `
-                <button class="btn btn-sm btn-outline-success me-1" onclick="openDeliverModal(${o.id || o.Id})" title="Marcar Entregado"><i class="bi bi-check-circle"></i></button>
                 <button class="btn btn-sm btn-outline-danger" onclick="cancelOrder(${o.id || o.Id})" title="Cancelar Pedido"><i class="bi bi-x-circle"></i></button>
             `;
         }
