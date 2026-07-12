@@ -263,7 +263,8 @@ function renderStops() {
     } else {
         tbody.innerHTML = currentRouteStops.map((s, index) => {
             const order = allOrdersCache.find(o => o.id === s.orderId);
-            const orderLabel = order ? order.orderNumber : `Pedido #${s.orderId}`;
+            const orderNum = order ? (order.ordernumber || order.orderNumber || order.OrderNumber) : null;
+            const orderLabel = orderNum ? orderNum : `Pedido #${s.orderId}`;
             return `
             <tr>
                 <td>${orderLabel}</td>
@@ -294,6 +295,7 @@ async function updateMap() {
     availableOrders.forEach(o => {
         const isInRoute = currentRouteStops.some(s => s.orderId === o.id);
         if(!isInRoute && o.latitude && o.longitude) {
+            const orderNum = o.ordernumber || o.orderNumber || o.OrderNumber || `Pedido #${o.id}`;
             const marker = L.marker([o.latitude, o.longitude], {
                 icon: L.icon({
                     iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-grey.png',
@@ -301,9 +303,9 @@ async function updateMap() {
                 })
             }).addTo(map);
             marker.bindPopup(`
-                <b>${o.orderNumber}</b><br>
-                Cliente: ${o.customerName}<br>
-                Total: $${o.total}<br>
+                <b>${orderNum}</b><br>
+                Cliente: ${o.customerName || o.customername || ''}<br>
+                Total: $${o.total || o.Total || ''}<br>
                 <button class="btn btn-sm btn-primary mt-2" onclick="addStopFromMap(${o.id})">Añadir a Ruta</button>
             `);
             markers.push(marker);
@@ -314,6 +316,7 @@ async function updateMap() {
     currentRouteStops.forEach((s, index) => {
         const order = allOrdersCache.find(o => o.id === s.orderId);
         if (order && order.latitude && order.longitude) {
+            const orderNum = order.ordernumber || order.orderNumber || order.OrderNumber || `Pedido #${order.id}`;
             latlngsForRoute.push([order.latitude, order.longitude]);
             const marker = L.marker([order.latitude, order.longitude], {
                 icon: L.icon({
@@ -321,7 +324,7 @@ async function updateMap() {
                     iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34]
                 })
             }).addTo(map);
-            marker.bindPopup(`<b>Parada ${index + 1}</b><br>${order.orderNumber}<br>${order.customerName}`);
+            marker.bindPopup(`<b>Parada ${index + 1}</b><br>${orderNum}<br>${order.customerName || order.customername || ''}`);
             markers.push(marker);
         }
     });
@@ -428,6 +431,7 @@ window.viewRouteMap = async function(routeId) {
         stops.forEach((s, index) => {
             const order = allOrders.find(o => o.id === s.orderId);
             if (order && order.latitude && order.longitude) {
+                const orderNum = order.ordernumber || order.orderNumber || order.OrderNumber || `Pedido #${order.id}`;
                 latlngsForRoute.push([order.latitude, order.longitude]);
                 const marker = L.marker([order.latitude, order.longitude], {
                     icon: L.icon({
@@ -435,7 +439,7 @@ window.viewRouteMap = async function(routeId) {
                         iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34]
                     })
                 }).addTo(viewMap);
-                marker.bindPopup(`<b>Parada ${index + 1}</b><br>${order.orderNumber}<br>${order.customerName || ''}<br>Estado: ${s.status}`);
+                marker.bindPopup(`<b>Parada ${index + 1}</b><br>${orderNum}<br>${order.customerName || order.customername || ''}<br>Estado: ${s.status}`);
                 viewMarkers.push(marker);
             }
         });
