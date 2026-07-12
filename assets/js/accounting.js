@@ -236,12 +236,20 @@ async function viewJournalDetails(id) {
 }
 
 async function loadTrialBalance() {
-    const asOfDate = document.getElementById('reportDate').value;
+    const startDate = document.getElementById('startDate').value;
+    const reportDate = document.getElementById('reportDate').value;
     
+    if (!startDate || !reportDate) {
+        showToast('Debe seleccionar ambas fechas', 'warning');
+        return;
+    }
+
     try {
-        const balances = await ApiClient.request(`/Accounting/trial-balance?asOfDate=${asOfDate}`, 'GET');
+        const balances = await ApiClient.request(`/Accounting/trial-balance?startDate=${startDate}&endDate=${reportDate}`, 'GET');
         const tbody = document.getElementById('trialBalanceBody');
         tbody.innerHTML = '';
+        const tfoot = document.getElementById('trialBalanceFoot');
+        tfoot.style.display = 'table-row-group';
         
         if (balances.length === 0) {
             tbody.innerHTML = '<tr><td colspan="6" class="text-center">No hay datos contables.</td></tr>';
@@ -262,23 +270,27 @@ async function loadTrialBalance() {
 
         balances.forEach(b => {
             // Handle casing and nulls
-            const bTotalDebit = b.totalDebit || b.TotalDebit || 0;
-            const bTotalCredit = b.totalCredit || b.TotalCredit || 0;
+            const bInitialBalance = b.initialBalance || b.InitialBalance || 0;
+            const bPeriodDebit = b.periodDebit || b.PeriodDebit || 0;
+            const bPeriodCredit = b.periodCredit || b.PeriodCredit || 0;
             
             // Only show accounts with activity
-            if (bTotalDebit === 0 && bTotalCredit === 0) return;
+            if (bInitialBalance === 0 && bPeriodDebit === 0 && bPeriodCredit === 0) return;
             
-            totalDebit += bTotalDebit;
-            totalCredit += bTotalCredit;
+            totalDebit += bPeriodDebit;
+            totalCredit += bPeriodCredit;
             
+            let initial = 0;
             let netBalance = 0;
             const type = b.type || b.Type;
-            // Naturaleza de las cuentas: Activos y Gastos aumentan en debe, disminuyen en haber
-            // Pasivos, Capital e Ingresos aumentan en haber, disminuyen en debe
+            
+            // Naturaleza de las cuentas
             if (type === 'Asset' || type === 'Expense' || type === 'Cost') {
-                netBalance = bTotalDebit - bTotalCredit;
+                initial = bInitialBalance; // Debit - Credit
+                netBalance = initial + bPeriodDebit - bPeriodCredit;
             } else {
-                netBalance = bTotalCredit - bTotalDebit;
+                initial = -bInitialBalance; // Credit - Debit
+                netBalance = initial + bPeriodCredit - bPeriodDebit;
             }
 
             const tr = document.createElement('tr');
@@ -286,8 +298,9 @@ async function loadTrialBalance() {
                 <td>${b.code || b.Code}</td>
                 <td>${b.name || b.Name}</td>
                 <td>${typeLabels[type] || type}</td>
-                <td class="text-end">$${bTotalDebit.toFixed(2)}</td>
-                <td class="text-end">$${bTotalCredit.toFixed(2)}</td>
+                <td class="text-end" style="color: ${initial < 0 ? 'red' : 'inherit'}">$${initial.toFixed(2)}</td>
+                <td class="text-end">$${bPeriodDebit.toFixed(2)}</td>
+                <td class="text-end">$${bPeriodCredit.toFixed(2)}</td>
                 <td class="text-end font-weight-bold" style="color: ${netBalance < 0 ? 'red' : 'inherit'}">$${netBalance.toFixed(2)}</td>
             `;
             tbody.appendChild(tr);
