@@ -53,15 +53,29 @@
             </header>
 
             <div class="page-content">
-                <h2 class="mb-4 fw-bold text-dark">Control de Usuarios</h2>
+                <h2 class="mb-4 fw-bold text-dark">Recursos Humanos y Nómina</h2>
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h4 class="fw-bold mb-0 text-secondary">Personal de Sucursal</h4>
-                    <button class="btn btn-primary shadow-sm" onclick="openUserModal()">
-                        <i class="bi bi-person-plus me-1"></i> Nuevo Usuario
+                    <h4 class="fw-bold mb-0 text-secondary">Expedientes y Planillas</h4>
+                    <button class="btn btn-primary shadow-sm" onclick="calculatePayroll()">
+                        <i class="bi bi-person-plus me-1"></i> Calcular Nómina
                     </button>
                 </div>
 
-                <div class="row mb-3">
+                
+                <ul class="nav nav-tabs mb-4" id="hrTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="expedientes-tab" data-bs-toggle="tab" data-bs-target="#expedientes" type="button" role="tab">Expedientes</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="asistencia-tab" data-bs-toggle="tab" data-bs-target="#asistencia" type="button" role="tab">Asistencia (Reloj)</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="nomina-tab" data-bs-toggle="tab" data-bs-target="#nomina" type="button" role="tab">Nóminas (Planillas)</button>
+                    </li>
+                </ul>
+                <div class="tab-content" id="hrTabsContent">
+                    <div class="tab-pane fade show active" id="expedientes" role="tabpanel">
+<div class="row mb-3">
                     <div class="col-md-4">
                         <input type="text" id="searchInput" class="form-control" placeholder="Buscar usuarios..." onkeyup="handleSearch(event)">
                     </div>
@@ -73,15 +87,16 @@
                             <table class="table table-hover align-middle mb-0">
                                 <thead class="table-light">
                                     <tr>
-                                        <th class="ps-4">ID</th>
-                                        <th>Username</th>
-                                        <th>Nombre Completo</th>
-                                        <th>Rol ID</th>
-                                        <th>Sucursal ID</th>
+                                        
+                                        <th class="ps-4">DPI/Doc</th>
+                                        <th>Empleado</th>
+                                        <th>Cargo</th>
+                                        <th>Salario Base</th>
+                                        <th>Fecha Alta</th>
                                         <th class="text-end pe-4">Acciones</th>
                                     </tr>
                                 </thead>
-                                <tbody id="users-table-body">
+                                <tbody id="hr-table-body">
                                     <!-- Dinámico -->
                                 </tbody>
                             </table>
@@ -93,77 +108,88 @@
         </main>
     </div>
 
-    <!-- User Modal -->
-    <div class="modal fade" id="userModal" tabindex="-1">
-        <div class="modal-dialog">
+    
+    <!-- HR Modal -->
+    <div class="modal fade" id="hrModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content border-0 shadow">
                 <div class="modal-header border-bottom-0 pb-0">
-                    <h5 class="modal-title fw-bold" id="userModalLabel">Nuevo Usuario</h5>
+                    <h5 class="modal-title fw-bold" id="hrModalLabel">Expediente del Empleado</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="userForm">
-                        <input type="hidden" id="userId">
-                        <div class="mb-3">
-                            <label class="form-label text-secondary small fw-semibold">Nombre de Usuario *</label>
-                            <input type="text" class="form-control" id="userUsername" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label text-secondary small fw-semibold">Nombre Completo *</label>
-                            <input type="text" class="form-control" id="userFullName" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label text-secondary small fw-semibold">Contraseña</label>
-                            <input type="password" class="form-control" id="userPassword">
-                            <div class="form-text" id="passwordHelp" style="display:none;">Déjalo en blanco para mantener la contraseña actual.</div>
+                    <form id="hrForm">
+                        <input type="hidden" id="hrUserId">
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label text-secondary small fw-semibold">Nombre Completo</label>
+                                <input type="text" class="form-control" id="hrFullName" readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-secondary small fw-semibold">DPI / Documento</label>
+                                <input type="text" class="form-control" id="hrDocumentId">
+                            </div>
                         </div>
                         <div class="row g-3 mb-3">
                             <div class="col-md-6">
-                                <label class="form-label text-secondary small fw-semibold">Rol *</label>
-                                <select class="form-select" id="userRole" required></select>
+                                <label class="form-label text-secondary small fw-semibold">Cargo (Puesto)</label>
+                                <input type="text" class="form-control" id="hrJobTitle">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label text-secondary small fw-semibold">Sucursal *</label>
-                                <select class="form-select" id="userBranch" required></select>
+                                <label class="form-label text-secondary small fw-semibold">Salario Base Mensual</label>
+                                <input type="number" step="0.01" class="form-control" id="hrSalary">
                             </div>
                         </div>
-                        <hr class="my-4">
-                        <h6 class="fw-bold mb-3">Información Laboral (RRHH)</h6>
                         <div class="row g-3 mb-3">
                             <div class="col-md-6">
-                                <label class="form-label text-secondary small fw-semibold">Salario Base ($)</label>
-                                <input type="number" step="0.01" class="form-control" id="userSalary">
+                                <label class="form-label text-secondary small fw-semibold">Bono Adicional Fijo</label>
+                                <input type="number" step="0.01" class="form-control" id="hrBaseBonus">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label text-secondary small fw-semibold">Fecha de Contratación</label>
-                                <input type="date" class="form-control" id="userHireDate">
-                            </div>
-                        </div>
-                        <div class="mb-3 form-check form-switch">
-                            <input class="form-check-input" type="checkbox" role="switch" id="userIsActive" checked onchange="toggleTerminationFields()">
-                            <label class="form-check-label" for="userIsActive">Empleado Activo</label>
-                        </div>
-                        <div id="terminationFields" style="display: none; background: #fff3cd; padding: 1rem; border-radius: 8px;">
-                            <div class="row g-3 mb-3">
-                                <div class="col-md-6">
-                                    <label class="form-label text-secondary small fw-semibold">Fecha de Baja</label>
-                                    <input type="date" class="form-control" id="userTerminationDate">
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label text-secondary small fw-semibold">Motivo de Baja</label>
-                                    <input type="text" class="form-control" id="userTerminationReason" placeholder="Ej. Renuncia voluntaria">
-                                </div>
+                                <input type="date" class="form-control" id="hrHireDate">
                             </div>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer border-top-0 pt-0">
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" id="btnSaveUser" onclick="saveUser()">Guardar Usuario</button>
+                    <button type="button" class="btn btn-primary" onclick="saveHrDetails()">Guardar Expediente</button>
                 </div>
             </div>
         </div>
     </div>
+    
+    <!-- Payroll Details Modal -->
+    <div class="modal fade" id="payrollDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header border-bottom-0 pb-0">
+                    <h5 class="modal-title fw-bold">Detalle de Planilla</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Empleado</th>
+                                    <th>Cargo</th>
+                                    <th>Salario Base</th>
+                                    <th>Bonos</th>
+                                    <th>Deducciones</th>
+                                    <th class="text-success fw-bold">Total a Pagar</th>
+                                </tr>
+                            </thead>
+                            <tbody id="payroll-details-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
     <script src="../assets/js/theme.js?v=20260627004119"></script>
@@ -171,7 +197,7 @@
     <script src="../assets/js/apiClient.js?v=20260627004119"></script>
     <script src="../assets/js/signalr-client.js?v=20260627004119"></script>
     <script src="../assets/js/pagination.js?v=20260627004119"></script>
-    <script src="users.js?v=20260627004119"></script>
+    <script src="hr.js"></script>
     <script src="../assets/js/ui-core.js?v=20260627004119"></script>
     <script src="../assets/js/menu.js?v=1783831414144"></script>
 </body>

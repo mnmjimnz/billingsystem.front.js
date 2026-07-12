@@ -112,6 +112,33 @@
                         </div>
                     </div>
                 </div>
+                <div class="card border-0 shadow-sm mt-4">
+                    <div class="card-header bg-white border-0 pt-4 pb-2">
+                        <h5 class="fw-bold m-0" style="color: var(--dx-text);"><i class="bi bi-people-fill text-info me-2"></i>Recursos Humanos y Nómina</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="row align-items-center">
+                            <div class="col-md-3">
+                                <div class="form-floating">
+                                    <input type="number" step="0.01" min="0" max="100" class="form-control" id="socialSecurityPercentage" placeholder="Seguro Social">
+                                    <label>Seguro Social (IGSS) %</label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-floating">
+                                    <input type="number" step="0.01" min="0" max="100" class="form-control" id="incomeTaxPercentage" placeholder="ISR">
+                                    <label>Impuesto sobre Renta (ISR) %</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="alert alert-info mb-0 border-0 d-flex align-items-center" style="background: rgba(0, 188, 212, 0.05); color: var(--dx-text-secondary);">
+                                    <i class="bi bi-info-circle fs-4 text-info me-3"></i>
+                                    <div>Estos porcentajes se deducirán del salario bruto al <strong>calcular la nómina de los empleados</strong>.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
@@ -123,6 +150,6 @@
     <script src="../assets/js/signalr-client.js"></script>
     <script src="settings.js"></script>
     <script src="../assets/js/ui-core.js"></script>
-    <script src="../assets/js/menu.js"></script>
+    <script src="../assets/js/menu.js?v=1783831414144"></script>
 </body>
 </html>
