@@ -119,22 +119,42 @@ function updateCategories() {
         catSelect.innerHTML += `<option value="${cat}">${cat}</option>`;
     });
     
+    toggleEmployeeField();
+    updateAccounts();
+}
+
+function updateAccounts() {
+    const type = document.getElementById('movType').value;
+    const category = document.getElementById('movCategory').value;
+    
     // Update accounts list
     const accSelect = document.getElementById('movAccountId');
     accSelect.innerHTML = '<option value="">-- No Registrar en Contabilidad --</option>';
     
     let filteredAccounts = [];
+    
     if (type === 'IN') {
-        filteredAccounts = accountsList.filter(a => a.type === 'Revenue' && a.allowsTransactions);
+        if (category === 'Inyección de Capital') {
+            filteredAccounts = accountsList.filter(a => a.type === 'Equity' && a.allowsTransactions);
+        } else if (category === 'Préstamo') {
+            filteredAccounts = accountsList.filter(a => a.type === 'Liability' && a.allowsTransactions);
+        } else {
+            // Ajuste Positivo, Otro Ingreso
+            filteredAccounts = accountsList.filter(a => a.type === 'Revenue' && a.allowsTransactions);
+        }
     } else {
-        filteredAccounts = accountsList.filter(a => a.type === 'Expense' && a.allowsTransactions);
+        if (category === 'Pago de Planilla' || category === 'Pago Impuestos') {
+            filteredAccounts = accountsList.filter(a => (a.type === 'Expense' || a.type === 'Liability') && a.allowsTransactions);
+        } else {
+            // Pago de Servicios, Compra Insumos, Otro Egreso
+            filteredAccounts = accountsList.filter(a => a.type === 'Expense' && a.allowsTransactions);
+        }
     }
     
     filteredAccounts.forEach(a => {
-        accSelect.innerHTML += `<option value="${a.id}">${a.code} - ${a.name}</option>`;
+        const typeLabel = a.type === 'Equity' ? 'Capital' : (a.type === 'Liability' ? 'Pasivo' : (a.type === 'Revenue' ? 'Ingreso' : 'Gasto'));
+        accSelect.innerHTML += `<option value="${a.id}">${a.code} - ${a.name} (${typeLabel})</option>`;
     });
-
-    toggleEmployeeField();
 }
 
 function toggleEmployeeField() {
