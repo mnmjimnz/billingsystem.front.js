@@ -129,13 +129,19 @@
                               </select>
                           </div>
                           <div class="mb-3">
-                              <label class="form-label text-secondary small fw-semibold">Método de Pago</label>
-                              <select class="form-select" id="movPaymentMethod" required>
-                                  <option value="Cash">Efectivo (Caja)</option>
-                                  <option value="Bank">Transferencia/Cheque (Banco)</option>
-                              </select>
-                          </div>
-                          <div class="mb-3" id="employeeDiv" style="display:none;">
+                                <label class="form-label text-secondary small fw-semibold">Método de Pago</label>
+                                <select class="form-select" id="movPaymentMethod" onchange="toggleCashRegisterField()" required>
+                                    <option value="Cash">Efectivo (Caja)</option>
+                                    <option value="Bank">Transferencia/Cheque (Banco)</option>
+                                </select>
+                            </div>
+                            <div class="mb-3" id="cashRegisterDiv">
+                                <label class="form-label text-secondary small fw-semibold">Caja Registradora / Origen *</label>
+                                <select class="form-select" id="movCashRegister">
+                                    <option value="">Seleccione una caja...</option>
+                                </select>
+                            </div>
+                            <div class="mb-3" id="employeeDiv" style="display:none;">
                             <label class="form-label text-secondary small fw-semibold">Empleado a Pagar *</label>
                             <select class="form-select" id="movEmployee" onchange="updateEmployeeSalary()">
                                 <option value="">Seleccione un empleado...</option>

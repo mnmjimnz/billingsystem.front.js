@@ -64,8 +64,33 @@ async function loadMovements(page = 1) {
         movementsList = filtered;
         renderMovements();
         renderPagination('pagination-container', result, 'loadMovements');
+        
+        // Cargar cajas registradoras de la sucursal actual
+        const resReg = await ApiClient.request(`/CashRegisters/branch/${branchId}`);
+        const registers = resReg.data || [];
+        const regSelect = document.getElementById('movCashRegister');
+        if (regSelect) {
+            regSelect.innerHTML = '<option value="">Bóveda General de la Sucursal</option>';
+            registers.forEach(r => {
+                regSelect.innerHTML += `<option value="${r.id}">${r.name}</option>`;
+            });
+        }
+        
     } catch (e) {
         console.error(e);
+    }
+}
+
+function toggleCashRegisterField() {
+    const paymentMethod = document.getElementById('movPaymentMethod').value;
+    const cashRegisterDiv = document.getElementById('cashRegisterDiv');
+    const cashRegisterSelect = document.getElementById('movCashRegister');
+    
+    if (paymentMethod === 'Cash') {
+        cashRegisterDiv.style.display = 'block';
+    } else {
+        cashRegisterDiv.style.display = 'none';
+        cashRegisterSelect.value = "";
     }
 }
 
@@ -193,6 +218,17 @@ function updateEmployeeSalary() {
     }
 }
 
+function openNewMovementModal() {
+    document.getElementById('movementForm').reset();
+    document.getElementById('movementId').value = '';
+    document.getElementById('employeeDiv').style.display = 'none';
+    document.getElementById('accountDiv').style.display = 'block';
+    
+    toggleCashRegisterField();
+    
+    movementModalInstance.show();
+}
+
 function clearForm() {
     document.getElementById('movementForm').reset();
     document.getElementById('movAmount').readOnly = false;
@@ -206,6 +242,7 @@ async function saveMovement() {
         return;
     }
 
+    const movId = document.getElementById('movementId').value;
     const type = document.getElementById('movType').value;
     const category = document.getElementById('movCategory').value;
     const amount = parseFloat(document.getElementById('movAmount').value);
@@ -213,10 +250,17 @@ async function saveMovement() {
     const employeeId = document.getElementById('movEmployee').value;
     const accountId = document.getElementById('movAccountId').value;
     const paymentMethod = document.getElementById('movPaymentMethod').value;
+    let cashRegisterId = document.getElementById('movCashRegister')?.value;
 
     if (!amount || amount <= 0) {
         showToast('El monto debe ser mayor a 0.', 'error');
         return;
+    }
+
+    if (paymentMethod !== 'Cash' || !cashRegisterId) {
+        cashRegisterId = null;
+    } else {
+        cashRegisterId = parseInt(cashRegisterId);
     }
 
     if (category === 'Pago de Planilla' && !employeeId) {
@@ -232,7 +276,8 @@ async function saveMovement() {
         description: description,
         employeeId: employeeId ? parseInt(employeeId) : null,
         accountId: accountId ? parseInt(accountId) : null,
-        paymentMethod: paymentMethod
+        paymentMethod: paymentMethod,
+        cashRegisterId: cashRegisterId
     };
 
     try {
