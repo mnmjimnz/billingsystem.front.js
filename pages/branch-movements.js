@@ -159,7 +159,7 @@ function updateAccounts() {
 
 function toggleEmployeeField() {
     const cat = document.getElementById('movCategory').value;
-    const empGroup = document.getElementById('employeeGroup');
+    const empGroup = document.getElementById('employeeDiv');
     const amountInput = document.getElementById('movAmount');
     
     if (cat === 'Pago de Planilla') {
