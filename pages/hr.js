@@ -98,16 +98,25 @@ async function registerAttendance() {
     }
 }
 
-async function calculatePayroll() {
-    const start = prompt("Fecha inicio de periodo (YYYY-MM-DD):");
-    if (!start) return;
-    const end = prompt("Fecha fin de periodo (YYYY-MM-DD):");
-    if (!end) return;
+function calculatePayroll() {
+    document.getElementById('calculatePayrollForm').reset();
+    new bootstrap.Modal(document.getElementById('calculatePayrollModal')).show();
+}
+
+async function confirmCalculatePayroll() {
+    const start = document.getElementById('payrollStartDate').value;
+    const end = document.getElementById('payrollEndDate').value;
+    
+    if (!start || !end) {
+        showToast('Debes seleccionar ambas fechas', 'warning');
+        return;
+    }
     
     try {
         const payload = { periodStart: start, periodEnd: end };
         await ApiClient.request('/Hr/payroll/calculate', 'POST', payload);
         showToast('Nómina calculada exitosamente', 'success');
+        bootstrap.Modal.getInstance(document.getElementById('calculatePayrollModal')).hide();
         loadPayrollRuns();
     } catch (e) {
         showToast('Error al calcular nómina', 'error');
