@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    initApp();
     loadAccounts();
     
     // Set default dates for journals
@@ -26,7 +25,7 @@ function switchTab(tabId) {
 
 async function loadAccounts() {
     try {
-        const accounts = await apiFetch('/api/Accounting/accounts');
+        const accounts = await ApiClient.request('/Accounting/accounts', 'GET');
         accountsData = accounts;
         renderAccountsTree(accounts);
         populateParentDropdown(accounts);
@@ -124,11 +123,13 @@ function openAccountModal() {
     document.getElementById('accountForm').reset();
     document.getElementById('accountId').value = '';
     document.getElementById('accountModalTitle').textContent = 'Nueva Cuenta Contable';
-    document.getElementById('accountModal').classList.add('active');
+    const modal = new bootstrap.Modal(document.getElementById('accountModal'));
+    modal.show();
 }
 
 function closeAccountModal() {
-    document.getElementById('accountModal').classList.remove('active');
+    const modal = bootstrap.Modal.getInstance(document.getElementById('accountModal'));
+    if (modal) modal.hide();
 }
 
 async function saveAccount() {
@@ -145,17 +146,11 @@ async function saveAccount() {
 
     try {
         if (id) {
-            await apiFetch(`/api/Accounting/accounts/${id}`, {
-                method: 'PUT',
-                body: JSON.stringify(account)
-            });
-            showToast('Cuenta actualizada exitosamente');
+            await ApiClient.request(`/Accounting/accounts/${id}`, 'PUT', account);
+            showToast('Cuenta actualizada exitosamente', 'success');
         } else {
-            await apiFetch('/api/Accounting/accounts', {
-                method: 'POST',
-                body: JSON.stringify(account)
-            });
-            showToast('Cuenta creada exitosamente');
+            await ApiClient.request('/Accounting/accounts', 'POST', account);
+            showToast('Cuenta creada exitosamente', 'success');
         }
         closeAccountModal();
         loadAccounts();
@@ -169,7 +164,7 @@ async function loadJournals() {
     const end = document.getElementById('journalEndDate').value;
     
     try {
-        const journals = await apiFetch(`/api/Accounting/journal-entries?startDate=${start}&endDate=${end}`);
+        const journals = await ApiClient.request(`/Accounting/journal-entries?startDate=${start}&endDate=${end}`, 'GET');
         const tbody = document.getElementById('journalsTableBody');
         tbody.innerHTML = '';
         
@@ -200,7 +195,7 @@ async function loadJournals() {
 
 async function viewJournalDetails(id) {
     try {
-        const journal = await apiFetch(`/api/Accounting/journal-entries/${id}`);
+        const journal = await ApiClient.request(`/Accounting/journal-entries/${id}`, 'GET');
         const container = document.getElementById('journalDetailsContainer');
         const tbody = document.getElementById('journalDetailsBody');
         
@@ -244,7 +239,7 @@ async function loadTrialBalance() {
     const asOfDate = document.getElementById('reportDate').value;
     
     try {
-        const balances = await apiFetch(`/api/Accounting/trial-balance?asOfDate=${asOfDate}`);
+        const balances = await ApiClient.request(`/Accounting/trial-balance?asOfDate=${asOfDate}`, 'GET');
         const tbody = document.getElementById('trialBalanceBody');
         tbody.innerHTML = '';
         
