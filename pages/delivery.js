@@ -195,6 +195,7 @@ async function saveRoute() {
 
 // Manage Stops
 let currentRouteStops = [];
+let allOrdersCache = [];
 let availableOrders = [];
 let map = null;
 let markers = [];
@@ -205,7 +206,8 @@ const mapCenter = [19.432608, -99.133209]; // Default CDMX
 async function loadAvailableOrders() {
     try {
         const res = await ApiClient.request('/Orders?pageSize=100');
-        availableOrders = (res.items || []).filter(o => o.status === 'PENDING');
+        allOrdersCache = res.items || [];
+        availableOrders = allOrdersCache.filter(o => o.status === 'PENDING');
     } catch(e) {
         console.error(e);
     }
@@ -259,16 +261,20 @@ function renderStops() {
     if(currentRouteStops.length === 0) {
         tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">No hay paradas asignadas a esta ruta.</td></tr>';
     } else {
-        tbody.innerHTML = currentRouteStops.map((s, index) => `
+        tbody.innerHTML = currentRouteStops.map((s, index) => {
+            const order = allOrdersCache.find(o => o.id === s.orderId);
+            const orderLabel = order ? order.orderNumber : `Pedido #${s.orderId}`;
+            return `
             <tr>
-                <td>Pedido #${s.orderId}</td>
+                <td>${orderLabel}</td>
                 <td>${index + 1}</td>
                 <td><span class="badge bg-secondary">${s.status}</span></td>
                 <td class="text-end">
                     <button class="btn btn-sm btn-light text-danger" onclick="removeStop(${index})"><i class="bi bi-trash"></i></button>
                 </td>
             </tr>
-        `).join('');
+            `;
+        }).join('');
     }
     
     updateMap();
@@ -295,7 +301,7 @@ async function updateMap() {
                 })
             }).addTo(map);
             marker.bindPopup(`
-                <b>Pedido #${o.id}</b><br>
+                <b>${o.orderNumber}</b><br>
                 Cliente: ${o.customerName}<br>
                 Total: $${o.total}<br>
                 <button class="btn btn-sm btn-primary mt-2" onclick="addStopFromMap(${o.id})">Añadir a Ruta</button>
@@ -306,8 +312,7 @@ async function updateMap() {
     
     // Draw route stops in order
     currentRouteStops.forEach((s, index) => {
-        // Stop might be in availableOrders (if recent), or we might need to fetch it (for MVP, we assume we have it or just plot what we know)
-        const order = availableOrders.find(o => o.id === s.orderId);
+        const order = allOrdersCache.find(o => o.id === s.orderId);
         if (order && order.latitude && order.longitude) {
             latlngsForRoute.push([order.latitude, order.longitude]);
             const marker = L.marker([order.latitude, order.longitude], {
@@ -316,7 +321,7 @@ async function updateMap() {
                     iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34]
                 })
             }).addTo(map);
-            marker.bindPopup(`<b>Parada ${index + 1}</b><br>Pedido #${order.id}<br>${order.customerName}`);
+            marker.bindPopup(`<b>Parada ${index + 1}</b><br>${order.orderNumber}<br>${order.customerName}`);
             markers.push(marker);
         }
     });
@@ -430,7 +435,7 @@ window.viewRouteMap = async function(routeId) {
                         iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34]
                     })
                 }).addTo(viewMap);
-                marker.bindPopup(`<b>Parada ${index + 1}</b><br>Pedido #${order.id}<br>${order.customerName || ''}<br>Estado: ${s.status}`);
+                marker.bindPopup(`<b>Parada ${index + 1}</b><br>${order.orderNumber}<br>${order.customerName || ''}<br>Estado: ${s.status}`);
                 viewMarkers.push(marker);
             }
         });
