@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contabilidad - Sistema de Facturación Premium</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../assets/css/devextreme-theme.css">
+    <style>
+        .tabs-container {
+            display: flex;
+            border-bottom: 1px solid var(--dx-border-color);
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            font-weight: 500;
+            color: var(--dx-text-color);
+        }
+        .tab.active {
+            border-bottom-color: var(--dx-primary-color);
+            color: var(--dx-primary-color);
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .tree-container {
+            margin-top: 15px;
+            background: #fff;
+            border: 1px solid var(--dx-border-color);
+            border-radius: 4px;
+            padding: 15px;
+        }
+        .tree-node {
+            padding: 5px 0;
+            margin-left: 20px;
+            border-left: 1px dashed #ccc;
+            position: relative;
+        }
+        .tree-node::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 15px;
+            width: 15px;
+            border-top: 1px dashed #ccc;
+        }
+        .tree-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 10px;
+            background: var(--dx-bg-color);
+            border: 1px solid var(--dx-border-color);
+            border-radius: 4px;
+            margin-left: 15px;
+            margin-bottom: 5px;
+        }
+        .tree-item:hover {
+            background-color: var(--dx-row-hover);
+        }
+        .account-code {
+            font-weight: 600;
+            color: var(--dx-primary-color);
+            margin-right: 10px;
+        }
+        .account-type {
+            font-size: 0.85em;
+            color: #666;
+            background: #eee;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        .journal-details {
+            padding: 15px;
+            background: var(--dx-bg-color);
+            border: 1px solid var(--dx-border-color);
+            margin-top: 10px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="d-flex w-100 justify-content-between align-items-center pe-3">
+                <a href="#" class="sidebar-brand mb-0">
+                    <i class="bi bi-hexagon-fill"></i> <span id="brand-name">Nexus POS</span>
+                </a>
+                <button class="btn p-1 text-danger border-0" onclick="logout()" title="Cerrar Sesión">
+                    <i class="bi bi-power fs-4"></i>
+                </button>
+                </div>
+                <div class="sidebar-toggle" id="sidebarToggle">
+                    <i class="bi bi-chevron-left"></i>
+                </div>
+            </div>
+            <div class="sidebar-user text-center mt-3 mb-2 px-3">
+                <div class="user-avatar mx-auto mb-2 bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; font-size: 20px;">
+                    <i class="bi bi-person-fill"></i>
+                </div>
+                <h6 class="mb-0 text-white" id="current-user-name">Usuario</h6>
+                <small class="text-white-50" id="current-user-role">Rol</small>
+            </div>
+            <ul class="sidebar-menu" id="sidebar-menu">
+                <!-- Menu items injected by JS -->
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="top-header">
+                <div class="header-left">
+                    <h2 class="page-title"><i class="bi bi-calculator"></i> Contabilidad General</h2>
+                </div>
+                <div class="header-right">
+                    <div class="theme-switch" id="themeSwitch">
+                        <i class="bi bi-moon-fill dark-icon"></i>
+                        <i class="bi bi-sun-fill light-icon"></i>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <div class="dx-card">
+                    <div class="dx-card-header d-flex justify-content-between align-items-center">
+                        <h5 class="dx-card-title mb-0">Administración Contable</h5>
+                    </div>
+                    <div class="dx-card-body">
+                        
+                        <div class="tabs-container">
+                            <div class="tab active" onclick="switchTab('chart')">Catálogo de Cuentas</div>
+                            <div class="tab" onclick="switchTab('journals')">Pólizas (Asientos)</div>
+                            <div class="tab" onclick="switchTab('reports')">Reportes Fiscales</div>
+                        </div>
+
+                        <!-- Tab 1: Catálogo de Cuentas -->
+                        <div id="tab-chart" class="tab-content active">
+                            <div class="d-flex justify-content-between mb-3">
+                                <h6>Estructura de Cuentas</h6>
+                                <button class="dx-btn dx-btn-primary" onclick="openAccountModal()">
+                                    <i class="bi bi-plus"></i> Nueva Cuenta
+                                </button>
+                            </div>
+                            <div id="accounts-tree" class="tree-container">
+                                <div class="text-center py-4 text-muted">Cargando catálogo...</div>
+                            </div>
+                        </div>
+
+                        <!-- Tab 2: Pólizas (Journal Entries) -->
+                        <div id="tab-journals" class="tab-content">
+                            <div class="d-flex justify-content-between mb-3">
+                                <h6>Historial de Movimientos</h6>
+                                <div class="d-flex gap-2">
+                                    <input type="date" id="journalStartDate" class="dx-input" style="width: 150px;">
+                                    <input type="date" id="journalEndDate" class="dx-input" style="width: 150px;">
+                                    <button class="dx-btn dx-btn-secondary" onclick="loadJournals()">Filtrar</button>
+                                </div>
+                            </div>
+                            <div class="dx-datagrid">
+                                <table class="dx-table">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Fecha</th>
+                                            <th>Descripción</th>
+                                            <th>Referencia</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="journalsTableBody">
+                                        <tr><td colspan="5" class="text-center">Cargando pólizas...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- Contenedor para detalles del asiento -->
+                            <div id="journalDetailsContainer" class="journal-details" style="display:none;">
+                                <h6>Detalle del Asiento #<span id="detailJournalId"></span></h6>
+                                <table class="dx-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Cuenta</th>
+                                            <th>Nombre</th>
+                                            <th class="text-end">Debe</th>
+                                            <th class="text-end">Haber</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="journalDetailsBody"></tbody>
+                                    <tfoot>
+                                        <tr style="font-weight: bold; background: #eee;">
+                                            <td colspan="2" class="text-end">TOTALES:</td>
+                                            <td class="text-end" id="totalDebit">$0.00</td>
+                                            <td class="text-end" id="totalCredit">$0.00</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Tab 3: Reportes Fiscales -->
+                        <div id="tab-reports" class="tab-content">
+                            <h6>Balanza de Comprobación</h6>
+                            <div class="d-flex gap-3 align-items-end mb-4">
+                                <div>
+                                    <label class="dx-label">A la fecha:</label>
+                                    <input type="date" id="reportDate" class="dx-input">
+                                </div>
+                                <button class="dx-btn dx-btn-primary" onclick="loadTrialBalance()">Generar Reporte</button>
+                            </div>
+                            <div class="dx-datagrid">
+                                <table class="dx-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Código</th>
+                                            <th>Nombre de Cuenta</th>
+                                            <th>Tipo</th>
+                                            <th class="text-end">Debe</th>
+                                            <th class="text-end">Haber</th>
+                                            <th class="text-end">Saldo Neto</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="trialBalanceBody">
+                                        <tr><td colspan="6" class="text-center text-muted">Seleccione una fecha y presione Generar Reporte</td></tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr style="font-weight: bold; background: #eee;">
+                                            <td colspan="3" class="text-end">SUMAS IGUALES:</td>
+                                            <td class="text-end" id="tbTotalDebit">$0.00</td>
+                                            <td class="text-end" id="tbTotalCredit">$0.00</td>
+                                            <td></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Account Modal -->
+    <div id="accountModal" class="dx-modal">
+        <div class="dx-modal-content" style="max-width: 500px;">
+            <div class="dx-modal-header">
+                <h5 class="dx-modal-title" id="accountModalTitle">Nueva Cuenta Contable</h5>
+                <button class="dx-modal-close" onclick="closeAccountModal()">&times;</button>
+            </div>
+            <div class="dx-modal-body">
+                <form id="accountForm">
+                    <input type="hidden" id="accountId">
+                    <div class="dx-field">
+                        <label class="dx-label">Código (ej. 1.01.01)</label>
+                        <input type="text" id="accountCode" class="dx-input" required>
+                    </div>
+                    <div class="dx-field">
+                        <label class="dx-label">Nombre</label>
+                        <input type="text" id="accountName" class="dx-input" required>
+                    </div>
+                    <div class="dx-field">
+                        <label class="dx-label">Tipo</label>
+                        <select id="accountType" class="dx-input" required>
+                            <option value="Asset">Activo</option>
+                            <option value="Liability">Pasivo</option>
+                            <option value="Equity">Capital</option>
+                            <option value="Revenue">Ingreso</option>
+                            <option value="Cost">Costo</option>
+                            <option value="Expense">Gasto</option>
+                        </select>
+                    </div>
+                    <div class="dx-field">
+                        <label class="dx-label">Cuenta Padre</label>
+                        <select id="parentAccountId" class="dx-input">
+                            <option value="">-- Ninguna (Cuenta de Mayor) --</option>
+                        </select>
+                    </div>
+                    <div class="dx-field" style="display:flex; align-items:center; gap: 10px;">
+                        <input type="checkbox" id="allowsTransactions" checked>
+                        <label class="dx-label" style="margin:0; padding-top:4px;">Permite Transacciones (Subcuenta)</label>
+                    </div>
+                </form>
+            </div>
+            <div class="dx-modal-footer">
+                <button class="dx-btn dx-btn-secondary" onclick="closeAccountModal()">Cancelar</button>
+                <button class="dx-btn dx-btn-primary" onclick="saveAccount()">Guardar Cuenta</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="../assets/js/apiClient.js"></script>
+    <script src="../assets/js/ui-core.js"></script>
+    <script src="../assets/js/menu.js"></script>
+    <script src="../assets/js/accounting.js"></script>
+</body>
+</html>

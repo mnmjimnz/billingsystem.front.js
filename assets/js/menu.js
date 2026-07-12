@@ -25,7 +25,8 @@ const MENU_ITEMS = [
     { url: 'store-settings.html', icon: 'bi-shop-window', text: 'Apariencia de Tienda', permission: 'MANAGE_SETTINGS' },
     { url: 'marketing.html', icon: 'bi-ticket-perforated', text: 'Cupones y Marketing', permission: 'MANAGE_SETTINGS' },
     { url: 'delivery.html', icon: 'bi-truck', text: 'Logística y Rutas', permission: 'MANAGE_SETTINGS' },
-    { url: 'hr.html', icon: 'bi-people-fill', text: 'RRHH y Nómina', permission: 'MANAGE_HR' }
+    { url: 'hr.html', icon: 'bi-people-fill', text: 'RRHH y Nómina', permission: 'MANAGE_HR' },
+    { url: 'accounting.html', icon: 'bi-calculator', text: 'Contabilidad General', permission: 'MANAGE_ACCOUNTING' }
 ];
 
 function generateMenu() {
