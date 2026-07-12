@@ -267,12 +267,12 @@ async function loadTrialBalance() {
             'Cost': 'Costo',
             'Expense': 'Gasto'
         };
-
+        console.log(balances);
         balances.forEach(b => {
-            // Handle casing and nulls
-            const bInitialBalance = b.initialBalance || b.InitialBalance || 0;
-            const bPeriodDebit = b.periodDebit || b.PeriodDebit || 0;
-            const bPeriodCredit = b.periodCredit || b.PeriodCredit || 0;
+            // Handle casing and nulls (PostgreSQL expando keys are lowercase)
+            const bInitialBalance = b.initialbalance || b.initialBalance || b.InitialBalance || 0;
+            const bPeriodDebit = b.perioddebit || b.periodDebit || b.PeriodDebit || 0;
+            const bPeriodCredit = b.periodcredit || b.periodCredit || b.PeriodCredit || 0;
             
             // Only show accounts with activity
             if (bInitialBalance === 0 && bPeriodDebit === 0 && bPeriodCredit === 0) return;
