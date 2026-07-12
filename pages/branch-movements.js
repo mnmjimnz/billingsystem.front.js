@@ -22,8 +22,14 @@ async function loadDependencies() {
     try {
         branchesList = await ApiClient.request('/Branches');
         const branchSelect = document.getElementById('branchFilter');
+        const movBranchSelect = document.getElementById('movBranchId');
+        
+        branchSelect.innerHTML = '';
+        if (movBranchSelect) movBranchSelect.innerHTML = '';
+        
         branchesList.forEach(b => {
             branchSelect.innerHTML += `<option value="${b.id}">${b.name} (Disp: $${(b.availableFunds || 0).toFixed(2)})</option>`;
+            if (movBranchSelect) movBranchSelect.innerHTML += `<option value="${b.id}">${b.name}</option>`;
         });
 
         if (branchesList.length > 0) {
@@ -65,7 +71,19 @@ async function loadMovements(page = 1) {
         renderMovements();
         renderPagination('pagination-container', result, 'loadMovements');
         
-        // Cargar cajas registradoras de la sucursal actual
+        // Cargar cajas registradoras de la sucursal actual para el filtro u otras cosas
+        // Pero ahora la carga del modal depende de `movBranchId`. Así que lo movemos a otra función.
+        
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+async function loadCashRegistersForModal() {
+    const branchId = document.getElementById('movBranchId')?.value || document.getElementById('branchFilter').value;
+    if (!branchId) return;
+    
+    try {
         const resReg = await ApiClient.request(`/CashRegisters/branch/${branchId}`);
         const registers = resReg.data || [];
         const regSelect = document.getElementById('movCashRegister');
@@ -75,9 +93,8 @@ async function loadMovements(page = 1) {
                 regSelect.innerHTML += `<option value="${r.id}">${r.name}</option>`;
             });
         }
-        
     } catch (e) {
-        console.error(e);
+        console.error("Error cargando cajas", e);
     }
 }
 
@@ -224,9 +241,16 @@ function openNewMovementModal() {
     document.getElementById('employeeDiv').style.display = 'none';
     document.getElementById('accountDiv').style.display = 'block';
     
-    toggleCashRegisterField();
+    // Set current branch to the globally selected one
+    const currentBranchId = document.getElementById('branchFilter').value;
+    if (document.getElementById('movBranchId')) {
+        document.getElementById('movBranchId').value = currentBranchId;
+    }
     
-    movementModalInstance.show();
+    loadCashRegistersForModal().then(() => {
+        toggleCashRegisterField();
+        movementModalInstance.show();
+    });
 }
 
 function clearForm() {
@@ -251,6 +275,8 @@ async function saveMovement() {
     const accountId = document.getElementById('movAccountId').value;
     const paymentMethod = document.getElementById('movPaymentMethod').value;
     let cashRegisterId = document.getElementById('movCashRegister')?.value;
+    
+    const selectedBranchId = document.getElementById('movBranchId') ? document.getElementById('movBranchId').value : branchId;
 
     if (!amount || amount <= 0) {
         showToast('El monto debe ser mayor a 0.', 'error');
@@ -269,7 +295,7 @@ async function saveMovement() {
     }
 
     const payload = {
-        branchId: parseInt(branchId),
+        branchId: parseInt(selectedBranchId),
         type: type,
         category: category,
         amount: amount,
