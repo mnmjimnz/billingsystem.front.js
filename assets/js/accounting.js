@@ -261,28 +261,33 @@ async function loadTrialBalance() {
         };
 
         balances.forEach(b => {
-            // Only show accounts with activity
-            if (b.totalDebit === 0 && b.totalCredit === 0) return;
+            // Handle casing and nulls
+            const bTotalDebit = b.totalDebit || b.TotalDebit || 0;
+            const bTotalCredit = b.totalCredit || b.TotalCredit || 0;
             
-            totalDebit += b.totalDebit;
-            totalCredit += b.totalCredit;
+            // Only show accounts with activity
+            if (bTotalDebit === 0 && bTotalCredit === 0) return;
+            
+            totalDebit += bTotalDebit;
+            totalCredit += bTotalCredit;
             
             let netBalance = 0;
+            const type = b.type || b.Type;
             // Naturaleza de las cuentas: Activos y Gastos aumentan en debe, disminuyen en haber
             // Pasivos, Capital e Ingresos aumentan en haber, disminuyen en debe
-            if (b.type === 'Asset' || b.type === 'Expense' || b.type === 'Cost') {
-                netBalance = b.totalDebit - b.totalCredit;
+            if (type === 'Asset' || type === 'Expense' || type === 'Cost') {
+                netBalance = bTotalDebit - bTotalCredit;
             } else {
-                netBalance = b.totalCredit - b.totalDebit;
+                netBalance = bTotalCredit - bTotalDebit;
             }
 
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td>${b.code}</td>
-                <td>${b.name}</td>
-                <td>${typeLabels[b.type] || b.type}</td>
-                <td class="text-end">$${b.totalDebit.toFixed(2)}</td>
-                <td class="text-end">$${b.totalCredit.toFixed(2)}</td>
+                <td>${b.code || b.Code}</td>
+                <td>${b.name || b.Name}</td>
+                <td>${typeLabels[type] || type}</td>
+                <td class="text-end">$${bTotalDebit.toFixed(2)}</td>
+                <td class="text-end">$${bTotalCredit.toFixed(2)}</td>
                 <td class="text-end font-weight-bold" style="color: ${netBalance < 0 ? 'red' : 'inherit'}">$${netBalance.toFixed(2)}</td>
             `;
             tbody.appendChild(tr);
