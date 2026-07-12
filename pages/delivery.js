@@ -269,7 +269,6 @@ function renderStops() {
             <tr>
                 <td>${orderLabel}</td>
                 <td>${index + 1}</td>
-                <td><span class="badge bg-secondary">${s.status}</span></td>
                 <td class="text-end">
                     <button class="btn btn-sm btn-light text-danger" onclick="removeStop(${index})"><i class="bi bi-trash"></i></button>
                 </td>
