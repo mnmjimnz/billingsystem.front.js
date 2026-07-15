@@ -44,7 +44,6 @@ async function checkCashRegister() {
             // SesiC3n activa encontrada
             window.currentPosBranchId = res.branchId;
             await loadProducts(); // Cargar productos especificos para esta sucursal
-            document.getElementById('pos-overlay').classList.add('d-none');
             
             const payload = JSON.parse(atob(ApiClient.getToken().split('.')[1]));
             document.getElementById('cashier-name').textContent = payload.unique_name || 'Cajero';
