@@ -173,6 +173,9 @@ async function openCashRegister() {
         
         if (res.success) {
             showToast('Caja aperturada exitosamente.', 'success');
+            const modalEl = document.getElementById('openRegisterModal');
+            const modal = bootstrap.Modal.getInstance(modalEl);
+            if (modal) modal.hide();
             await checkCashRegister(); // Volver a verificar y recargar todo, incluyendo productos
         } else {
             showToast(res.message || 'Error al aperturar caja.', 'error');
@@ -474,6 +477,7 @@ async function confirmSale() {
     const taxAmount = currentTaxAmount;
 
     const request = {
+        branchId: window.currentPosBranchId,
         customerId: customerValue ? parseInt(customerValue) : null,
         subtotal: subtotal,
         discount: discount,
