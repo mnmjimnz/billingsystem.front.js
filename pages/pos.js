@@ -44,21 +44,42 @@ async function checkCashRegister() {
             // Load branches — only OPEN ones can receive a cash register
             const branches = await ApiClient.request('/Branches') || [];
             const openBranches = branches.filter(b => b.status !== 'CLOSED');
+            // Check IsAdmin and BranchId from token
+            const token = ApiClient.getToken();
+            let isAdmin = false;
+            let userBranchId = null;
+            if (token) {
+                try {
+                    const payload = JSON.parse(atob(token.split('.')[1]));
+                    isAdmin = payload.IsAdmin === 'True' || payload.IsAdmin === 'true' || payload.IsAdmin === true;
+                    userBranchId = parseInt(payload.BranchId) || 0;
+                } catch (e) {}
+            }
+
+            let branchesToShow = openBranches;
             const select = document.getElementById('register-branch');
             select.innerHTML = '';
+            
+            if (!isAdmin) {
+                // Si no es admin, forzar unicamente su sucursal y deshabilitar el dropdown
+                branchesToShow = openBranches.filter(b => b.id === userBranchId);
+                select.disabled = true;
+            } else {
+                select.disabled = false;
+            }
 
-            if (openBranches.length === 0) {
+            if (branchesToShow.length === 0) {
                 // No open branches at all - block everything
                 showBlockedOverlay(
                     'bi-buildings text-danger',
                     'Ninguna sucursal disponible',
-                    'No hay sucursales aperturadas. Por favor, pida a un administrador que aperture una sucursal antes de operar.',
+                    'No hay sucursales aperturadas, o no tienes permiso para acceder a una. Por favor contacta al administrador.',
                     true
                 );
                 return;
             }
 
-            openBranches.forEach(b => {
+            branchesToShow.forEach(b => {
                 select.innerHTML += `<option value="${b.id}">${b.name}</option>`;
             });
 
