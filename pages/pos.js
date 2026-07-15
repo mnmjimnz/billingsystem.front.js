@@ -40,7 +40,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function checkCashRegister() {
     try {
         const res = await ApiClient.request('/CashRegisters/session');
-        if (!res.hasOpenSession) {
+        if (res.hasOpenSession) {
+            // SesiC3n activa encontrada
+            window.currentPosBranchId = res.branchId;
+            await loadProducts(); // Cargar productos especificos para esta sucursal
+            document.getElementById('pos-overlay').classList.add('d-none');
+            
+            const payload = JSON.parse(atob(ApiClient.getToken().split('.')[1]));
+            document.getElementById('cashier-name').textContent = payload.unique_name || 'Cajero';
+            
+            startClock();
+            renderCart();
+        } else {
             // Load branches — only OPEN ones can receive a cash register
             const branches = await ApiClient.request('/Branches') || [];
             const openBranches = branches.filter(b => b.status !== 'CLOSED');
@@ -166,10 +177,7 @@ async function openCashRegister() {
         
         if (res.success) {
             showToast('Caja aperturada exitosamente.', 'success');
-            // Hide modal and remove backdrop
-            const modalEl = document.getElementById('openRegisterModal');
-            const modal = bootstrap.Modal.getInstance(modalEl);
-            modal.hide();
+            await checkCashRegister(); // Volver a verificar y recargar todo, incluyendo productos
         } else {
             showToast(res.message || 'Error al aperturar caja.', 'error');
         }
@@ -194,11 +202,14 @@ async function loadCustomers() {
 
 async function loadProducts() {
     try {
-        products = await ApiClient.request('/Products') || [];
+        let url = '/Products';
+        if (window.currentPosBranchId) {
+            url += `?branchId=${window.currentPosBranchId}`;
+        }
+        products = await ApiClient.request(url) || [];
         renderProducts();
     } catch (e) {
-        console.error("Error loading products", e);
-        products = [];
+        showToast('Error cargando productos', 'error');
     }
 }
 
