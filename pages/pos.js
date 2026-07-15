@@ -46,9 +46,6 @@ async function checkCashRegister() {
             await loadProducts(); // Cargar productos especificos para esta sucursal
             
             const payload = JSON.parse(atob(ApiClient.getToken().split('.')[1]));
-            document.getElementById('cashier-name').textContent = payload.unique_name || 'Cajero';
-            
-            startClock();
             renderCart();
         } else {
             // Load branches — only OPEN ones can receive a cash register
