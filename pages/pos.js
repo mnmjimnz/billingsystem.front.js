@@ -174,7 +174,7 @@ async function openCashRegister() {
             showToast(res.message || 'Error al aperturar caja.', 'error');
         }
     } catch (e) {
-        showToast('Error de conexión al aperturar caja.', 'error');
+        showToast(e.message || 'Error de conexión al aperturar caja.', 'error');
     }
 }
 
