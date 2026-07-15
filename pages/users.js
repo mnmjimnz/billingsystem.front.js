@@ -88,8 +88,26 @@ function openUserModal() {
     document.getElementById('passwordHelp').style.display = 'none';
     
     document.getElementById('userIsActive').checked = true;
+    document.getElementById('userIsAdmin').checked = false;
+    
+    checkAdminAccess();
     
     userModalInstance.show();
+}
+
+function checkAdminAccess() {
+    const token = ApiClient.getToken();
+    const container = document.getElementById('adminCheckboxContainer');
+    if (token) {
+        try {
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            if (payload.IsAdmin === 'True' || payload.IsAdmin === 'true' || payload.IsAdmin === true) {
+                container.style.display = 'block';
+                return;
+            }
+        } catch (e) {}
+    }
+    container.style.display = 'none';
 }
 
 function editUser(id) {
@@ -104,6 +122,9 @@ function editUser(id) {
     document.getElementById('userPassword').value = '';
     
     document.getElementById('userIsActive').checked = user.isActive !== false;
+    document.getElementById('userIsAdmin').checked = user.isAdmin === true;
+    
+    checkAdminAccess();
     
     document.getElementById('userModalLabel').innerText = 'Editar Usuario';
     document.getElementById('passwordHelp').style.display = 'block';
@@ -135,7 +156,8 @@ async function saveUser() {
         roleId: parseInt(roleId),
         branchId: parseInt(branchId),
         passwordHash: password || '',
-        isActive: document.getElementById('userIsActive').checked
+        isActive: document.getElementById('userIsActive').checked,
+        isAdmin: document.getElementById('userIsAdmin').checked
     };
 
     try {
